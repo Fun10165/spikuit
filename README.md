@@ -43,13 +43,29 @@ It works as:
 | | Anki | Obsidian + SRS | Spikuit |
 |---|---|---|---|
 | Scheduling | Per-card | Per-note | Per-concept, connected |
-| Knowledge structure | Flat deck | Manual links | Auto-growing graph |
+| Knowledge structure | Flat deck | Manual links | Emergent graph (no up-front taxonomy) |
+| Tagging / domain | Required | Manual, up-front | Optional, filled in later from structure |
 | Search | Keyword | Keyword + tags | Semantic + graph-weighted |
 | Retrieval quality | Static | Static | Improves with usage |
 | AI integration | Limited | Plugins | Built-in (agent-native) |
 
 Spikuit doesn't replace these tools — it explores what becomes possible when
 you combine a knowledge graph, spaced repetition, and AI agents into one system.
+
+### Structure emerges
+
+You do not pick a folder tree, tag scheme, or taxonomy before you start.
+Drop Neurons in with or without a domain label; Spikuit discovers clusters
+from the Synapse structure itself. When a blank domain has enough evidence,
+`spkt domain audit` fills it in — with your approval on anything ambiguous.
+
+This matters because curation is where knowledge bases usually fail: the
+cost of keeping taxonomy consistent grows faster than the value of having
+one. Spikuit keeps that cost sub-linear by letting structure self-assemble,
+and surfacing disagreements only when they are load-bearing.
+
+For the full picture, see [Emergent Structure](docs/appendix/emergent-structure.md)
+and the [Cognitive Retrieval model](docs/appendix/cognitive-retrieval.md).
 
 ## Quick Start
 
