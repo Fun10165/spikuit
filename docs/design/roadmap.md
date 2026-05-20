@@ -196,11 +196,10 @@ a Spikuit-core extension interface, never via raw
 
 Decided enough to start; flagged for the user, not frozen.
 
-1. **Substrate vs. feature ordering.** This redraw gives v0.8.x to
-   substrate self-organization and pushes the GUI/feature line to
-   v0.9.x. The 2026-04-13 plan had the GUI MVP at v0.8.0. If browser
-   UX is wanted sooner, v0.8 and v0.9 can be interleaved instead of
-   sequenced — a product call left to the user.
+1. **Substrate vs. feature ordering — resolved (2026-05-20, with
+   user).** Substrate-first: v0.8.x is substrate self-organization,
+   and the GUI/feature line follows in v0.9.x — sequenced, not
+   interleaved. The 2026-04-13 plan's GUI-at-v0.8.0 is superseded.
 2. **Tutor extraction Stage 0 timing.** Independent and low-risk; it
    can land in v0.7.2 or v0.7.3 opportunistically rather than waiting
    for a dedicated slot.
