@@ -12,7 +12,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from spikuit_core import Neuron, Scaffold
+    from spikuit_core.appkit import NeuronView, Scaffold
 
     from ..quiz import BaseQuiz, QuizResult
 
@@ -56,7 +56,7 @@ class FollowUpGenerator(Protocol):
     """
 
     async def generate_follow_up(
-        self, *, neuron: "Neuron", anchor: "Neuron", scaffold: "Scaffold"
+        self, *, neuron: "NeuronView", anchor: "NeuronView", scaffold: "Scaffold"
     ) -> "FollowUp": ...
 
 

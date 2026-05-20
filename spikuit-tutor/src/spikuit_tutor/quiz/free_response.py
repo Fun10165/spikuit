@@ -11,14 +11,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from spikuit_core import ScaffoldLevel
+from spikuit_core.appkit import ScaffoldLevel
 
 from ._content import extract_body, extract_title
 from .base import BaseQuiz
 from .models import QuizResponse, QuizResult, RenderedContent
 
 if TYPE_CHECKING:
-    from spikuit_core import Neuron, Scaffold
+    from spikuit_core.appkit import NeuronView, Scaffold
 
 
 def _default_question(title: str, level: ScaffoldLevel) -> str:
@@ -51,7 +51,7 @@ class FreeResponseQuiz(BaseQuiz):
 
     def __init__(
         self,
-        neuron: "Neuron",
+        neuron: "NeuronView",
         scaffold: "Scaffold",
         *,
         question: str | None = None,

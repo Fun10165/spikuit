@@ -12,19 +12,18 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from spikuit_core import ScaffoldLevel
-from spikuit_core.scaffold import compute_scaffold
+from spikuit_core.appkit import ScaffoldLevel, compute_scaffold
 
 from ..quiz import BaseQuiz, Flashcard, FreeResponseQuiz
 from ..quiz._content import extract_title
 from .plan import ExamPlan, ExamStep, FollowUp, FollowUpGenerator, InterleaveMode
 
 if TYPE_CHECKING:
-    from spikuit_core import Circuit, Neuron, Scaffold
+    from spikuit_core.appkit import NeuronView, Scaffold, SchedulerCircuit
 
 
 async def plan_exam(
-    circuit: "Circuit",
+    circuit: "SchedulerCircuit",
     *,
     neuron_ids: list[str] | None = None,
     limit: int = 10,
@@ -76,7 +75,7 @@ async def plan_exam(
 
     # Fetch all neurons in one pass; _interleave_by_domain may have added
     # near-due ids not in the original queue.
-    neurons: dict[str, "Neuron"] = {}
+    neurons: dict[str, "NeuronView"] = {}
     for nid in expanded:
         n = await circuit.get_neuron(nid)
         if n is not None:
@@ -119,7 +118,7 @@ async def plan_exam(
     )
 
 
-def _choose_quiz(neuron: "Neuron", scaffold) -> "BaseQuiz":
+def _choose_quiz(neuron: "NeuronView", scaffold) -> "BaseQuiz":
     """Desirable-difficulties mapping: strong cards (MINIMAL/NONE) get the
     harder free-response prompt; weaker cards (FULL/GUIDED) get the
     supportive Flashcard so the learner can rebuild the trace.
@@ -129,7 +128,7 @@ def _choose_quiz(neuron: "Neuron", scaffold) -> "BaseQuiz":
     return Flashcard(neuron, scaffold)
 
 
-def _build_follow_up(neuron: "Neuron", anchor: "Neuron") -> FollowUp:
+def _build_follow_up(neuron: "NeuronView", anchor: "NeuronView") -> FollowUp:
     neuron_title = extract_title(neuron.content) or neuron.id
     anchor_title = extract_title(anchor.content) or anchor.id
     return FollowUp(
@@ -143,7 +142,7 @@ def _build_follow_up(neuron: "Neuron", anchor: "Neuron") -> FollowUp:
 
 
 async def _interleave_by_domain(
-    circuit: "Circuit",
+    circuit: "SchedulerCircuit",
     queue: list[str],
     *,
     pull_ratio: float,

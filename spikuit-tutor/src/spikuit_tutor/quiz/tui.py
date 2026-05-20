@@ -18,7 +18,7 @@ from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.widgets import Footer, Header, Input, Label, Static
 
-from spikuit_core import Grade
+from spikuit_core.appkit import Grade
 
 from .base import BaseQuiz
 from .models import QuizResponse, QuizResult
