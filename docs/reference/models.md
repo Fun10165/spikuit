@@ -8,8 +8,6 @@ Core data models using `msgspec.Struct`.
 
 ::: spikuit_core.SynapseType
 
-::: spikuit_core.ScaffoldLevel
-
 ## Data Models
 
 ::: spikuit_core.Neuron
@@ -19,8 +17,6 @@ Core data models using `msgspec.Struct`.
 ::: spikuit_core.Spike
 
 ::: spikuit_core.Plasticity
-
-::: spikuit_core.Scaffold
 
 ## Quiz Models
 
