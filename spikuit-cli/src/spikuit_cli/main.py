@@ -1023,8 +1023,8 @@ def quiz(
     --no-tui: Stream one RenderResponse per line to stdout, read one
               QuizResponse per line from stdin, grade and record.
     """
-    from .quiz import Flashcard as NewFlashcard
-    from .quiz.models import QuizResponse as NewQuizResponse
+    from spikuit_tutor.quiz import Flashcard as NewFlashcard
+    from spikuit_tutor.quiz.models import QuizResponse as NewQuizResponse
     from spikuit_core import Spike
     from spikuit_core.scaffold import compute_scaffold
     import dataclasses as _dc
@@ -1130,7 +1130,7 @@ def quiz(
                 return
 
             # Default: Textual TUI
-            from .quiz.tui import QuizApp
+            from spikuit_tutor.quiz.tui import QuizApp
 
             recorded: list[tuple[str, Grade, Optional[str]]] = []
 

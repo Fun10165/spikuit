@@ -5,7 +5,7 @@ description = "Strands-based agent workflows for Spikuit"
 requires-python = ">=3.11"
 dependencies = [
     "spikuit-core",
-    "spikuit-cli",
+    "spikuit-tutor",
     "amkb",
 ]
 

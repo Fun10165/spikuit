@@ -44,12 +44,14 @@ members = [
     "spikuit-core",
     "spikuit-agents",
     "spikuit-cli",
+    "spikuit-tutor",
 ]
 
 [tool.uv.sources]
 spikuit-core = { workspace = true }
 spikuit-agents = { workspace = true }
 spikuit-cli = { workspace = true }
+spikuit-tutor = { workspace = true }
 amkb = { git = "https://github.com/takyone/amkb-sdk.git", rev = "e7ae4de8ebe86002f55086488dec2ffa0adf8f77" }
 
 [dependency-groups]

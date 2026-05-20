@@ -8,13 +8,13 @@ import pytest_asyncio
 from spikuit_core import Circuit, Grade, Neuron, ScaffoldLevel
 from spikuit_core.scaffold import compute_scaffold
 
-from spikuit_cli.quiz import (
+from spikuit_tutor.quiz import (
     FreeResponseQuiz,
     LLMGrader,
     QuizResponse,
     QuizResult,
 )
-from spikuit_cli.tutor import TutorSession, plan_exam
+from spikuit_tutor.tutor import TutorSession, plan_exam
 
 
 @pytest_asyncio.fixture
@@ -114,7 +114,7 @@ async def test_free_response_needs_llm_raises_on_record_response(circuit):
     neuron = await circuit.get_neuron("n1")
     scaffold = compute_scaffold(circuit, "n1")
 
-    from spikuit_cli.tutor.plan import ExamPlan, ExamStep
+    from spikuit_tutor.tutor.plan import ExamPlan, ExamStep
     step = ExamStep(
         neuron_id="n1",
         quiz=FreeResponseQuiz(neuron, scaffold),
@@ -133,7 +133,7 @@ async def test_free_response_record_llm_graded_advances(circuit):
     neuron = await circuit.get_neuron("n1")
     scaffold = compute_scaffold(circuit, "n1")
 
-    from spikuit_cli.tutor.plan import ExamPlan, ExamStep
+    from spikuit_tutor.tutor.plan import ExamPlan, ExamStep
     step = ExamStep(
         neuron_id="n1",
         quiz=FreeResponseQuiz(neuron, scaffold),
@@ -154,7 +154,7 @@ async def test_free_response_record_llm_graded_advances(circuit):
         canonical_answer=raw.canonical_answer or "",
         student_response=raw.student_response or "",
     )
-    from spikuit_cli.tutor.plan import TransitionEvent
+    from spikuit_tutor.tutor.plan import TransitionEvent
     tr = await sess.record_llm_graded(final)
     assert tr.event == TransitionEvent.ADVANCE
 

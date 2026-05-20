@@ -1,9 +1,9 @@
 """Spikuit agents — tutor grading backends.
 
-Concrete ``LLMGrader`` implementations. The cli package defines the
-``LLMGrader`` Protocol in ``spikuit_cli.quiz.grader``; this module
+Concrete ``LLMGrader`` implementations. The tutor package defines the
+``LLMGrader`` Protocol in ``spikuit_tutor.quiz.grader``; this module
 satisfies it with LLM-backed strategies. Dependency flow stays
-``core ← cli ← agents``.
+``core ← tutor ← agents``.
 """
 
 from __future__ import annotations

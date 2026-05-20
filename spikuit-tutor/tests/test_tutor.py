@@ -1,4 +1,4 @@
-"""Tests for spikuit_cli.tutor — ExamPlan + TutorSession interpreter."""
+"""Tests for spikuit_tutor.tutor — ExamPlan + TutorSession interpreter."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ import pytest_asyncio
 
 from spikuit_core import Circuit, Grade, Neuron, SynapseType
 
-from spikuit_cli.quiz import QuizResponse, QuizResult
-from spikuit_cli.tutor import (
+from spikuit_tutor.quiz import QuizResponse, QuizResult
+from spikuit_tutor.tutor import (
     ExamPlan,
     ExamStep,
     FollowUp,

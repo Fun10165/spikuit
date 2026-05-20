@@ -1,4 +1,4 @@
-"""AgentLLMGrader — satisfies ``spikuit_cli.quiz.LLMGrader`` via an
+"""AgentLLMGrader — satisfies ``spikuit_tutor.quiz.LLMGrader`` via an
 injected async grade function.
 
 The grade_fn is backend-agnostic: a Strands agent tool, a raw OpenAI-
@@ -19,7 +19,7 @@ import json
 import re
 from typing import Awaitable, Callable
 
-from spikuit_cli.quiz import QuizResult
+from spikuit_tutor.quiz import QuizResult
 from spikuit_core import Grade
 
 GradeFn = Callable[[str], Awaitable[str]]

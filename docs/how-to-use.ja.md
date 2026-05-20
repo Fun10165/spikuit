@@ -423,7 +423,7 @@ Curator: "math"ドメインが2つのコミュニティにまたがっていま�
 ```python
 from spikuit_core import Circuit, Grade
 from spikuit_core.scaffold import compute_scaffold
-from spikuit_cli.quiz import Flashcard, FreeResponseQuiz, QuizResponse
+from spikuit_tutor.quiz import Flashcard, FreeResponseQuiz, QuizResponse
 
 neuron = await circuit.get_neuron("n1")
 scaffold = compute_scaffold(circuit, "n1")
@@ -444,7 +444,7 @@ ExamPlan が pedagogy（gap展開・リクエ・elaboration）を宣言的に持
 TutorSession はそれを解釈するだけ。
 
 ```python
-from spikuit_cli.tutor import plan_exam, TutorSession
+from spikuit_tutor.tutor import plan_exam, TutorSession
 
 plan = await plan_exam(
     circuit,

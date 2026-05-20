@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from spikuit_agents.tutor import AgentLLMGrader, build_grade_prompt
-from spikuit_cli.quiz import LLMGrader
+from spikuit_tutor.quiz import LLMGrader
 from spikuit_core import Grade
 
 
@@ -93,9 +93,9 @@ def test_build_grade_prompt_contains_all_sections():
 @pytest.mark.asyncio
 async def test_end_to_end_with_tutor_session(tmp_path):
     """AgentLLMGrader result should be feedable to TutorSession.record_llm_graded."""
-    from spikuit_cli.quiz import FreeResponseQuiz, QuizResponse
-    from spikuit_cli.tutor import TutorSession
-    from spikuit_cli.tutor.plan import ExamPlan, ExamStep, TransitionEvent
+    from spikuit_tutor.quiz import FreeResponseQuiz, QuizResponse
+    from spikuit_tutor.tutor import TutorSession
+    from spikuit_tutor.tutor.plan import ExamPlan, ExamStep, TransitionEvent
     from spikuit_core import Circuit, Neuron
     from spikuit_core.scaffold import compute_scaffold
 
