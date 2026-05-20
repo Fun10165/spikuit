@@ -2,10 +2,13 @@
 
 Walks an ExamPlan step by step. All pedagogical policy lives on the
 plan; this class just routes events through transitions and calls
-circuit.fire for the primary quiz result.
+``scheduler.review`` for the primary quiz result.
 
-Follow-up results are transcribed into spike.notes but never fired,
-guaranteed by the FollowUpResult type being distinct from QuizResult.
+As of Stage 2 the session is the *review orchestrator* (§4.2): it
+drives the :class:`TutorScheduler`, which schedules with FSRS and then
+fires the substrate. Follow-up results are transcribed into
+spike.notes but never reviewed, guaranteed by the FollowUpResult type
+being distinct from QuizResult.
 """
 
 from __future__ import annotations
@@ -24,9 +27,8 @@ from .plan import (
 )
 
 if TYPE_CHECKING:
-    from spikuit_core.appkit import SchedulerCircuit
-
     from ..quiz.models import QuizResponse
+    from ..scheduler import TutorScheduler
 
 
 class TutorSession:
@@ -34,12 +36,12 @@ class TutorSession:
 
     def __init__(
         self,
-        circuit: "SchedulerCircuit",
+        scheduler: "TutorScheduler",
         plan: ExamPlan,
         *,
         persist: bool = True,
     ) -> None:
-        self.circuit = circuit
+        self.scheduler = scheduler
         self.plan = plan
         self.persist = persist
         self._idx = 0
@@ -215,12 +217,12 @@ class TutorSession:
         return await self._complete_and_advance(self._current)
 
     async def _complete_and_advance(self, step: ExamStep) -> TransitionResult:
-        """Fire FSRS for the primary quiz result (awaited, not
-        fire-and-forget), then move cursor to next step.
+        """Review the primary quiz result through the scheduler (awaited,
+        not fire-and-forget), then move cursor to next step.
         """
         if self.persist and step.final_result is not None and step.final_result.grade is not None:
             notes = self._compose_notes(step)
-            await self.circuit.fire(
+            await self.scheduler.review(
                 Spike(
                     neuron_id=step.neuron_id,
                     grade=step.final_result.grade,
@@ -246,7 +248,7 @@ class TutorSession:
         step.final_result = QuizResult(grade=grade, user_notes=None)
         if self.persist:
             notes = self._compose_notes(step)
-            await self.circuit.fire(
+            await self.scheduler.review(
                 Spike(neuron_id=step.neuron_id, grade=grade, notes=notes)
             )
 

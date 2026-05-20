@@ -1,4 +1,4 @@
-"""Spikuit Core — FSRS + Knowledge Graph + Spreading Activation engine.
+"""Spikuit Core — Knowledge Graph + Spreading Activation substrate.
 
 Two install profiles:
 
@@ -7,8 +7,9 @@ Two install profiles:
 
 The minimal install ships embedder + QABot (read-only retrieval over
 exported Brain bundles) with only `httpx` and `numpy` as dependencies.
-The `[engine]` extras pull `fsrs`, `networkx`, `aiosqlite`, `sqlite-vec`,
-and `msgspec` for the live Brain engine.
+The `[engine]` extras pull `networkx`, `aiosqlite`, and `sqlite-vec`
+for the live Brain engine. As of Stage 2 the substrate owns no learner
+model — FSRS scheduling lives wholly in ``spikuit-tutor``.
 
 Engine symbols (`Circuit`, `Neuron`, etc.) are loaded lazily via PEP 562
 `__getattr__`. Importing them without the `[engine]` extras raises a
@@ -53,16 +54,12 @@ _ENGINE_SYMBOLS: dict[str, tuple[str, str]] = {
     "QuizItemRole": ("models", "QuizItemRole"),
     "QuizRequest": ("models", "QuizRequest"),
     "QuizResult": ("models", "QuizResult"),
-    "Scaffold": ("models", "Scaffold"),
-    "ScaffoldLevel": ("models", "ScaffoldLevel"),
     "Source": ("models", "Source"),
     "Spike": ("models", "Spike"),
     "Synapse": ("models", "Synapse"),
     "SynapseConfidence": ("models", "SynapseConfidence"),
     "SynapseType": ("models", "SynapseType"),
     "strip_frontmatter": ("models", "strip_frontmatter"),
-    # scaffold
-    "compute_scaffold": ("scaffold", "compute_scaffold"),
     # session
     "IngestSession": ("session", "IngestSession"),
     "QABotSession": ("session", "QABotSession"),
@@ -121,8 +118,6 @@ if TYPE_CHECKING:
         QuizItemRole,
         QuizRequest,
         QuizResult,
-        Scaffold,
-        ScaffoldLevel,
         Source,
         Spike,
         Synapse,
@@ -130,7 +125,6 @@ if TYPE_CHECKING:
         SynapseType,
         strip_frontmatter,
     )
-    from .scaffold import compute_scaffold
     from .session import IngestSession, QABotSession, Session
 
 

@@ -1,10 +1,14 @@
-"""plan_exam() — builds an ExamPlan from circuit state + policy knobs.
+"""plan_exam() — builds an ExamPlan from scheduler state + policy knobs.
 
 This is where the survey's pedagogical decisions become concrete:
 - Gap expansion (prerequisites before dependents)
 - Interleaving (soft pull from near-due other domains)
 - Quiz type selection by scaffold level (desirable difficulties)
 - Follow-up attachment (elaborative interrogation)
+
+As of Stage 2 the planner is driven by a :class:`TutorScheduler`, not a
+raw substrate ``Circuit`` — FSRS queries (``due_neurons`` /
+``near_due_neurons``) and scaffolding now belong to the tutor.
 """
 
 from __future__ import annotations
@@ -12,18 +16,20 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from spikuit_core.appkit import ScaffoldLevel, compute_scaffold
-
 from ..quiz import BaseQuiz, Flashcard, FreeResponseQuiz
 from ..quiz._content import extract_title
+from ..scaffold import ScaffoldLevel, compute_scaffold
 from .plan import ExamPlan, ExamStep, FollowUp, FollowUpGenerator, InterleaveMode
 
 if TYPE_CHECKING:
-    from spikuit_core.appkit import NeuronView, Scaffold, SchedulerCircuit
+    from spikuit_core.appkit import NeuronView
+
+    from ..scaffold import Scaffold
+    from ..scheduler import TutorScheduler
 
 
 async def plan_exam(
-    circuit: "SchedulerCircuit",
+    scheduler: "TutorScheduler",
     *,
     neuron_ids: list[str] | None = None,
     limit: int = 10,
@@ -39,19 +45,19 @@ async def plan_exam(
     """Construct an ExamPlan.
 
     If ``neuron_ids`` is provided, teach those (expanding gaps).
-    Otherwise pull from ``circuit.due_neurons(limit=limit)``.
+    Otherwise pull from ``scheduler.due_neurons(limit=limit)``.
     """
     if neuron_ids is not None:
         ids = list(neuron_ids)
     else:
-        ids = await circuit.due_neurons(limit=limit)
+        ids = await scheduler.due_neurons(limit=limit)
 
     scaffolds: dict[str, "Scaffold"] = {}
 
     def _scaffold(nid: str) -> "Scaffold":
         s = scaffolds.get(nid)
         if s is None:
-            s = compute_scaffold(circuit, nid)
+            s = compute_scaffold(scheduler, nid)
             scaffolds[nid] = s
         return s
 
@@ -68,7 +74,7 @@ async def plan_exam(
 
     if interleave_by == InterleaveMode.DOMAIN and expanded:
         expanded = await _interleave_by_domain(
-            circuit, expanded,
+            scheduler, expanded,
             pull_ratio=interleave_pull_ratio,
             near_due_days=near_due_days,
         )
@@ -77,7 +83,7 @@ async def plan_exam(
     # near-due ids not in the original queue.
     neurons: dict[str, "NeuronView"] = {}
     for nid in expanded:
-        n = await circuit.get_neuron(nid)
+        n = await scheduler.get_neuron(nid)
         if n is not None:
             neurons[nid] = n
 
@@ -95,7 +101,7 @@ async def plan_exam(
 
         if elaborate_on_correct and scaffold.context:
             anchor_id = scaffold.context[0]
-            anchor = neurons.get(anchor_id) or await circuit.get_neuron(anchor_id)
+            anchor = neurons.get(anchor_id) or await scheduler.get_neuron(anchor_id)
             if anchor is not None:
                 if follow_up_generator is not None:
                     fu = await follow_up_generator.generate_follow_up(
@@ -142,7 +148,7 @@ def _build_follow_up(neuron: "NeuronView", anchor: "NeuronView") -> FollowUp:
 
 
 async def _interleave_by_domain(
-    circuit: "SchedulerCircuit",
+    scheduler: "TutorScheduler",
     queue: list[str],
     *,
     pull_ratio: float,
@@ -157,7 +163,7 @@ async def _interleave_by_domain(
 
     domain_of: dict[str, str] = {}
     for nid in queue:
-        neuron = await circuit.get_neuron(nid)
+        neuron = await scheduler.get_neuron(nid)
         if neuron is not None:
             domain_of[nid] = neuron.domain or "_none"
 
@@ -172,14 +178,14 @@ async def _interleave_by_domain(
         return queue
 
     pull_n = max(1, math.ceil(len(queue) * pull_ratio))
-    near = await circuit.near_due_neurons(
+    near = await scheduler.near_due_neurons(
         days_ahead=near_due_days,
         limit=pull_n * 3,
         exclude_ids=set(queue),
     )
     non_dom_pulled: list[str] = []
     for nid in near:
-        neuron = await circuit.get_neuron(nid)
+        neuron = await scheduler.get_neuron(nid)
         if neuron is None:
             continue
         d = neuron.domain or "_none"

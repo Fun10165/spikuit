@@ -12,9 +12,10 @@ from enum import Enum
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from spikuit_core.appkit import NeuronView, Scaffold
+    from spikuit_core.appkit import NeuronView
 
     from ..quiz import BaseQuiz, QuizResult
+    from ..scaffold import Scaffold
 
 
 class InterleaveMode(str, Enum):

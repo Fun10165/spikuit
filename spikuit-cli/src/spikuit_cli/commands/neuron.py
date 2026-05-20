@@ -14,6 +14,7 @@ from ..helpers import (
     _GRADE_MAP,
     _extract_title,
     _get_circuit,
+    _get_scheduler,
     _neuron_dict,
     _out,
     _run,
@@ -155,6 +156,8 @@ def neuron_inspect(
     async def _inspect():
         circuit = _get_circuit(brain)
         await circuit.connect()
+        scheduler = _get_scheduler(circuit, brain)
+        await scheduler.open()
         try:
             neuron = await circuit.get_neuron(neuron_id)
             if neuron is None:
@@ -163,9 +166,10 @@ def neuron_inspect(
 
             sources = await circuit.get_sources_for_neuron(neuron_id)
             community_id = circuit.get_community(neuron_id)
+            card = scheduler.get_card(neuron_id)
 
             if as_json:
-                d = _neuron_dict(neuron, circuit)
+                d = _neuron_dict(neuron, circuit, card=card)
                 d["neighbors_out"] = circuit.neighbors(neuron_id)
                 d["neighbors_in"] = circuit.predecessors(neuron_id)
                 d["community_id"] = community_id
@@ -180,7 +184,6 @@ def neuron_inspect(
                 typer.echo(f"Domain:   {neuron.domain or '-'}")
                 typer.echo(f"Created:  {neuron.created_at}")
 
-                card = circuit.get_card(neuron_id)
                 if card:
                     stab = f"{card.stability:.2f}" if card.stability is not None else "-"
                     diff = f"{card.difficulty:.2f}" if card.difficulty is not None else "-"
@@ -207,6 +210,7 @@ def neuron_inspect(
 
                 typer.echo(f"\n{neuron.content}")
         finally:
+            await scheduler.close()
             await circuit.close()
 
     _run(_inspect())
@@ -280,14 +284,18 @@ def neuron_due(
     async def _due():
         circuit = _get_circuit(brain)
         await circuit.connect()
+        scheduler = _get_scheduler(circuit, brain)
+        await scheduler.open()
         try:
-            ids = await circuit.due_neurons(limit=limit)
+            ids = await scheduler.due_neurons(limit=limit)
             if as_json:
                 items = []
                 for nid in ids:
                     neuron = await circuit.get_neuron(nid)
                     if neuron:
-                        items.append(_neuron_dict(neuron, circuit))
+                        items.append(
+                            _neuron_dict(neuron, circuit, card=scheduler.get_card(nid))
+                        )
                 _out(items, use_json=True)
             else:
                 if not ids:
@@ -301,6 +309,7 @@ def neuron_due(
                     p_indicator = f"  pressure={pressure:.2f}" if pressure > 0 else ""
                     typer.echo(f"  {nid}  {title}{p_indicator}")
         finally:
+            await scheduler.close()
             await circuit.close()
 
     _run(_due())
@@ -313,7 +322,12 @@ def neuron_fire(
     as_json: bool = typer.Option(False, "--json", help="Output as JSON"),
     brain: Optional[Path] = typer.Option(None, "--brain", "-b", help="Brain root directory"),
 ) -> None:
-    """Fire a spike (record a review) on a Neuron."""
+    """Fire a spike (record a review) on a Neuron.
+
+    Tutor-orchestrated since Stage 2 (``tutor-extraction-stage2.md``
+    §4.2, §4.7): the tutor schedules the FSRS card and then calls the
+    substrate's ``fire`` for grade-driven plasticity.
+    """
     g = _GRADE_MAP.get(grade.lower())
     if g is None:
         typer.echo(f"Invalid grade: {grade}. Use: miss, weak, fire, strong", err=True)
@@ -322,6 +336,8 @@ def neuron_fire(
     async def _fire():
         circuit = _get_circuit(brain)
         await circuit.connect()
+        scheduler = _get_scheduler(circuit, brain)
+        await scheduler.open()
         try:
             neuron = await circuit.get_neuron(neuron_id)
             if neuron is None:
@@ -329,7 +345,7 @@ def neuron_fire(
                 raise typer.Exit(1)
             now = datetime.now(timezone.utc)
             spike = Spike(neuron_id=neuron_id, grade=g, fired_at=now)
-            card = await circuit.fire(spike)
+            card = await scheduler.review(spike)
             if as_json:
                 _out({
                     "neuron_id": neuron_id,
@@ -343,6 +359,7 @@ def neuron_fire(
                 typer.echo(f"Fired {grade} on {neuron_id}")
                 typer.echo(f"  stability={card.stability:.2f}  difficulty={card.difficulty:.2f}  due={card.due}")
         finally:
+            await scheduler.close()
             await circuit.close()
 
     _run(_fire())

@@ -634,19 +634,6 @@ async def test_upsert_meta_neuron_replaces(circuit):
 
 
 @pytest.mark.asyncio
-async def test_meta_neurons_excluded_from_due(circuit):
-    await circuit.upsert_meta_neuron("_meta:overview", "# Overview")
-    n = Neuron.create("# Regular", domain="math", type="concept")
-    await circuit.add_neuron(n)
-
-    due = await circuit.due_neurons(limit=100)
-    # _meta neuron should NOT be in due list
-    assert "_meta:overview" not in due
-    # Regular neuron should be
-    assert n.id in due
-
-
-@pytest.mark.asyncio
 async def test_meta_neurons_cannot_be_fired(circuit):
     await circuit.upsert_meta_neuron("_meta:overview", "# Overview")
 
@@ -1052,7 +1039,7 @@ async def test_diagnose_dangling_prerequisites(circuit):
     await circuit.add_neuron(dependent)
     await circuit.add_synapse(dependent.id, prereq.id, SynapseType.REQUIRES)
 
-    # prereq has card but stability=None (never reviewed) → "never_reviewed"
+    # prereq has no spike history (never reviewed) → "never_reviewed"
     result = await circuit.diagnose()
     dangling = result["dangling_prerequisites"]
     assert any(d["requires"] == prereq.id and d["reason"] == "never_reviewed" for d in dangling)
@@ -1104,107 +1091,6 @@ async def test_diagnose_empty_brain(circuit):
     assert result["isolated_communities"] == []
     assert result["dangling_prerequisites"] == []
     assert result["surprise_bridges"] == []
-
-
-# -- Progress ---------------------------------------------------------------
-
-
-@pytest.mark.asyncio
-async def test_progress_mastery(circuit):
-    """Per-domain mastery is computed from FSRS cards."""
-    from datetime import datetime, timezone
-
-    n1 = Neuron.create("# A", domain="math")
-    n2 = Neuron.create("# B", domain="math")
-    n3 = Neuron.create("# C", domain="cs")
-    for n in (n1, n2, n3):
-        await circuit.add_neuron(n)
-
-    # Fire n1 so it has stability
-    spike = Spike(neuron_id=n1.id, grade=Grade.FIRE, fired_at=datetime.now(timezone.utc))
-    await circuit.fire(spike)
-
-    result = await circuit.progress()
-    m = result["mastery"]
-    assert "math" in m
-    assert m["math"]["neuron_count"] == 2
-    assert m["math"]["reviewed_count"] == 1  # only n1 was fired
-    assert "cs" in m
-
-
-@pytest.mark.asyncio
-async def test_progress_retention(circuit):
-    """Retention rate from spike history."""
-    from datetime import datetime, timezone
-
-    n1 = Neuron.create("# A", domain="math")
-    await circuit.add_neuron(n1)
-
-    # Fire twice: one success, one miss
-    await circuit.fire(Spike(neuron_id=n1.id, grade=Grade.FIRE, fired_at=datetime.now(timezone.utc)))
-    await circuit.fire(Spike(neuron_id=n1.id, grade=Grade.MISS, fired_at=datetime.now(timezone.utc)))
-
-    result = await circuit.progress()
-    r = result["retention"]
-    assert r["total_reviews"] == 2
-    assert r["overall"] == 0.5  # 1 success / 2 total
-
-
-@pytest.mark.asyncio
-async def test_progress_velocity(circuit):
-    """Learning velocity counts neurons per week."""
-    n1 = Neuron.create("# Recent", domain="math")
-    await circuit.add_neuron(n1)
-
-    result = await circuit.progress()
-    v = result["velocity"]
-    assert v["total_neurons"] == 1
-    assert len(v["weekly"]) == 4
-    # The neuron was just added, so the most recent week should have 1
-    assert v["weekly"][-1]["added"] == 1
-
-
-@pytest.mark.asyncio
-async def test_progress_weak_spots(circuit):
-    """Weak spots: connected neurons with low/no stability."""
-    n1 = Neuron.create("# Hub", domain="math")
-    n2 = Neuron.create("# Leaf", domain="math")
-    await circuit.add_neuron(n1)
-    await circuit.add_neuron(n2)
-    await circuit.add_synapse(n1.id, n2.id, SynapseType.RELATES_TO)
-
-    result = await circuit.progress()
-    ws = result["weak_spots"]
-    # Both are never reviewed but connected
-    assert len(ws) >= 1
-    ids = [w["id"] for w in ws]
-    assert n1.id in ids or n2.id in ids
-
-
-@pytest.mark.asyncio
-async def test_progress_domain_filter(circuit):
-    """Domain filter restricts all metrics."""
-    n1 = Neuron.create("# Math", domain="math")
-    n2 = Neuron.create("# CS", domain="cs")
-    await circuit.add_neuron(n1)
-    await circuit.add_neuron(n2)
-
-    result = await circuit.progress(domain="math")
-    assert result["domain_filter"] == "math"
-    assert result["velocity"]["total_neurons"] == 1
-    assert "cs" not in result["mastery"]
-
-
-@pytest.mark.asyncio
-async def test_progress_empty_brain(circuit):
-    """Progress on empty brain returns safe defaults."""
-    result = await circuit.progress()
-    assert result["mastery"] == {}
-    assert result["retention"]["total_reviews"] == 0
-    assert result["retention"]["overall"] is None
-    assert result["velocity"]["total_neurons"] == 0
-    assert result["weak_spots"] == []
-    assert result["adherence"]["total_neurons"] == 0
 
 
 # -- Domain Audit ----------------------------------------------------------

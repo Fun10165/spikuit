@@ -5,20 +5,21 @@ from __future__ import annotations
 import pytest
 import pytest_asyncio
 
-from spikuit_core import Circuit, Grade, Neuron, ScaffoldLevel
-from spikuit_core.scaffold import compute_scaffold
+from spikuit_core import Circuit, Grade, Neuron, Spike
 
+from spikuit_tutor import TutorScheduler, TutorStore
 from spikuit_tutor.quiz import (
     FreeResponseQuiz,
     LLMGrader,
     QuizResponse,
     QuizResult,
 )
+from spikuit_tutor.scaffold import ScaffoldLevel, compute_scaffold
 from spikuit_tutor.tutor import TutorSession, plan_exam
 
 
 @pytest_asyncio.fixture
-async def circuit(tmp_path):
+async def scheduler(tmp_path):
     c = Circuit(db_path=tmp_path / "test.db")
     await c.connect()
     n = Neuron.create(
@@ -28,7 +29,10 @@ async def circuit(tmp_path):
         domain="math",
     )
     await c.add_neuron(n)
-    yield c
+    sched = TutorScheduler(c, TutorStore(tmp_path / "test.tutor.db"))
+    await sched.open()
+    yield sched
+    await sched.close()
     await c.close()
 
 
@@ -36,9 +40,9 @@ async def circuit(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_free_response_grade_requests_tutor_grading(circuit):
-    neuron = await circuit.get_neuron("n1")
-    scaffold = compute_scaffold(circuit, "n1")
+async def test_free_response_grade_requests_tutor_grading(scheduler):
+    neuron = await scheduler.get_neuron("n1")
+    scaffold = compute_scaffold(scheduler, "n1")
     q = FreeResponseQuiz(neuron, scaffold)
 
     front = q.front()
@@ -54,9 +58,9 @@ async def test_free_response_grade_requests_tutor_grading(circuit):
 
 
 @pytest.mark.asyncio
-async def test_free_response_custom_question_and_rubric(circuit):
-    neuron = await circuit.get_neuron("n1")
-    scaffold = compute_scaffold(circuit, "n1")
+async def test_free_response_custom_question_and_rubric(scheduler):
+    neuron = await scheduler.get_neuron("n1")
+    scaffold = compute_scaffold(scheduler, "n1")
     q = FreeResponseQuiz(
         neuron, scaffold,
         question="Define a functor.",
@@ -109,10 +113,10 @@ def test_stub_grader_satisfies_protocol():
 
 
 @pytest.mark.asyncio
-async def test_free_response_needs_llm_raises_on_record_response(circuit):
+async def test_free_response_needs_llm_raises_on_record_response(scheduler):
     """record_response must refuse to handle quizzes that need LLM grading."""
-    neuron = await circuit.get_neuron("n1")
-    scaffold = compute_scaffold(circuit, "n1")
+    neuron = await scheduler.get_neuron("n1")
+    scaffold = compute_scaffold(scheduler, "n1")
 
     from spikuit_tutor.tutor.plan import ExamPlan, ExamStep
     step = ExamStep(
@@ -121,7 +125,7 @@ async def test_free_response_needs_llm_raises_on_record_response(circuit):
         scaffold=scaffold,
     )
     plan = ExamPlan(steps=[step])
-    sess = TutorSession(circuit, plan, persist=False)
+    sess = TutorSession(scheduler, plan, persist=False)
     await sess.teach()
 
     with pytest.raises(RuntimeError, match="LLM grading"):
@@ -129,9 +133,9 @@ async def test_free_response_needs_llm_raises_on_record_response(circuit):
 
 
 @pytest.mark.asyncio
-async def test_free_response_record_llm_graded_advances(circuit):
-    neuron = await circuit.get_neuron("n1")
-    scaffold = compute_scaffold(circuit, "n1")
+async def test_free_response_record_llm_graded_advances(scheduler):
+    neuron = await scheduler.get_neuron("n1")
+    scaffold = compute_scaffold(scheduler, "n1")
 
     from spikuit_tutor.tutor.plan import ExamPlan, ExamStep
     step = ExamStep(
@@ -140,10 +144,10 @@ async def test_free_response_record_llm_graded_advances(circuit):
         scaffold=scaffold,
     )
     plan = ExamPlan(steps=[step])
-    sess = TutorSession(circuit, plan, persist=True)
+    sess = TutorSession(scheduler, plan, persist=True)
     await sess.teach()
 
-    # Caller runs grader manually, then feeds result back
+    # Caller runs grader manually, then feeds result back.
     grader = StubGrader(grade=Grade.FIRE)
     raw = step.quiz.grade(QuizResponse(answer="a morphism-preserving map"))
     assert raw.needs_tutor_grading is True
@@ -159,8 +163,8 @@ async def test_free_response_record_llm_graded_advances(circuit):
     assert tr.event == TransitionEvent.ADVANCE
 
     tr = await sess.advance()
-    # Spike should be in DB
-    spikes = await circuit._db.get_spikes_for("n1", limit=10)
+    # Spike should be in the substrate.
+    spikes = await scheduler.substrate.get_spikes_for("n1", limit=10)
     assert len(spikes) == 1
     assert spikes[0].grade == Grade.FIRE
     assert len(grader.calls) == 1
@@ -170,17 +174,16 @@ async def test_free_response_record_llm_graded_advances(circuit):
 
 
 @pytest.mark.asyncio
-async def test_builder_routes_minimal_scaffold_to_free_response(circuit):
+async def test_builder_routes_minimal_scaffold_to_free_response(scheduler):
     """When a neuron is strong (MINIMAL scaffold), plan_exam should pick
     FreeResponseQuiz over Flashcard — desirable difficulties in action.
     """
-    # Force n1's scaffold down to MINIMAL by firing FIRE repeatedly
-    from spikuit_core import Spike
+    # Force n1's scaffold down to MINIMAL by reviewing STRONG repeatedly.
     for _ in range(6):
-        await circuit.fire(Spike(neuron_id="n1", grade=Grade.STRONG))
+        await scheduler.review(Spike(neuron_id="n1", grade=Grade.STRONG))
 
-    scaffold = compute_scaffold(circuit, "n1")
-    # Only run the assertion if we actually hit MINIMAL/NONE territory
+    scaffold = compute_scaffold(scheduler, "n1")
+    # Only run the assertion if we actually hit MINIMAL/NONE territory.
     if scaffold.level in (ScaffoldLevel.MINIMAL, ScaffoldLevel.NONE):
-        plan = await plan_exam(circuit, neuron_ids=["n1"])
+        plan = await plan_exam(scheduler, neuron_ids=["n1"])
         assert isinstance(plan.steps[0].quiz, FreeResponseQuiz)

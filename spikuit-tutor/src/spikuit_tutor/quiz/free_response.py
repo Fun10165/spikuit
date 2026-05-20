@@ -11,14 +11,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from spikuit_core.appkit import ScaffoldLevel
-
+from ..scaffold import ScaffoldLevel
 from ._content import extract_body, extract_title
 from .base import BaseQuiz
 from .models import QuizResponse, QuizResult, RenderedContent
 
 if TYPE_CHECKING:
-    from spikuit_core.appkit import NeuronView, Scaffold
+    from spikuit_core.appkit import NeuronView
+
+    from ..scaffold import Scaffold
 
 
 def _default_question(title: str, level: ScaffoldLevel) -> str:

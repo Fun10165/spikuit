@@ -1,15 +1,14 @@
 """Tests for Step 4: Graph-weighted retrieve scoring.
 
-TDD — tests written before implementation.
-Retrieve score = keyword_match × retrievability × stability_norm × centrality × pressure_boost
+Retrieve score = text_sim × (1 + centrality + pressure + keyword_boost).
+Stage 2 (``docs/design/tutor-extraction-stage2.md`` §4.3) dropped the
+FSRS retrievability term — the substrate no longer holds card state.
 """
-
-from datetime import datetime, timedelta, timezone
 
 import pytest
 import pytest_asyncio
 
-from spikuit_core import Circuit, Grade, Neuron, Plasticity, Source, Spike, SynapseType
+from spikuit_core import Circuit, Neuron, Plasticity, Source, SynapseType
 from spikuit_core.db import Database
 
 
@@ -50,33 +49,6 @@ async def test_retrieve_empty_query_returns_nothing(circuit: Circuit):
     await circuit.add_neuron(n1)
     results = await circuit.retrieve("")
     assert len(results) == 0
-
-
-# -------------------------------------------------------------------
-# FSRS retrievability boosts recently reviewed neurons
-# -------------------------------------------------------------------
-
-
-@pytest.mark.asyncio
-async def test_recently_reviewed_ranks_higher(circuit: Circuit):
-    """A recently reviewed neuron should rank higher than a stale one."""
-    n_reviewed = Neuron.create("# Category Theory\n\nStudy of abstract structures.")
-    n_stale = Neuron.create("# Category Theory basics\n\nIntro to categories.")
-    await circuit.add_neuron(n_reviewed)
-    await circuit.add_neuron(n_stale)
-
-    # Review n_reviewed multiple times to build retrievability
-    now = datetime.now(timezone.utc)
-    for i in range(3):
-        t = now + timedelta(days=i)
-        await circuit.fire(
-            Spike(neuron_id=n_reviewed.id, grade=Grade.FIRE, fired_at=t)
-        )
-
-    results = await circuit.retrieve("category theory")
-    assert len(results) >= 2
-    # Reviewed neuron should come first
-    assert results[0].id == n_reviewed.id
 
 
 # -------------------------------------------------------------------
