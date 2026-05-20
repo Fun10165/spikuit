@@ -1,6 +1,7 @@
 # Tutor extraction — Stage 1 design
 
-**Status:** Draft for review — design only, no implementation.
+**Status:** Reviewed — round 1 (2026-05-20) resolved Q1–Q5 (§8).
+Design only, no implementation in this doc.
 **Slot:** v0.8.x window (per `roadmap.md` §6). Stage 0 ships first (PR #66).
 **Supersedes:** nothing. Extends `roadmap.md` §6 and the H3 staging in
 `agent-workspace/contexts/active/spikuit-amkb-v03-tutor-extraction.md`.
@@ -158,6 +159,14 @@ Migration of the twelve sites:
 `from spikuit_core.appkit import …`. Any other `spikuit_core` import
 fails the build.
 
+`appkit` is **public, semver-stable API** — the rest of `spikuit_core`
+is internal. That designation is what lets `appkit` double as the
+contract a **custom adapter** programs against: a third party can build
+their own adapter (a different scheduler, a spaced-export tool) on the
+same surface `spikuit-tutor` uses, without reading substrate internals.
+`spikuit-tutor` is then simply the first-party, pre-installed adapter —
+not a privileged one.
+
 - **Pros:** small, mechanical diff; no type relocation; no change to
   `Circuit.fire`; `compute_scaffold` stays where its dependencies are;
   fully reversible; Stage-2-ready (appkit is the single seam to edit
@@ -185,10 +194,17 @@ depends *only* on it, never on `spikuit-core`.
   graph coupling), so it stays in core and the "independence" is
   partial anyway.
 
-Option B is only worth its cost if `spikuit-agent-rag` turns out to
-need the same value types **and** we want `spikuit-tutor`
-pip-installable standalone. Neither is established yet —
-`spikuit-agent-rag` does not exist.
+**A and B are not exclusive — B is the graduation of A.** Because the
+CI import rule guarantees every app touches *only*
+`spikuit_core.appkit`, promoting `appkit` to a standalone
+`spikuit-substrate-api` package later is a mechanical packaging move:
+publish the package, make `spikuit_core.appkit` a re-export shim
+pointing at it, repoint the app `pyproject.toml` dependency. **No app
+code changes** — the spelling `from spikuit_core.appkit import …` stays
+valid across the move. So Stage 1 picks A; B is deferred until a real
+third-party adapter ecosystem (or standalone-install demand) makes the
+fifth package earn its cost. Choosing A now does not burn the B
+bridge — it lays the first plank of it.
 
 ### 4.3 Rejected
 
@@ -199,6 +215,33 @@ pip-installable standalone. Neither is established yet —
 - **Pure consumer-defined Protocols, no shared module.** Breaks on the
   enum constraint (§3.1): `Grade` and `ScaffoldLevel` cannot be
   structural.
+
+### 4.4 Packaging & the adapter ecosystem (out of Stage 1 scope)
+
+Two future directions surfaced in review round 1. Both are **additive
+and orthogonal to the A/B choice**, so neither blocks Stage 1 — but
+they confirm why A (with `appkit` designated public) is the right
+shape.
+
+- **pip extras.** `pip install spikuit[tutor]` / `spikuit[rag]` /
+  `spikuit[all]` is implementable today: Stage 0 already gave
+  `spikuit-tutor` its own distributable boundary, and the umbrella
+  `spikuit` package can declare `[project.optional-dependencies]`
+  whenever wanted. It works identically under A or B — a contract
+  package carries no engine, so a working tutor pulls in `spikuit-core`
+  either way. Recommended default once extras land: bare
+  `pip install spikuit` keeps today's behaviour (core + cli + tutor —
+  do not break existing users), `spikuit[rag]` opt-in, `spikuit[all]`
+  everything. This is a small standalone packaging task, slotted
+  separately — not part of the Stage 1 contract work.
+- **Custom adapters.** A first-class adapter SPI (registration,
+  discovery, lifecycle) belongs to the longer adapter-abstraction arc,
+  not Stage 1. But its *foundation* is exactly the appkit contract: a
+  stable surface adapter authors depend on. Stage 1 delivers that
+  foundation; the SPI is built on top later. Designating `appkit`
+  public/semver-stable from day one (§4.1) is what keeps that path
+  open, and `spikuit-tutor` becomes the first-party preinstalled
+  adapter — fine to bundle, not privileged.
 
 ## 5. Recommended Stage 1 plan
 
@@ -277,23 +320,28 @@ explicitly warns against.
 
 ## 8. Open questions for review
 
-- **Q1 — Option A vs B.** This doc recommends A (curated facade).
-  Confirm, or signal that standalone `spikuit-tutor` installability is
-  a near-term requirement that justifies B.
-- **Q2 — `compute_scaffold` home.** Recommendation: stays in
+Review round 1 (2026-05-20) resolved Q1–Q5; resolutions recorded
+inline.
+
+- **Q1 — Option A vs B. → RESOLVED: adopt A.** A is the curated
+  facade; B is reframed (§4.2) as a later *graduation* of A, not a
+  competing option — deferred until a real third-party adapter
+  ecosystem or standalone-install demand appears. The `appkit` surface
+  is designated public/semver-stable so it can serve as the
+  custom-adapter contract directly. pip extras and the custom-adapter
+  SPI (§4.4) are additive and do not change this.
+- **Q2 — `compute_scaffold` home. → RESOLVED: confirmed.** Stays in
   `spikuit-core`, exposed via `appkit` (its `fsrs` + graph coupling
-  makes relocation expensive and premature). Agree?
-- **Q3 — `spikuit-agents`.** It imports `Grade` from `spikuit_core`
-  too. Out of scope for the ban (not an app package), but should it
-  also move to `from spikuit_core.appkit import Grade` for
-  consistency? Low cost, recommend yes.
-- **Q4 — CI scope.** Should the new `ci.yml` also run the full
-  `pytest` matrix (it does not exist today), or only the import
-  check? Recommendation: both — the missing test CI is a gap worth
-  closing in the same PR.
-- **Q5 — `roadmap.md` §6 wording.** §6 says Stage 1 gates "FSRS
-  columns by contract"; §2.3 shows there are no raw column accesses to
-  gate. Recommend a one-line correction to §6 when this lands.
+  makes relocation expensive and premature).
+- **Q3 — `spikuit-agents`. → RESOLVED: confirmed yes.** It also moves
+  to `from spikuit_core.appkit import Grade` for consistency, even
+  though it is out of scope for the enforced ban (not an app package).
+- **Q4 — CI scope. → RESOLVED: confirmed both.** The new `ci.yml`
+  runs the full `pytest` matrix *and* the import check — closing the
+  missing test CI gap in the same PR.
+- **Q5 — `roadmap.md` §6 wording. → RESOLVED: confirmed.** One-line
+  correction to §6 ("FSRS columns by contract" → the `Circuit` method
+  subset, per §2.3) lands together with Stage 1.
 
 ## 9. Effort & risk
 
