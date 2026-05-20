@@ -183,8 +183,8 @@ leaks across `spikuit-core` and `spikuit-cli`:
 
 | Stage | Content | Slot |
 |---|---|---|
-| Stage 0 | Python package boundary only — carve `spikuit-tutor/`, move `tutor/`+`quiz/` out of `spikuit-cli`, forbid `from spikuit_core` (CI lint). DB schema untouched. | Any v0.7.x point release — low risk, independent. |
-| Stage 1 | Tutor-app owns overlay state; still reads/writes core FSRS columns by contract; no direct import. | v0.8.x window. |
+| Stage 0 | Python package boundary only — carve `spikuit-tutor/`, move `tutor/`+`quiz/` out of `spikuit-cli`, repoint the `spikuit-cli` and `spikuit-agents` consumers. `spikuit-tutor` declares `spikuit-core` as a dependency: `tutor`/`quiz` legitimately use shared `spikuit-core` types (`Grade`, `ScaffoldLevel`, `Spike`), so **no import ban yet**. DB schema untouched. | Any v0.7.x point release — low risk, independent. |
+| Stage 1 | Build the Spikuit-core extension interface; tutor-app owns overlay state and reads/writes core FSRS columns by contract. Replace the `spikuit-core` type imports, then forbid `from spikuit_core` in `spikuit-tutor` (CI lint). | v0.8.x window. |
 | Stage 2 | DB migration — retire FSRS columns from core, move to tutor-app SQLite, joined by `atom_id`. **Not additive** — needs its own session and migration plan. | v0.9.x. |
 
 Once the split lands, the §5 substrate behaviors stay entirely inside
