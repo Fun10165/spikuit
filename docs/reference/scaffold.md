@@ -9,9 +9,10 @@ ZPD-inspired scaffolding and the Quiz protocol.
 ## Quiz Protocol
 
 The `BaseQuiz` protocol and its concrete implementations live in
-`spikuit-cli` as of v0.6.3 — core is LLM-free and the grader-bound
-quiz types belong with the CLI.
+`spikuit-tutor` — core is LLM-free and the grader-bound quiz types
+belong with the tutor application package (extracted from `spikuit-cli`
+in v0.7.x).
 
-::: spikuit_cli.quiz.BaseQuiz
+::: spikuit_tutor.quiz.BaseQuiz
 
-::: spikuit_cli.quiz.Flashcard
+::: spikuit_tutor.quiz.Flashcard

@@ -1,4 +1,4 @@
-"""Unit tests for spikuit_cli.quiz (BaseQuiz + Flashcard)."""
+"""Unit tests for spikuit_tutor.quiz (BaseQuiz + Flashcard)."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import pytest
 
 from spikuit_core import Grade, Neuron, Scaffold, ScaffoldLevel
 
-from spikuit_cli.quiz import (
+from spikuit_tutor.quiz import (
     FLASHCARD_GRADE_CHOICES,
     Flashcard,
     QuizResponse,

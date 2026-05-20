@@ -5,9 +5,10 @@ quizzes + transition rules + pedagogical policy. TutorSession is a pure
 interpreter that walks the plan.
 
 LLM-dependent quiz grading is handled through the injectable
-``LLMGrader`` Protocol (see ``spikuit_cli.quiz.grader``). The cli package
-is self-sufficient: Flashcards work without any grader, FreeResponseQuiz
-falls back to self-grade or can use any LLMGrader implementation.
+``LLMGrader`` Protocol (see ``spikuit_tutor.quiz.grader``). The tutor
+package is self-sufficient: Flashcards work without any grader,
+FreeResponseQuiz falls back to self-grade or can use any LLMGrader
+implementation.
 """
 
 from __future__ import annotations

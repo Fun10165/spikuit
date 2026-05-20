@@ -6,8 +6,8 @@ import pytest
 
 from spikuit_core import Grade, Neuron, Scaffold, ScaffoldLevel
 
-from spikuit_cli.quiz import Flashcard
-from spikuit_cli.quiz.tui import QuizApp
+from spikuit_tutor.quiz import Flashcard
+from spikuit_tutor.quiz.tui import QuizApp
 
 
 def _card(nid: str, title: str) -> tuple[str, Flashcard]:
