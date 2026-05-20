@@ -1,9 +1,9 @@
 """Verify the lightweight install boundary.
 
 These tests ensure `spikuit_core` can be imported without pulling the
-engine dependencies (fsrs, networkx, aiosqlite, sqlite-vec, msgspec)
-into `sys.modules`. They simulate a `pip install spikuit-core` (no
-extras) by inspecting which modules get loaded.
+engine dependencies (networkx, aiosqlite, sqlite-vec, msgspec) into
+`sys.modules`. They simulate a `pip install spikuit-core` (no extras)
+by inspecting which modules get loaded.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ import sys
 import pytest
 
 
-_ENGINE_DEPS = {"fsrs", "networkx", "aiosqlite", "sqlite_vec", "msgspec"}
+_ENGINE_DEPS = {"networkx", "aiosqlite", "sqlite_vec", "msgspec"}
 
 
 def _fresh_import(modname: str):
@@ -83,18 +83,18 @@ def test_engine_symbol_friendly_error_when_dep_missing(monkeypatch):
     for name in ("Circuit", "Neuron", "ReadOnlyError"):
         spikuit_core.__dict__.pop(name, None)
 
-    # Force the next import of `fsrs` to fail (Circuit imports fsrs)
+    # Force the next import of `networkx` to fail (Circuit imports networkx).
     real_import = importlib.import_module
 
     def fake_import(name, *args, **kwargs):
-        if name == "fsrs" or name.startswith("fsrs."):
-            raise ImportError("No module named 'fsrs'")
+        if name == "networkx" or name.startswith("networkx."):
+            raise ImportError("No module named 'networkx'")
         return real_import(name, *args, **kwargs)
 
     monkeypatch.setattr(importlib, "import_module", fake_import)
-    sys.modules.pop("fsrs", None)
+    sys.modules.pop("networkx", None)
     monkeypatch.setitem(
-        sys.modules, "fsrs", None  # type: ignore[arg-type]
+        sys.modules, "networkx", None  # type: ignore[arg-type]
     )
 
     with pytest.raises(ImportError, match=r"spikuit-core\[engine\]"):

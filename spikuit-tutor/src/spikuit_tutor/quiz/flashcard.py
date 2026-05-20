@@ -9,14 +9,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from spikuit_core.appkit import Grade, ScaffoldLevel
+from spikuit_core.appkit import Grade
 
+from ..scaffold import ScaffoldLevel
 from ._content import extract_body, extract_title
 from .base import BaseQuiz
 from .models import GradeChoice, QuizResponse, QuizResult, RenderedContent
 
 if TYPE_CHECKING:
-    from spikuit_core.appkit import NeuronView, Scaffold
+    from spikuit_core.appkit import NeuronView
+
+    from ..scaffold import Scaffold
 
 
 FLASHCARD_GRADE_CHOICES: list[GradeChoice] = [

@@ -10,7 +10,7 @@ refactors that quietly break the app boundary fail here.
 from __future__ import annotations
 
 from spikuit_core import appkit
-from spikuit_core.appkit import NeuronView, SchedulerCircuit
+from spikuit_core.appkit import NeuronView, SubstrateView
 from spikuit_core.circuit import Circuit
 from spikuit_core.models import Neuron
 
@@ -19,19 +19,16 @@ def test_appkit_exports_exactly_the_documented_surface():
     assert sorted(appkit.__all__) == [
         "Grade",
         "NeuronView",
-        "Scaffold",
-        "ScaffoldLevel",
-        "SchedulerCircuit",
         "Spike",
-        "compute_scaffold",
+        "SubstrateView",
     ]
     for name in appkit.__all__:
         assert hasattr(appkit, name), f"appkit.__all__ names {name} but it is missing"
 
 
-def test_circuit_satisfies_scheduler_circuit():
-    # SchedulerCircuit is a method-only Protocol — issubclass is valid.
-    assert issubclass(Circuit, SchedulerCircuit)
+def test_circuit_satisfies_substrate_view():
+    # SubstrateView is a method-only Protocol — issubclass is valid.
+    assert issubclass(Circuit, SubstrateView)
 
 
 def test_neuron_satisfies_neuron_view():

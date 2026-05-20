@@ -9,16 +9,15 @@ from __future__ import annotations
 
 import hashlib
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import AsyncIterator
 
 import networkx as nx
-from fsrs import Card, Rating, Scheduler
 
 from .db import DEFAULT_DB_PATH, Database
 from .embedder import Embedder, EmbeddingType, vec_to_blob
-from .models import Grade, Neuron, Plasticity, QuizItem, QuizItemRole, ScaffoldLevel, Source, Spike, Synapse, SynapseConfidence, SynapseType
+from .models import Grade, Neuron, Plasticity, QuizItem, QuizItemRole, Source, Spike, Synapse, SynapseConfidence, SynapseType
 from .propagation import compute_propagation, compute_stdp, decay_all_pressure
 from .transactions import (
     OP_NEURON_ADD,
@@ -52,25 +51,22 @@ def _synapse_target_id(pre: str, post: str, stype: SynapseType | str) -> str:
     type_str = stype.value if isinstance(stype, SynapseType) else stype
     return f"{pre}|{post}|{type_str}"
 
-# Grade → FSRS Rating mapping
-_GRADE_TO_RATING: dict[Grade, Rating] = {
-    Grade.MISS: Rating.Again,
-    Grade.WEAK: Rating.Hard,
-    Grade.FIRE: Rating.Good,
-    Grade.STRONG: Rating.Easy,
-}
-
 
 class ReadOnlyError(Exception):
     """Raised when a mutating operation is attempted on a read-only Circuit."""
 
 
 class Circuit:
-    """The knowledge graph engine — FSRS scheduling + NetworkX graph + propagation.
+    """The knowledge graph engine — NetworkX graph + propagation.
 
     Circuit is the main entry point for spikuit-core. It owns the database,
     the in-memory NetworkX graph, and exposes all operations that external
     layers (CLI, agents, sessions) need.
+
+    As of Stage 2 (``tutor-extraction-stage2.md``) the substrate owns no
+    learner model: FSRS scheduling — cards, ratings, due queues — lives
+    wholly in ``spikuit-tutor``. ``fire`` records a review event and runs
+    the grade-driven plasticity pipeline, but no longer schedules.
 
     Example:
         ```python
@@ -106,8 +102,6 @@ class Circuit:
             embedding_dimension=embedder.dimension if embedder else None,
         )
         self._graph: nx.DiGraph = nx.DiGraph()
-        self._scheduler: Scheduler = Scheduler()
-        self._cards: dict[str, Card] = {}  # neuron_id → FSRS Card (in-memory cache)
         self.plasticity: Plasticity = plasticity or Plasticity()
         self._current_tx: SpikuitTransaction | None = None
 
@@ -207,10 +201,9 @@ class Circuit:
     # -- Lifecycle ----------------------------------------------------------
 
     async def connect(self) -> None:
-        """Connect to DB and load the graph + FSRS cards into memory."""
+        """Connect to DB and load the graph into memory."""
         await self._db.connect()
         await self._load_graph()
-        await self._load_cards()
         await self._load_retrieval_boosts()
 
     async def close(self) -> None:
@@ -233,16 +226,6 @@ class Circuit:
         for nid, cid in community_ids.items():
             if nid in self._graph:
                 self._graph.nodes[nid]["community_id"] = cid
-
-    async def _load_cards(self) -> None:
-        """Load FSRS cards from DB into memory cache."""
-        self._cards.clear()
-        rows = await self._db.conn.execute_fetchall(
-            "SELECT neuron_id, card_json FROM fsrs_state"
-        )
-        for row in rows:
-            card = Card.from_json(row["card_json"])
-            self._cards[row["neuron_id"]] = card
 
     async def _load_retrieval_boosts(self) -> None:
         """Load retrieval boosts from DB into graph node attributes."""
@@ -299,8 +282,9 @@ class Circuit:
     async def add_neuron(self, neuron: Neuron) -> Neuron:
         """Add a Neuron to the circuit.
 
-        Initializes an FSRS card and auto-embeds content if an embedder
-        is configured.
+        Auto-embeds content if an embedder is configured. The substrate
+        creates no FSRS card — scheduling state is the tutor's, created
+        lazily on first review (``tutor-extraction-stage2.md`` §4.4).
 
         Args:
             neuron: The neuron to add.
@@ -312,11 +296,6 @@ class Circuit:
         async with self._auto_tx(tag="neuron.add") as tx:
             await self._db.insert_neuron(neuron)
             self._graph.add_node(neuron.id, type=neuron.type, domain=neuron.domain)
-
-            # Initialize FSRS card
-            card = Card()
-            self._cards[neuron.id] = card
-            await self._db.upsert_fsrs_card(neuron.id, card.to_json())
 
             # Auto-embed if embedder is available
             if self._embedder is not None:
@@ -364,9 +343,9 @@ class Circuit:
         """Soft-retire a neuron and cascade-retire its synapses.
 
         The neuron row stays in the database with ``retired_at`` set,
-        preserving FSRS state and history. Its vector row is physically
-        deleted to keep ANN recall undegraded. Synapses touching the
-        neuron are cascade-retired. A ``neuron.retire`` event plus one
+        preserving spike history. Its vector row is physically deleted
+        to keep ANN recall undegraded. Synapses touching the neuron are
+        cascade-retired. A ``neuron.retire`` event plus one
         ``synapse.retire`` event per cascaded synapse are emitted in
         the current (or implicit) transaction.
         """
@@ -397,7 +376,6 @@ class Circuit:
                 )
         if neuron_id in self._graph:
             self._graph.remove_node(neuron_id)
-        self._cards.pop(neuron_id, None)
 
     # -- Quiz item operations -----------------------------------------------
 
@@ -424,14 +402,14 @@ class Circuit:
         neuron_id: str,
         *,
         role: QuizItemRole | None = None,
-        scaffold_level: ScaffoldLevel | None = None,
+        scaffold_level: str | None = None,
     ) -> list[QuizItem]:
         """Get quiz items associated with a neuron.
 
         Args:
             neuron_id: The neuron to look up.
             role: Filter by role (primary/supporting). ``None`` = any role.
-            scaffold_level: Filter by scaffold level. ``None`` = any level.
+            scaffold_level: Filter by scaffold-level label. ``None`` = any level.
 
         Returns:
             List of matching QuizItems, newest first.
@@ -802,9 +780,6 @@ class Circuit:
         )
         await self._db.insert_neuron(neuron)
         self._graph.add_node(neuron.id, type="meta", domain="_meta")
-        card = Card()
-        self._cards[neuron.id] = card
-        await self._db.upsert_fsrs_card(neuron.id, card.to_json())
         if self._embedder:
             await self._embed_neuron(neuron)
         return neuron
@@ -928,24 +903,23 @@ class Circuit:
 
     # -- Spike (fire) -------------------------------------------------------
 
-    async def fire(self, spike: Spike) -> Card:
-        """Record a review event, update FSRS state, and propagate activation.
+    async def fire(self, spike: Spike) -> None:
+        """Record a review event and run the grade-driven plasticity pipeline.
 
-        This is the central method for all review operations. The full
-        pipeline is:
+        As of Stage 2 (``tutor-extraction-stage2.md`` §4.2) the substrate
+        no longer schedules: ``fire`` records the spike and runs the
+        plasticity steps, but FSRS card state is the tutor's. The tutor
+        is the review orchestrator now — it schedules with FSRS, then
+        calls ``fire`` as a callee. The pipeline here is:
 
         1. Record spike to DB
-        2. FSRS: update stability, difficulty, schedule next review
-        3. APPNP: propagate activation to neighbors (pressure deltas)
-        4. Reset source neuron pressure
-        5. STDP: update edge weights based on co-fire timing
-        6. Record last-fire timestamp for future STDP
+        2. APPNP: propagate activation to neighbors (pressure deltas)
+        3. Reset source neuron pressure
+        4. STDP: update edge weights based on co-fire timing
+        5. Record last-fire timestamp for future STDP
 
         Args:
             spike: The review event to process.
-
-        Returns:
-            The updated FSRS Card with new scheduling state.
         """
         self._guard_readonly()
         # Guard: auto-generated neurons are not reviewable
@@ -958,22 +932,7 @@ class Circuit:
         # 1. Record spike
         await self._db.insert_spike(spike)
 
-        # 2. Get or create FSRS card
-        card = self._cards.get(spike.neuron_id)
-        if card is None:
-            card = Card()
-
-        # 3. Review with FSRS
-        rating = _GRADE_TO_RATING[spike.grade]
-        updated_card, _log = self._scheduler.review_card(
-            card, rating, spike.fired_at,
-        )
-
-        # 4. Persist updated card
-        self._cards[spike.neuron_id] = updated_card
-        await self._db.upsert_fsrs_card(spike.neuron_id, updated_card.to_json())
-
-        # 5. APPNP propagation → update neighbor pressures
+        # 2. APPNP propagation → update neighbor pressures
         deltas = compute_propagation(
             self._graph, spike.neuron_id, spike.grade, self.plasticity,
         )
@@ -984,12 +943,12 @@ class Circuit:
             node_data["pressure"] = current + delta
             node_data["pressure_updated_at"] = now_iso
 
-        # 6. Reset source neuron's pressure (post-fire reset)
+        # 3. Reset source neuron's pressure (post-fire reset)
         if spike.neuron_id in self._graph:
             self._graph.nodes[spike.neuron_id]["pressure"] = self.plasticity.pressure_reset
             self._graph.nodes[spike.neuron_id]["pressure_updated_at"] = now_iso
 
-        # 7. STDP edge updates
+        # 4. STDP edge updates
         stdp_updates = compute_stdp(
             self._graph, spike.neuron_id, spike.grade,
             spike.fired_at, self.plasticity,
@@ -1013,67 +972,21 @@ class Circuit:
                 )
                 await self._db.update_synapse(syn)
 
-        # 8. Record last fire time on the node (for STDP timing)
+        # 5. Record last fire time on the node (for STDP timing)
         if spike.neuron_id in self._graph:
             self._graph.nodes[spike.neuron_id]["last_fired_at"] = now_iso
 
-        return updated_card
+    async def get_spikes_for(
+        self, neuron_id: str, *, limit: int = 50
+    ) -> list[Spike]:
+        """Review events recorded for a neuron, newest first.
 
-    # -- FSRS queries -------------------------------------------------------
-
-    def get_card(self, neuron_id: str) -> Card | None:
-        """Get the FSRS Card for a neuron (from in-memory cache)."""
-        return self._cards.get(neuron_id)
-
-    def _is_reviewable(self, neuron_id: str) -> bool:
-        """Skip auto-generated neurons (meta domain, community summaries)."""
-        node_data = self._graph.nodes.get(neuron_id, {})
-        return not (
-            node_data.get("domain") == "_meta"
-            or node_data.get("type") == "community_summary"
-        )
-
-    async def due_neurons(
-        self,
-        *,
-        now: datetime | None = None,
-        limit: int = 20,
-    ) -> list[str]:
-        """Return neuron IDs that are due for review."""
-        if now is None:
-            now = datetime.now(timezone.utc)
-        due: list[str] = []
-        for neuron_id, card in self._cards.items():
-            if card.due <= now and self._is_reviewable(neuron_id):
-                due.append(neuron_id)
-                if len(due) >= limit:
-                    break
-        return due
-
-    async def near_due_neurons(
-        self,
-        *,
-        days_ahead: int = 2,
-        limit: int = 20,
-        exclude_ids: set[str] | None = None,
-        now: datetime | None = None,
-    ) -> list[str]:
-        """Return neuron IDs whose next review is within ``days_ahead`` days
-        but not yet due. Used by interleaving to pull near-due work from
-        other domains without breaking FSRS optimality significantly.
+        Public on the app contract as of Stage 2 (§4.3): the tutor's
+        relocated ``progress`` report needs review history, and the
+        substrate's own ``consolidate``/``diagnose`` triage now reads the
+        ``spike`` table directly instead of FSRS card state.
         """
-        if now is None:
-            now = datetime.now(timezone.utc)
-        horizon = now + timedelta(days=days_ahead)
-        exclude_ids = exclude_ids or set()
-        near: list[tuple[datetime, str]] = []
-        for neuron_id, card in self._cards.items():
-            if neuron_id in exclude_ids:
-                continue
-            if now < card.due <= horizon and self._is_reviewable(neuron_id):
-                near.append((card.due, neuron_id))
-        near.sort(key=lambda x: x[0])
-        return [nid for _, nid in near[:limit]]
+        return await self._db.get_spikes_for(neuron_id, limit=limit)
 
     # -- Pressure -----------------------------------------------------------
 
@@ -1132,11 +1045,16 @@ class Circuit:
         Scoring formula::
 
             score = max(keyword_sim, semantic_sim)
-                    × (1 + retrievability + centrality + pressure + boost)
+                    × (1 + centrality + pressure + boost)
 
         ``semantic_sim`` uses sqlite-vec KNN when an embedder is configured;
         otherwise only keyword matching is used. ``boost`` is accumulated
         through [`QABotSession`][spikuit_core.QABotSession] feedback.
+
+        As of Stage 2 (``tutor-extraction-stage2.md`` §4.3) the score
+        carries no FSRS retrievability term — the substrate ranks by its
+        own signals only. A tutor wanting memory-aware retrieval pushes a
+        per-neuron weight through ``set_retrieval_boost`` instead.
 
         Args:
             query: Search query text.
@@ -1199,20 +1117,11 @@ class Circuit:
             if text_sim == 0.0:
                 continue
 
-            # FSRS retrievability (0-1)
-            card = self._cards.get(n.id)
-            now = datetime.now(timezone.utc)
-            retrievability = (
-                self._scheduler.get_card_retrievability(card, now)
-                if card is not None
-                else 0.0
-            )
-
             centrality_norm = centrality_map.get(n.id, 0.0)
             pressure = self.get_pressure(n.id)
 
             boost = self.get_retrieval_boost(n.id)
-            score = text_sim * (1.0 + retrievability + centrality_norm + pressure + boost)
+            score = text_sim * (1.0 + centrality_norm + pressure + boost)
             scored.append((score, n))
             seen.add(n.id)
 
@@ -1225,16 +1134,9 @@ class Circuit:
             n = neuron_map.get(nid)
             if n is None:
                 continue
-            card = self._cards.get(n.id)
-            now = datetime.now(timezone.utc)
-            retrievability = (
-                self._scheduler.get_card_retrievability(card, now)
-                if card is not None
-                else 0.0
-            )
             centrality_norm = centrality_map.get(n.id, 0.0)
             pressure = self.get_pressure(n.id)
-            score = sem_sim * (1.0 + retrievability + centrality_norm + pressure)
+            score = sem_sim * (1.0 + centrality_norm + pressure)
             scored.append((score, n))
 
         # Community boost: identify dominant community from top-K, boost same-community
@@ -1291,6 +1193,19 @@ class Circuit:
         if neuron_id not in self._graph:
             return []
         return list(self._graph.predecessors(neuron_id))
+
+    def edge_type(self, pre: str, post: str) -> str | None:
+        """Synapse type of the edge ``pre → post``, or ``None`` if there
+        is no such edge.
+
+        A read-only topology accessor on the app contract (Stage 2 §4.5):
+        it lets app code (e.g. the tutor's ``compute_scaffold``) read an
+        edge's type without importing NetworkX or touching ``.graph``.
+        """
+        edge = self._graph.get_edge_data(pre, post)
+        if edge is None:
+            return None
+        return edge.get("type", "relates_to")
 
     @property
     def neuron_count(self) -> int:
@@ -1529,7 +1444,6 @@ class Circuit:
             await self._db.delete_neuron(nid)
             if nid in self._graph:
                 self._graph.remove_node(nid)
-            self._cards.pop(nid, None)
 
         results: list[dict] = []
         for cid, members in sorted(communities.items()):
@@ -1574,9 +1488,6 @@ class Circuit:
             )
             await self._db.insert_neuron(neuron)
             self._graph.add_node(neuron.id, type="community_summary", domain=primary_domain)
-            card = Card()
-            self._cards[neuron.id] = card
-            await self._db.upsert_fsrs_card(neuron.id, card.to_json())
             if self._embedder:
                 await self._embed_neuron(neuron)
 
@@ -1723,9 +1634,10 @@ class Circuit:
                 if (nid, neighbor) not in pruned_edges:
                     remaining_edges += 1
             if remaining_edges == 0 and self._graph.degree(nid) > 0:
-                card = self._cards.get(nid)
-                has_activity = card is not None and card.stability is not None
-                if not has_activity:
+                # Stage 2 (§4.3): "activity" is read from the substrate's
+                # own spike log, not the tutor's FSRS card state.
+                spikes = await self._db.get_spikes_for(nid, limit=1)
+                if not spikes:
                     removable_neurons.append({
                         "id": nid,
                         "action": "remove_neuron",
@@ -1766,23 +1678,30 @@ class Circuit:
                                 "action": "propose_contrast",
                             })
 
-        # Phase 4: Triage — forget candidates
+        # Phase 4: Triage — forget candidates.
+        # Stage 2 (§4.3): the substrate triages on its own spike-table
+        # signal (review count + grade distribution), not the tutor's
+        # FSRS stability. A neuron that is old, peripheral, and never
+        # successfully recalled is a forget candidate. This is a coarser
+        # signal than FSRS stability — directionally correct, not exact.
         forget_candidates: list[dict] = []
         centrality = nx.degree_centrality(self._graph) if self._graph.number_of_nodes() > 1 else {}
         now = datetime.now(timezone.utc)
         for nid in target_nids:
-            card = self._cards.get(nid)
-            stability = card.stability if card and card.stability else 0.0
             cent = centrality.get(nid, 0.0)
-            # Low stability + low centrality + old = forget candidate
             n = await self._db.get_neuron(nid)
             if n is None:
                 continue
             age_days = (now - n.created_at).days
-            if stability < 1.0 and cent < 0.1 and age_days > 30:
+            if cent >= 0.1 or age_days <= 30:
+                continue
+            spikes = await self._db.get_spikes_for(nid, limit=100_000)
+            success = sum(1 for s in spikes if int(s.grade) >= int(Grade.FIRE))
+            if success == 0:
                 forget_candidates.append({
                     "id": nid,
-                    "stability": round(stability, 2),
+                    "review_count": len(spikes),
+                    "successful_reviews": success,
                     "centrality": round(cent, 3),
                     "age_days": age_days,
                     "action": "flag_forget",
@@ -1893,7 +1812,6 @@ class Circuit:
             "neurons_retired": total_count - neuron_count,
             "synapses": self._graph.number_of_edges(),
             "graph_density": nx.density(self._graph) if neuron_count > 1 else 0.0,
-            "cards_loaded": len(self._cards),
             "communities": len(set(cmap.values())) if cmap else 0,
         }
 
@@ -1987,28 +1905,30 @@ class Circuit:
         ]
 
         # -- Dangling prerequisites ----------------------------------------
+        # Stage 2 (§4.3): a prerequisite's health is read from the
+        # substrate's own spike log, not the tutor's FSRS card. A
+        # prerequisite that was never practised, or never successfully
+        # recalled, is a dangling prerequisite.
         dangling_prereqs = []
         for u, v, data in g.edges(data=True):
             if data.get("type") == "requires":
-                # u requires v — check if v is very weak
-                card = self.get_card(v)
-                if card is None:
-                    dangling_prereqs.append({
-                        "neuron": u, "requires": v,
-                        "reason": "no_card",
-                    })
-                elif card.stability is None:
-                    # Never reviewed — stability not yet assigned
+                # u requires v — check whether v is practised/recalled.
+                spikes = await self._db.get_spikes_for(v, limit=100_000)
+                if not spikes:
                     dangling_prereqs.append({
                         "neuron": u, "requires": v,
                         "reason": "never_reviewed",
                     })
-                elif card.stability < 1.0:
-                    dangling_prereqs.append({
-                        "neuron": u, "requires": v,
-                        "reason": "low_stability",
-                        "stability": card.stability,
-                    })
+                else:
+                    success = sum(
+                        1 for s in spikes if int(s.grade) >= int(Grade.FIRE)
+                    )
+                    if success == 0:
+                        dangling_prereqs.append({
+                            "neuron": u, "requires": v,
+                            "reason": "weak",
+                            "review_count": len(spikes),
+                        })
 
         # -- Source freshness ----------------------------------------------
         sources = await self.list_sources(limit=100_000)
@@ -2229,170 +2149,4 @@ class Circuit:
                 str(cid): kws for cid, kws in community_keywords.items()
             },
             "suggestions": suggestions,
-        }
-
-    async def progress(
-        self,
-        *,
-        domain: str | None = None,
-    ) -> dict:
-        """Generate a learner-focused progress report.
-
-        Returns per-domain mastery, retention rate, learning velocity,
-        weak spots, and review adherence.
-        """
-        import math
-        from collections import defaultdict
-
-        g = self._graph
-        now = datetime.now(timezone.utc)
-
-        # Gather neurons (optionally filtered by domain)
-        all_neurons = await self.list_neurons(limit=100_000)
-        if domain:
-            neurons = [n for n in all_neurons if n.domain == domain]
-        else:
-            neurons = all_neurons
-
-        neuron_ids = {n.id for n in neurons}
-
-        # -- Per-domain mastery ------------------------------------------------
-        domain_stats: dict[str, dict] = defaultdict(lambda: {
-            "count": 0,
-            "stabilities": [],
-            "retrievabilities": [],
-        })
-        for n in neurons:
-            d = n.domain or "(none)"
-            card = self.get_card(n.id)
-            domain_stats[d]["count"] += 1
-            if card and card.stability is not None:
-                domain_stats[d]["stabilities"].append(card.stability)
-                # Retrievability = exp(-elapsed / stability)
-                elapsed = (now - card.due).total_seconds() / 86400 + card.stability
-                if card.stability > 0:
-                    r = math.exp(-max(0, elapsed - card.stability) / card.stability)
-                    domain_stats[d]["retrievabilities"].append(r)
-
-        mastery = {}
-        for d, stats in domain_stats.items():
-            stabs = stats["stabilities"]
-            rets = stats["retrievabilities"]
-            mastery[d] = {
-                "neuron_count": stats["count"],
-                "avg_stability": round(sum(stabs) / len(stabs), 2) if stabs else None,
-                "avg_retrievability": round(sum(rets) / len(rets), 3) if rets else None,
-                "reviewed_count": len(stabs),
-            }
-
-        # -- Retention rate (from spike history) --------------------------------
-        # Query all spikes for these neurons
-        rows = await self._db.conn.execute_fetchall(
-            "SELECT neuron_id, grade FROM spike"
-        )
-        total_fires = 0
-        success_fires = 0
-        domain_retention: dict[str, dict] = defaultdict(lambda: {"total": 0, "success": 0})
-
-        neuron_domain_map = {n.id: (n.domain or "(none)") for n in neurons}
-        for row in rows:
-            nid = row["neuron_id"]
-            if nid not in neuron_ids:
-                continue
-            total_fires += 1
-            d = neuron_domain_map.get(nid, "(none)")
-            domain_retention[d]["total"] += 1
-            # Grade: 1=miss, 2=weak, 3=fire, 4=strong (FSRS Rating values)
-            grade_val = row["grade"]
-            if grade_val >= 3:  # fire or strong
-                success_fires += 1
-                domain_retention[d]["success"] += 1
-
-        retention = {
-            "overall": round(success_fires / total_fires, 3) if total_fires > 0 else None,
-            "total_reviews": total_fires,
-            "per_domain": {
-                d: round(v["success"] / v["total"], 3) if v["total"] > 0 else None
-                for d, v in domain_retention.items()
-            },
-        }
-
-        # -- Learning velocity -------------------------------------------------
-        # Neurons added per week (last 4 weeks)
-        weekly_counts: list[dict] = []
-        for weeks_ago in range(4):
-            week_end = now - timedelta(weeks=weeks_ago)
-            week_start = week_end - timedelta(weeks=1)
-            count = sum(
-                1 for n in neurons
-                if hasattr(n, "created_at") and n.created_at
-                and week_start <= n.created_at <= week_end
-            )
-            week_label = week_start.strftime("%Y-%m-%d")
-            weekly_counts.append({"week_of": week_label, "added": count})
-        weekly_counts.reverse()  # oldest first
-
-        velocity = {
-            "weekly": weekly_counts,
-            "total_neurons": len(neurons),
-        }
-
-        # -- Weak spots (low stability + high centrality) ---------------------
-        centrality_map: dict[str, float] = {}
-        if g.number_of_nodes() > 1:
-            centrality_map = nx.degree_centrality(g)
-
-        weak_spots = []
-        for n in neurons:
-            card = self.get_card(n.id)
-            if card is None or card.stability is None:
-                # Never reviewed — include if it has connections
-                centrality = centrality_map.get(n.id, 0.0)
-                if centrality > 0:
-                    weak_spots.append({
-                        "id": n.id,
-                        "domain": n.domain,
-                        "stability": None,
-                        "centrality": round(centrality, 4),
-                        "reason": "never_reviewed",
-                    })
-            elif card.stability < 5.0:
-                centrality = centrality_map.get(n.id, 0.0)
-                if centrality > 0:
-                    weak_spots.append({
-                        "id": n.id,
-                        "domain": n.domain,
-                        "stability": round(card.stability, 2),
-                        "centrality": round(centrality, 4),
-                        "reason": "low_stability",
-                    })
-
-        # Sort by centrality desc (most important weak spots first)
-        weak_spots.sort(key=lambda x: x["centrality"], reverse=True)
-        weak_spots = weak_spots[:20]
-
-        # -- Review adherence --------------------------------------------------
-        # % of due neurons that were reviewed (have at least one spike)
-        due_ids = await self.due_neurons(limit=100_000)
-        due_in_scope = [nid for nid in due_ids if nid in neuron_ids]
-        reviewed_neurons = {n.id for n in neurons if self.get_card(n.id) and self.get_card(n.id).stability is not None}
-        total_with_cards = len([n for n in neurons if self.get_card(n.id)])
-        overdue = len(due_in_scope)
-
-        adherence = {
-            "total_neurons": len(neurons),
-            "reviewed_at_least_once": len(reviewed_neurons),
-            "currently_overdue": overdue,
-            "adherence_rate": round(
-                len(reviewed_neurons) / total_with_cards, 3
-            ) if total_with_cards > 0 else None,
-        }
-
-        return {
-            "domain_filter": domain,
-            "mastery": mastery,
-            "retention": retention,
-            "velocity": velocity,
-            "weak_spots": weak_spots,
-            "adherence": adherence,
         }

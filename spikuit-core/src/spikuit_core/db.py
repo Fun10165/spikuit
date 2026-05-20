@@ -10,7 +10,7 @@ from typing import Any
 import aiosqlite
 import sqlite_vec
 
-from .models import Grade, Neuron, QuizItem, QuizItemRole, ScaffoldLevel, Source, Spike, Synapse, SynapseConfidence, SynapseType
+from .models import Grade, Neuron, QuizItem, QuizItemRole, Source, Spike, Synapse, SynapseConfidence, SynapseType
 
 DEFAULT_DB_PATH: Path = Path.home() / ".spikuit" / "spikuit.db"
 
@@ -39,11 +39,6 @@ CREATE TABLE IF NOT EXISTS synapse (
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     PRIMARY KEY (pre, post, type)
-);
-
-CREATE TABLE IF NOT EXISTS fsrs_state (
-    neuron_id TEXT PRIMARY KEY REFERENCES neuron(id),
-    card_json TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS spike (
@@ -475,7 +470,6 @@ class Database:
         await self.conn.execute(
             "DELETE FROM synapse WHERE pre=? OR post=?", (neuron_id, neuron_id)
         )
-        await self.conn.execute("DELETE FROM fsrs_state WHERE neuron_id=?", (neuron_id,))
         await self.conn.execute("DELETE FROM spike WHERE neuron_id=?", (neuron_id,))
         await self.delete_quiz_items_for_neuron(neuron_id)
         if self._embedding_dimension is not None:
@@ -527,7 +521,7 @@ class Database:
 
         Returns the list of (pre, post, type) for each synapse that was
         cascade-retired, so the caller can emit synapse retire events.
-        FSRS state, spike history, and quiz item links are preserved.
+        Spike history is preserved; quiz item links are cascade-removed.
         """
         cur = await self.conn.execute(
             "SELECT pre, post, type FROM synapse "
@@ -663,41 +657,6 @@ class Database:
         )
         await self.conn.commit()
         return cur.rowcount > 0
-
-    # -- FSRS state ---------------------------------------------------------
-
-    async def upsert_fsrs_card(self, neuron_id: str, card_json: str) -> None:
-        await self.conn.execute(
-            """INSERT INTO fsrs_state (neuron_id, card_json) VALUES (?, ?)
-               ON CONFLICT(neuron_id) DO UPDATE SET card_json=excluded.card_json""",
-            (neuron_id, card_json),
-        )
-        await self.conn.commit()
-
-    async def get_fsrs_card_json(self, neuron_id: str) -> str | None:
-        rows = await self.conn.execute_fetchall(
-            "SELECT card_json FROM fsrs_state WHERE neuron_id=?", (neuron_id,)
-        )
-        return rows[0]["card_json"] if rows else None
-
-    async def get_due_neurons(self, *, now: datetime | None = None, limit: int = 20) -> list[str]:
-        """Return neuron IDs whose FSRS card is due for review."""
-        if now is None:
-            now = datetime.now(timezone.utc)
-        rows = await self.conn.execute_fetchall(
-            "SELECT neuron_id, card_json FROM fsrs_state"
-        )
-        due_ids: list[str] = []
-        for row in rows:
-            card_data = json.loads(row["card_json"])
-            due_str = card_data.get("due")
-            if due_str:
-                due_dt = datetime.fromisoformat(due_str)
-                if due_dt <= now:
-                    due_ids.append(row["neuron_id"])
-            if len(due_ids) >= limit:
-                break
-        return due_ids
 
     # -- Spike --------------------------------------------------------------
 
@@ -844,7 +803,7 @@ class Database:
                 item.answer,
                 json.dumps(item.hints),
                 item.grading_criteria,
-                item.scaffold_level.value if item.scaffold_level else None,
+                item.scaffold_level,
                 _ts(item.created_at),
             ),
         )
@@ -860,14 +819,14 @@ class Database:
         neuron_id: str,
         *,
         role: QuizItemRole | None = None,
-        scaffold_level: ScaffoldLevel | None = None,
+        scaffold_level: str | None = None,
     ) -> list[QuizItem]:
         """Get quiz items associated with a neuron.
 
         Args:
             neuron_id: The neuron to look up.
             role: Filter by role (primary/supporting). None = any role.
-            scaffold_level: Filter by scaffold level. None = any level.
+            scaffold_level: Filter by scaffold-level label. None = any level.
         """
         clauses = ["qin.neuron_id = ?"]
         params: list[str] = [neuron_id]
@@ -931,7 +890,7 @@ class Database:
             answer=row["answer"],
             hints=json.loads(row["hints"]),
             grading_criteria=row["grading_criteria"],
-            scaffold_level=ScaffoldLevel(row["scaffold_level"]) if row["scaffold_level"] else None,
+            scaffold_level=row["scaffold_level"] if row["scaffold_level"] else None,
             neuron_ids=neuron_ids,
             created_at=_parse_ts(row["created_at"]),
         )

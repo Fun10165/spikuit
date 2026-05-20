@@ -45,3 +45,6 @@ jobs:
 
       - name: Check app import boundary
         run: python tools/check_app_imports.py
+
+      - name: Check substrate has no FSRS import
+        run: python tools/check_core_no_fsrs.py

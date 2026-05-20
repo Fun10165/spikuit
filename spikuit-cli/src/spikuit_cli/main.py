@@ -32,6 +32,7 @@ from .helpers import (
     _GRADE_MAP,
     _extract_title,
     _get_circuit,
+    _get_scheduler,
     _load_brain_config,
     _neuron_dict,
     _out,
@@ -446,7 +447,6 @@ def stats(
                 typer.echo(f"Neurons:      {s['neurons']}")
                 typer.echo(f"Synapses:     {s['synapses']}")
                 typer.echo(f"Density:      {s['graph_density']:.4f}")
-                typer.echo(f"Cards:        {s['cards_loaded']}")
                 typer.echo(f"Communities:  {s['communities']}")
         finally:
             await circuit.close()
@@ -636,11 +636,14 @@ code {{ background: #f0f0f0; padding: 2px 4px; border-radius: 3px; font-size: 0.
 
 
 # -------------------------------------------------------------------
-# progress
+# tutor — FSRS-scheduled review and progress
 # -------------------------------------------------------------------
 
+tutor_app = typer.Typer(help="Tutor — FSRS-scheduled review and learning progress.")
+app.add_typer(tutor_app, name="tutor")
 
-@app.command()
+
+@tutor_app.command(name="progress")
 def progress(
     domain_filter: Optional[str] = typer.Option(None, "--domain", "-d", help="Filter by domain"),
     format: str = typer.Option("text", "--format", "-f", help="Output format: text, json, html"),
@@ -651,13 +654,22 @@ def progress(
 
     Mastery levels, retention rate, learning velocity, weak spots,
     and review adherence. Optionally filter by domain.
+
+    Stage 2 (``tutor-extraction-stage2.md`` §4.7) moved this report out
+    of the substrate into ``spikuit-tutor`` — it reads FSRS card state,
+    which now lives in the tutor's overlay store — so it surfaces under
+    ``spkt tutor`` rather than as a top-level command.
     """
 
     async def _progress():
+        from spikuit_tutor import compute_progress
+
         circuit = _get_circuit(brain)
         await circuit.connect()
+        scheduler = _get_scheduler(circuit, brain)
+        await scheduler.open()
         try:
-            result = await circuit.progress(domain=domain_filter)
+            result = await compute_progress(scheduler, domain=domain_filter)
 
             fmt = "json" if as_json else format
 
@@ -669,6 +681,7 @@ def progress(
             else:
                 _progress_text(result)
         finally:
+            await scheduler.close()
             await circuit.close()
 
     _run(_progress())
@@ -1025,15 +1038,17 @@ def quiz(
     """
     from spikuit_tutor.quiz import Flashcard as NewFlashcard
     from spikuit_tutor.quiz.models import QuizResponse as NewQuizResponse
+    from spikuit_tutor import compute_scaffold
     from spikuit_core import Spike
-    from spikuit_core.scaffold import compute_scaffold
     import dataclasses as _dc
 
     async def _quiz():
         circuit = _get_circuit(brain)
         await circuit.connect()
+        scheduler = _get_scheduler(circuit, brain)
+        await scheduler.open()
         try:
-            due_ids = await circuit.due_neurons(limit=limit)
+            due_ids = await scheduler.due_neurons(limit=limit)
 
             if not due_ids:
                 if as_json or no_tui:
@@ -1048,7 +1063,7 @@ def quiz(
                 neuron = await circuit.get_neuron(nid)
                 if neuron is None:
                     continue
-                scaffold = compute_scaffold(circuit, nid)
+                scaffold = compute_scaffold(scheduler, nid)
                 queue.append((nid, NewFlashcard(neuron, scaffold)))
 
             def _render_payload(nid: str, fc: NewFlashcard) -> dict:
@@ -1111,7 +1126,7 @@ def quiz(
                     response = NewQuizResponse(self_grade=grade, notes=note)
                     result = fc.grade(response)
                     final_grade = result.grade or grade
-                    await circuit.fire(
+                    await scheduler.review(
                         Spike(neuron_id=nid, grade=final_grade, notes=note)
                     )
                     reviewed += 1
@@ -1140,9 +1155,9 @@ def quiz(
             tui_app = QuizApp(queue=queue, record=_record)
             result = await tui_app.run_async()
 
-            # Flush recorded grades to Circuit
+            # Flush recorded grades through the tutor scheduler
             for neuron_id, grade, note in recorded:
-                await circuit.fire(Spike(neuron_id=neuron_id, grade=grade, notes=note))
+                await scheduler.review(Spike(neuron_id=neuron_id, grade=grade, notes=note))
 
             # Summary
             if result is None:
@@ -1158,6 +1173,7 @@ def quiz(
                     typer.echo(f"  {nid}: {note}")
 
         finally:
+            await scheduler.close()
             await circuit.close()
 
     _run(_quiz())
@@ -1180,6 +1196,8 @@ def visualize(
     async def _visualize():
         circuit = _get_circuit(brain)
         await circuit.connect()
+        scheduler = _get_scheduler(circuit, brain)
+        await scheduler.open()
         try:
             graph = circuit.graph
             if graph.number_of_nodes() == 0:
@@ -1252,7 +1270,7 @@ def visualize(
                 community_id = node_data.get("community_id")
 
                 # Size: base + stability + centrality (not just pressure)
-                card = circuit.get_card(nid)
+                card = scheduler.get_card(nid)
                 stability = card.stability if card and card.stability else 0.0
                 centrality = centrality_map.get(nid, 0.0)
                 size = 12 + stability * 3 + centrality * 20 + min(pressure, 1.0) * 10
@@ -1343,6 +1361,7 @@ def visualize(
                 import webbrowser
                 webbrowser.open(f"file://{output.resolve()}")
         finally:
+            await scheduler.close()
             await circuit.close()
 
     _run(_visualize())

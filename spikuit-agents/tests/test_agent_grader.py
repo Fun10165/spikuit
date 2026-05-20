@@ -97,15 +97,17 @@ async def test_end_to_end_with_tutor_session(tmp_path):
     from spikuit_tutor.tutor import TutorSession
     from spikuit_tutor.tutor.plan import ExamPlan, ExamStep, TransitionEvent
     from spikuit_core import Circuit, Neuron
-    from spikuit_core.scaffold import compute_scaffold
+    from spikuit_tutor import TutorScheduler, TutorStore, compute_scaffold
 
     circuit = Circuit(db_path=tmp_path / "test.db")
     await circuit.connect()
+    n = Neuron.create("# Functor\n\nA map.", id="n1", type="concept", domain="math")
+    await circuit.add_neuron(n)
+    scheduler = TutorScheduler(circuit, TutorStore(tmp_path / "test.tutor.db"))
+    await scheduler.open()
     try:
-        n = Neuron.create("# Functor\n\nA map.", id="n1", type="concept", domain="math")
-        await circuit.add_neuron(n)
         neuron = await circuit.get_neuron("n1")
-        scaffold = compute_scaffold(circuit, "n1")
+        scaffold = compute_scaffold(scheduler, "n1")
 
         step = ExamStep(
             neuron_id="n1",
@@ -113,7 +115,7 @@ async def test_end_to_end_with_tutor_session(tmp_path):
             scaffold=scaffold,
         )
         plan = ExamPlan(steps=[step])
-        sess = TutorSession(circuit, plan, persist=True)
+        sess = TutorSession(scheduler, plan, persist=True)
         await sess.teach()
 
         grader = AgentLLMGrader(
@@ -130,8 +132,9 @@ async def test_end_to_end_with_tutor_session(tmp_path):
         assert tr.event == TransitionEvent.ADVANCE
 
         await sess.advance()
-        spikes = await circuit._db.get_spikes_for("n1", limit=10)
+        spikes = await circuit.get_spikes_for("n1", limit=10)
         assert len(spikes) == 1
         assert spikes[0].grade == Grade.FIRE
     finally:
+        await scheduler.close()
         await circuit.close()

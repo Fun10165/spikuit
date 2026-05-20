@@ -7,21 +7,18 @@ module is the versioned, semver-stable contract: substrate internals
 churn freely behind it. The boundary is enforced in CI by
 ``tools/check_app_imports.py``.
 
-See ``docs/design/tutor-extraction-stage1.md`` §4.1.
+See ``docs/design/tutor-extraction-stage1.md`` §4.1 and
+``docs/design/tutor-extraction-stage2.md`` §4.6.
 """
 
 from __future__ import annotations
 
-from ._appkit_protocols import NeuronView, SchedulerCircuit
-from .models import Grade, Scaffold, ScaffoldLevel, Spike
-from .scaffold import compute_scaffold
+from ._appkit_protocols import NeuronView, SubstrateView
+from .models import Grade, Spike
 
 __all__ = [
     "Grade",
     "NeuronView",
-    "Scaffold",
-    "ScaffoldLevel",
-    "SchedulerCircuit",
     "Spike",
-    "compute_scaffold",
+    "SubstrateView",
 ]

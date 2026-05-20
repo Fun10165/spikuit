@@ -1,11 +1,16 @@
 [project]
 name = "spikuit-tutor"
-version = "0.7.1"
+version = "0.9.0"
 description = "Tutor application for Spikuit — FSRS-scheduled review, quiz rendering, and exam planning"
 requires-python = ">=3.11"
 dependencies = [
     "spikuit-core[engine]",
     "textual>=0.80.0",
+    # FSRS scheduling + the overlay store are tutor-owned as of Stage 2
+    # (tutor-extraction-stage2.md). Declared directly: spikuit-core drops
+    # the `fsrs` dependency once FSRS is fully extracted (§5.5).
+    "fsrs>=6.0.0",
+    "aiosqlite>=0.20.0",
 ]
 
 [build-system]

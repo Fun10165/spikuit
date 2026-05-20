@@ -261,46 +261,6 @@ class Plasticity(msgspec.Struct, kw_only=True, frozen=True):
 
 
 # ---------------------------------------------------------------------------
-# Scaffold
-# ---------------------------------------------------------------------------
-
-
-class ScaffoldLevel(str, Enum):
-    """How much support the learner needs (ZPD-inspired).
-
-    Attributes:
-        FULL: New or struggling — max hints, context, easy questions.
-        GUIDED: Progressing — hints on request, some context.
-        MINIMAL: Competent — harder questions, less hand-holding.
-        NONE: Mastered — application / synthesis level.
-    """
-
-    FULL = "full"
-    GUIDED = "guided"
-    MINIMAL = "minimal"
-    NONE = "none"
-
-
-class Scaffold(msgspec.Struct, kw_only=True):
-    """Scaffolding state computed from Brain data.
-
-    Determines how much support a Learn session provides,
-    based on FSRS state, graph context, and pressure.
-
-    Attributes:
-        level: Current support level.
-        hints: Auto-generated hint strings.
-        context: IDs of strong neighbors (scaffolding material).
-        gaps: IDs of weak prerequisites (should study first).
-    """
-
-    level: ScaffoldLevel = ScaffoldLevel.FULL
-    hints: list[str] = msgspec.field(default_factory=list)
-    context: list[str] = msgspec.field(default_factory=list)
-    gaps: list[str] = msgspec.field(default_factory=list)
-
-
-# ---------------------------------------------------------------------------
 # Quiz models
 # ---------------------------------------------------------------------------
 
@@ -311,14 +271,12 @@ class QuizRequest(msgspec.Struct, kw_only=True):
     Attributes:
         primary: Primary neuron ID to quiz on.
         supporting: Supporting neuron IDs for context.
-        scaffold: Scaffolding state for difficulty adaptation.
         quiz_type: Question style — ``"recall"``, ``"recognition"``,
             ``"application"``, ``"synthesis"``, or ``None`` for auto.
     """
 
     primary: str
     supporting: list[str] = msgspec.field(default_factory=list)
-    scaffold: Scaffold = msgspec.field(default_factory=Scaffold)
     quiz_type: str | None = None
 
 
@@ -346,7 +304,10 @@ class QuizItem(msgspec.Struct, kw_only=True):
         answer: The expected answer.
         hints: Progressive hints (reveal one at a time).
         grading_criteria: Free-text criteria for LLM-based grading.
-        scaffold_level: The scaffold level this item was designed for.
+        scaffold_level: Free-text label for the difficulty tier this item
+            was designed for (the scaffold-level vocabulary moved to
+            ``spikuit-tutor`` in Stage 2; the substrate keeps a plain
+            string column so quiz items remain round-trippable).
         neuron_ids: Mapping of neuron ID to role (primary/supporting).
         created_at: UTC timestamp, auto-set on creation.
     """
@@ -356,7 +317,7 @@ class QuizItem(msgspec.Struct, kw_only=True):
     answer: str = ""
     hints: list[str] = msgspec.field(default_factory=list)
     grading_criteria: str = ""
-    scaffold_level: ScaffoldLevel | None = None
+    scaffold_level: str | None = None
     neuron_ids: dict[str, QuizItemRole] = msgspec.field(default_factory=dict)
     created_at: datetime = msgspec.UNSET  # type: ignore[assignment]
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from spikuit_core import Grade, Neuron, Scaffold, ScaffoldLevel
+from spikuit_core import Grade, Neuron
 
 from spikuit_tutor.quiz import (
     FLASHCARD_GRADE_CHOICES,
@@ -13,6 +13,7 @@ from spikuit_tutor.quiz import (
     QuizResult,
     RenderResponse,
 )
+from spikuit_tutor.scaffold import Scaffold, ScaffoldLevel
 
 
 def _neuron(content: str, nid: str = "n-test") -> Neuron:
