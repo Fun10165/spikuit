@@ -4,6 +4,16 @@ ZPD-inspired scaffolding and the Quiz protocol.
 
 ## Scaffold Computation
 
+`compute_scaffold` and the [`Scaffold`](models.md) model are part of the
+**`spikuit_core.appkit`** contract — the curated, semver-stable surface
+that application packages (`spikuit-tutor`, `spikuit-agent-rag`) import
+from. Application code should reach them as
+`from spikuit_core.appkit import compute_scaffold, Scaffold`: that import
+opts into the contract, where substrate internals may churn but the
+appkit surface may not. `appkit` also re-exports `Grade`,
+`ScaffoldLevel`, and `Spike`, plus the `SchedulerCircuit` and
+`NeuronView` structural protocols an adapter programs against.
+
 ::: spikuit_core.compute_scaffold
 
 ## Quiz Protocol

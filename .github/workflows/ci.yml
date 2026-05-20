@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # spikuit-cli/tests and spikuit-tutor/tests both ship an
+        # __init__.py, so a single pytest run collides on the package
+        # name `tests`. One job per package keeps the suites apart.
+        package: [spikuit-core, spikuit-agents, spikuit-cli, spikuit-tutor]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: uv sync --all-packages --all-extras --all-groups
+
+      - name: Run ${{ matrix.package }} tests
+        run: >-
+          uv run --with pytest --with pytest-asyncio
+          python -m pytest ${{ matrix.package }}/tests -q
+
+  import-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check app import boundary
+        run: python tools/check_app_imports.py

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from spikuit_core import Grade, Spike
+from spikuit_core.appkit import Grade, Spike
 
 from .plan import (
     ExamPlan,
@@ -24,7 +24,7 @@ from .plan import (
 )
 
 if TYPE_CHECKING:
-    from spikuit_core import Circuit
+    from spikuit_core.appkit import SchedulerCircuit
 
     from ..quiz.models import QuizResponse
 
@@ -34,7 +34,7 @@ class TutorSession:
 
     def __init__(
         self,
-        circuit: "Circuit",
+        circuit: "SchedulerCircuit",
         plan: ExamPlan,
         *,
         persist: bool = True,

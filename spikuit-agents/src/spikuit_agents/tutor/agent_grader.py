@@ -20,7 +20,7 @@ import re
 from typing import Awaitable, Callable
 
 from spikuit_tutor.quiz import QuizResult
-from spikuit_core import Grade
+from spikuit_core.appkit import Grade
 
 GradeFn = Callable[[str], Awaitable[str]]
 
