@@ -39,7 +39,11 @@ def neuron_add(
         circuit = _get_circuit(brain)
         await circuit.connect()
         try:
-            real_content = content.encode().decode("unicode_escape")
+            # Interpret literal \n and \t so callers can pass single-line
+            # arguments. A blanket .decode("unicode_escape") corrupts
+            # non-ASCII content — it latin-1-decodes UTF-8 multibyte
+            # sequences — so handle only the escapes that matter.
+            real_content = content.replace("\\n", "\n").replace("\\t", "\t")
             neuron = Neuron.create(real_content, type=type, domain=domain)
             await circuit.add_neuron(neuron)
 
