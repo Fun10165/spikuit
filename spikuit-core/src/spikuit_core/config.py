@@ -45,6 +45,14 @@ provider = "none"
 # model = "nomic-embed-text"
 # dimension = 768
 # prefix_style = "nomic"
+
+[database]
+# SQLite journal mode.
+# "WAL"    → fastest on a single machine (default).
+# "DELETE" → single-file database, no -wal/-shm sidecars. Use this when the
+#            Brain vault is synced across machines (Syncthing, Dropbox, ...):
+#            WAL sidecars are per-machine and syncing them risks corruption.
+# journal_mode = "WAL"
 """
 
 
@@ -72,6 +80,21 @@ class EmbedderConfig:
 
 
 @dataclass
+class DatabaseConfig:
+    """SQLite storage options parsed from ``config.toml``.
+
+    Attributes:
+        journal_mode: SQLite journal mode. ``"WAL"`` (default) is fastest
+            on a single machine. ``"DELETE"`` keeps the whole database in
+            one file with no ``-wal`` / ``-shm`` sidecars — required for a
+            Brain vault synced across machines (e.g. via Syncthing), where
+            the per-machine WAL sidecars cannot safely travel.
+    """
+
+    journal_mode: str = "WAL"
+
+
+@dataclass
 class GitConfig:
     """Git-backed Brain versioning options.
 
@@ -92,12 +115,14 @@ class BrainConfig:
         name: Brain name (defaults to directory name).
         root: Directory containing ``.spikuit/``.
         embedder: Embedder settings.
+        database: SQLite storage settings.
         git: Git versioning settings.
     """
 
     name: str = "default"
     root: Path = field(default_factory=lambda: Path.cwd())
     embedder: EmbedderConfig = field(default_factory=EmbedderConfig)
+    database: DatabaseConfig = field(default_factory=DatabaseConfig)
     git: GitConfig = field(default_factory=GitConfig)
 
     @property
@@ -241,6 +266,12 @@ def _apply_config(config: BrainConfig, data: dict[str, Any]) -> None:
             timeout=emb.get("timeout", 30.0),
             prefix_style=emb.get("prefix_style", "none"),
             max_searchable_chars=emb.get("max_searchable_chars", 500),
+        )
+
+    database = data.get("database", {})
+    if database:
+        config.database = DatabaseConfig(
+            journal_mode=database.get("journal_mode", "WAL"),
         )
 
     git = data.get("git", {})

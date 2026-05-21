@@ -26,6 +26,7 @@ from typing import Iterable
 
 import aiosqlite
 from fsrs import Card
+from spikuit_core.db import normalize_journal_mode
 
 # The overlay holds exactly one table. No `due` index: the tutor loads
 # every card into memory on open, exactly as `Circuit` did pre-Stage-2.
@@ -70,10 +71,13 @@ class TutorStore:
     and writes go through to both the cache and the DB.
     """
 
-    def __init__(self, db_path: str | Path) -> None:
+    def __init__(self, db_path: str | Path, *, journal_mode: str = "WAL") -> None:
         self.db_path: Path = Path(db_path)
         self._conn: aiosqlite.Connection | None = None
         self._cards: dict[str, Card] = {}
+        # The overlay DB lives beside the substrate DB, so it must use the
+        # same journal mode — a synced vault needs both files sidecar-free.
+        self._journal_mode = normalize_journal_mode(journal_mode)
 
     # -- Lifecycle ----------------------------------------------------------
 
@@ -91,7 +95,7 @@ class TutorStore:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._conn = await aiosqlite.connect(self.db_path)
         self._conn.row_factory = aiosqlite.Row
-        await self._conn.execute("PRAGMA journal_mode=WAL")
+        await self._conn.execute(f"PRAGMA journal_mode={self._journal_mode}")
         await self._conn.executescript(_SCHEMA)
         await self._conn.commit()
         await self._load()

@@ -14,6 +14,35 @@ from .models import Grade, Neuron, QuizItem, QuizItemRole, Source, Spike, Synaps
 
 DEFAULT_DB_PATH: Path = Path.home() / ".spikuit" / "spikuit.db"
 
+# SQLite journal modes Spikuit supports. ``WAL`` is the default — fastest on
+# a single machine. ``DELETE`` keeps the whole database in one file at every
+# transaction boundary (no ``-wal`` / ``-shm`` sidecars), which is what a
+# file-synced Brain vault needs: a Syncthing/Dropbox sync that catches WAL
+# mode mid-checkpoint can ship a stale or torn ``.db``. The remaining modes
+# are accepted for completeness.
+_JOURNAL_MODES: frozenset[str] = frozenset(
+    {"DELETE", "TRUNCATE", "PERSIST", "MEMORY", "WAL", "OFF"}
+)
+
+
+def normalize_journal_mode(mode: str) -> str:
+    """Validate and canonicalize a SQLite ``journal_mode`` string.
+
+    SQLite silently ignores an unknown ``PRAGMA journal_mode`` value, so a
+    typo would otherwise leave the database in its previous mode with no
+    error. Validate up front instead.
+
+    Raises:
+        ValueError: If ``mode`` is not a recognized journal mode.
+    """
+    normalized = mode.strip().upper()
+    if normalized not in _JOURNAL_MODES:
+        raise ValueError(
+            f"unsupported journal_mode {mode!r}; "
+            f"expected one of {sorted(_JOURNAL_MODES)}"
+        )
+    return normalized
+
 # ---------------------------------------------------------------------------
 # Schema
 # ---------------------------------------------------------------------------
@@ -175,16 +204,18 @@ class Database:
         db_path: str | Path = DEFAULT_DB_PATH,
         *,
         embedding_dimension: int | None = None,
+        journal_mode: str = "WAL",
     ) -> None:
         self.db_path: Path = Path(db_path)
         self._conn: aiosqlite.Connection | None = None
         self._embedding_dimension = embedding_dimension
+        self._journal_mode = normalize_journal_mode(journal_mode)
 
     async def connect(self) -> None:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._conn = await aiosqlite.connect(self.db_path)
         self._conn.row_factory = aiosqlite.Row
-        await self._conn.execute("PRAGMA journal_mode=WAL")
+        await self._conn.execute(f"PRAGMA journal_mode={self._journal_mode}")
         await self._conn.execute("PRAGMA foreign_keys=ON")
         await self._conn.executescript(_SCHEMA)
         await self._conn.commit()

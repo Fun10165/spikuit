@@ -86,6 +86,9 @@ class Circuit:
         db_path: Path to the SQLite database file.
         plasticity: Tunable learning parameters (uses defaults if ``None``).
         embedder: Embedding provider for semantic search (optional).
+        journal_mode: SQLite journal mode. ``"WAL"`` (default) is fastest on
+            a single machine; ``"DELETE"`` keeps the database in one file
+            with no sidecars, for a Brain vault synced across machines.
     """
 
     def __init__(
@@ -94,12 +97,14 @@ class Circuit:
         plasticity: Plasticity | None = None,
         embedder: Embedder | None = None,
         read_only: bool = False,
+        journal_mode: str = "WAL",
     ) -> None:
         self._embedder = embedder
         self._read_only = read_only
         self._db: Database = Database(
             db_path,
             embedding_dimension=embedder.dimension if embedder else None,
+            journal_mode=journal_mode,
         )
         self._graph: nx.DiGraph = nx.DiGraph()
         self.plasticity: Plasticity = plasticity or Plasticity()

@@ -36,7 +36,11 @@ def _get_circuit(brain: Path | None = None) -> Circuit:
         timeout=config.embedder.timeout,
         prefix_style=config.embedder.prefix_style,
     )
-    return Circuit(db_path=config.db_path, embedder=embedder)
+    return Circuit(
+        db_path=config.db_path,
+        embedder=embedder,
+        journal_mode=config.database.journal_mode,
+    )
 
 
 def _get_scheduler(circuit: Circuit, brain: Path | None = None) -> TutorScheduler:
@@ -50,7 +54,10 @@ def _get_scheduler(circuit: Circuit, brain: Path | None = None) -> TutorSchedule
     and ``await scheduler.close()`` when done.
     """
     config = load_config(brain)
-    store = TutorStore(default_overlay_path(config.db_path))
+    store = TutorStore(
+        default_overlay_path(config.db_path),
+        journal_mode=config.database.journal_mode,
+    )
     return TutorScheduler(circuit, store)
 
 
