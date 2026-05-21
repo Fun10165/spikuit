@@ -21,6 +21,7 @@ def test_appkit_exports_exactly_the_documented_surface():
         "NeuronView",
         "Spike",
         "SubstrateView",
+        "normalize_journal_mode",
     ]
     for name in appkit.__all__:
         assert hasattr(appkit, name), f"appkit.__all__ names {name} but it is missing"

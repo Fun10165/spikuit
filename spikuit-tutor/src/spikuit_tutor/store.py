@@ -26,7 +26,7 @@ from typing import Iterable
 
 import aiosqlite
 from fsrs import Card
-from spikuit_core.db import normalize_journal_mode
+from spikuit_core.appkit import normalize_journal_mode
 
 # The overlay holds exactly one table. No `due` index: the tutor loads
 # every card into memory on open, exactly as `Circuit` did pre-Stage-2.

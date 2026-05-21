@@ -14,6 +14,7 @@ See ``docs/design/tutor-extraction-stage1.md`` §4.1 and
 from __future__ import annotations
 
 from ._appkit_protocols import NeuronView, SubstrateView
+from .db import normalize_journal_mode
 from .models import Grade, Spike
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "NeuronView",
     "Spike",
     "SubstrateView",
+    "normalize_journal_mode",
 ]
