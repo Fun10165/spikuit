@@ -7,6 +7,38 @@ carry breaking changes.
 
 This log begins at v0.9.0; earlier releases predate it.
 
+## [Unreleased]
+
+### Added
+
+- **`spkt brain` command group.** `spkt brain set-default <path>` records
+  a user-global default Brain (`~/.config/spikuit/config.toml`); `spkt
+  brain current` shows which Brain resolves here and how. With a default
+  set, `spkt` works from any directory — no `~/.spikuit` symlink needed.
+  A local `.spikuit/` found by walking up still takes precedence.
+- **`[database] journal_mode` is configurable per Brain.** `WAL` (default)
+  is fastest on one machine; `DELETE` keeps the database in a single file
+  with no `-wal`/`-shm` sidecars — required for a Brain vault synced
+  across machines (Syncthing, Dropbox, ...).
+
+### Changed
+
+- **Review commands consolidated under `tutor`.** `spkt neuron due` →
+  `spkt tutor due` and `spkt quiz` → `spkt tutor quiz`. Review scheduling
+  is tutor domain; `spkt neuron fire` stays (it drives graph plasticity).
+
+### Deprecated
+
+- `spkt neuron due`, `spkt quiz`, and the top-level `spkt due` are hidden
+  aliases that emit a deprecation warning and delegate to the `tutor`
+  group. They will be removed in a future release.
+
+### Fixed
+
+- `spkt neuron add` no longer corrupts non-ASCII content. A blanket
+  `unicode_escape` decode latin-1-mangled UTF-8 multibyte sequences;
+  only the literal `\n` / `\t` escapes are interpreted now.
+
 ## [0.9.0] — 2026-05-20
 
 ### Tutor extraction, Stage 2 — FSRS leaves the substrate

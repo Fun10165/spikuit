@@ -48,11 +48,9 @@ machine-readable output and `--brain <path>` to target a specific Brain.
 | `spkt retrieve "<query>"` | Graph-weighted search (keyword + semantic + memory + centrality) |
 | `spkt stats` | Circuit statistics |
 | `spkt diagnose` | Brain health diagnostics |
-| `spkt progress` | Learning progress report |
 | `spkt manual` | Auto-generated user guide from brain contents |
 | `spkt consolidate` | Sleep-inspired graph optimization (dry-run) |
 | `spkt consolidate apply` | Apply consolidation plan |
-| `spkt quiz` | Interactive flashcard review session |
 | `spkt visualize` | Generate interactive HTML graph |
 | `spkt export` | Export brain (tar/json/qabot) |
 | `spkt import` | Import brain from archive |
@@ -66,7 +64,6 @@ machine-readable output and `--brain <path>` to target a specific Brain.
 | `spkt neuron inspect <id>` | Neuron detail (content, FSRS state, neighbors, sources) |
 | `spkt neuron remove <id>` | Remove a neuron and its synapses |
 | `spkt neuron merge <id1> <id2> --into <target>` | Merge neurons |
-| `spkt neuron due` | List neurons due for review |
 | `spkt neuron fire <id> -g <grade>` | Record a review (fire a spike) |
 
 ### Synapse
@@ -104,6 +101,14 @@ machine-readable output and `--brain <path>` to target a specific Brain.
 | `spkt community detect` | Run Louvain community detection |
 | `spkt community list` | Show community assignments |
 
+### Tutor
+
+| Command | Purpose |
+|---------|---------|
+| `spkt tutor due` | List neurons due for review |
+| `spkt tutor quiz` | Interactive flashcard review session |
+| `spkt tutor progress` | Learning progress report |
+
 ## Grade Scale
 
 | Grade | Meaning | FSRS Rating |
@@ -134,7 +139,7 @@ spkt synapse add <new-id> <related-id> -t relates_to
 
 ### Review
 ```bash
-spkt neuron due --json
+spkt tutor due --json
 spkt neuron inspect <id> --json
 spkt neuron fire <id> -g fire
 ```

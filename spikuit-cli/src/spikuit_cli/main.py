@@ -16,6 +16,7 @@ from spikuit_core.config import BrainConfig, find_spikuit_root, init_brain, load
 from spikuit_core.embedder import create_embedder
 
 from .commands import (
+    brain_app,
     branch_app,
     community_app,
     domain_app,
@@ -53,6 +54,7 @@ app.add_typer(domain_app, name="domain")
 app.add_typer(community_app, name="community")
 app.add_typer(skills_app, name="skills")
 app.add_typer(branch_app, name="branch")
+app.add_typer(brain_app, name="brain")
 app.add_typer(history_app, name="history")
 app.command(name="undo")(undo_cmd)
 
@@ -1018,11 +1020,11 @@ def _manual_html(d: dict) -> str:
 
 
 # -------------------------------------------------------------------
-# quiz (interactive flashcard session)
+# tutor quiz (interactive flashcard session)
 # -------------------------------------------------------------------
 
 
-@app.command()
+@tutor_app.command(name="quiz")
 def quiz(
     limit: int = typer.Option(10, "--limit", "-n", help="Max neurons per session"),
     as_json: bool = typer.Option(False, "--json", help="Non-interactive JSON dump of all due quiz render payloads"),
@@ -1549,7 +1551,8 @@ def import_cmd(
 _DEPRECATION_MAP = {
     "add": "neuron add",
     "fire": "neuron fire",
-    "due": "neuron due",
+    "due": "tutor due",
+    "quiz": "tutor quiz",
     "list": "neuron list",
     "link": "synapse add",
     "inspect": "neuron inspect",
@@ -1573,6 +1576,11 @@ from .commands.neuron import (
 )
 from .commands.source import source_ingest, source_refresh
 from .commands.synapse import synapse_add
+
+# `due` is review scheduling, so it lives on the tutor group. The
+# implementation is in commands/neuron.py (undecorated) so the hidden
+# `spkt neuron due` deprecation alias can share it.
+tutor_app.command(name="due")(neuron_due)
 
 
 @app.command(name="add", hidden=True)
@@ -1608,9 +1616,21 @@ def due_deprecated(
     as_json: bool = typer.Option(False, "--json", help="Output as JSON"),
     brain: Optional[Path] = typer.Option(None, "--brain", "-b", help="Brain root directory"),
 ) -> None:
-    """[Deprecated] Use 'spkt neuron due' instead."""
+    """[Deprecated] Use 'spkt tutor due' instead."""
     _deprecation_warning("due")
     neuron_due(limit=limit, as_json=as_json, brain=brain)
+
+
+@app.command(name="quiz", hidden=True)
+def quiz_deprecated(
+    limit: int = typer.Option(10, "--limit", "-n", help="Max neurons per session"),
+    as_json: bool = typer.Option(False, "--json", help="Non-interactive JSON dump of all due quiz render payloads"),
+    no_tui: bool = typer.Option(False, "--no-tui", help="Drive the session via stdin/stdout JSON (one QuizResponse per line)"),
+    brain: Optional[Path] = typer.Option(None, "--brain", "-b", help="Brain root directory"),
+) -> None:
+    """[Deprecated] Use 'spkt tutor quiz' instead."""
+    _deprecation_warning("quiz")
+    quiz(limit=limit, as_json=as_json, no_tui=no_tui, brain=brain)
 
 
 @app.command(name="list", hidden=True)

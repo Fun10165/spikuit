@@ -1,4 +1,4 @@
-"""Integration tests for `spkt quiz --json` and `--no-tui`."""
+"""Integration tests for `spkt tutor quiz --json` and `--no-tui`."""
 
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ def _last_json(output: str) -> dict:
 
 
 def test_quiz_json_dumps_due_payloads(brain):
-    r = runner.invoke(app, ["quiz", "--json", "-n", "10"])
+    r = runner.invoke(app, ["tutor", "quiz", "--json", "-n", "10"])
     assert r.exit_code == 0, r.output
     payload = _last_json(r.output)
     assert payload["status"] == "due"
@@ -60,7 +60,7 @@ def test_quiz_no_tui_records_grades_and_notes(brain):
         + json.dumps({"self_grade": "WEAK"})
         + "\n"
     )
-    r = runner.invoke(app, ["quiz", "--no-tui", "-n", "10"], input=stdin)
+    r = runner.invoke(app, ["tutor", "quiz", "--no-tui", "-n", "10"], input=stdin)
     assert r.exit_code == 0, r.output
 
     payload = _last_json(r.output)

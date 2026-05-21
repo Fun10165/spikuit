@@ -161,11 +161,9 @@ All commands support `--json` for machine-readable output and `--brain` to targe
 | `spkt retrieve` | Graph-weighted search |
 | `spkt stats` | Circuit statistics |
 | `spkt diagnose` | Brain health diagnostics |
-| `spkt progress` | Learning progress report |
 | `spkt manual` | Auto-generated user guide |
 | `spkt consolidate` | Sleep-inspired knowledge consolidation (dry-run) |
 | `spkt consolidate apply` | Apply consolidation plan |
-| `spkt quiz` | Interactive flashcard review session |
 | `spkt visualize` | Interactive graph visualization (HTML) |
 | `spkt export` | Export brain (tar/json/qabot) |
 | `spkt import` | Import brain from archive |
@@ -179,7 +177,6 @@ All commands support `--json` for machine-readable output and `--brain` to targe
 | `spkt neuron inspect` | Neuron detail (content, FSRS, neighbors) |
 | `spkt neuron remove` | Remove a neuron and its synapses |
 | `spkt neuron merge` | Merge neurons (content + synapses + sources) |
-| `spkt neuron due` | List neurons due for review |
 | `spkt neuron fire` | Fire a Spike (FSRS + APPNP + STDP) |
 | `spkt synapse add` | Create a Synapse |
 | `spkt synapse remove` | Remove a Synapse |
@@ -196,6 +193,11 @@ All commands support `--json` for machine-readable output and `--brain` to targe
 | `spkt domain audit` | Domain ↔ community alignment analysis |
 | `spkt community detect` | Run community detection |
 | `spkt community list` | Show community assignments |
+| `spkt tutor due` | List neurons due for review |
+| `spkt tutor quiz` | Interactive flashcard review session |
+| `spkt tutor progress` | Learning progress report |
+| `spkt brain set-default` | Set the fallback Brain used outside any `.spikuit/` |
+| `spkt brain current` | Show which Brain resolves here + the default |
 | `spkt skills install` | Install SKILL.md for Agent CLIs |
 | `spkt skills list` | List available skills |
 | `spkt skills extractor list` | List ingestion extractors (system + brain tier) |

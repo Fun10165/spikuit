@@ -54,6 +54,20 @@ spkt config
 spkt config --json
 ```
 
+### `spkt brain set-default` / `spkt brain current`
+
+`spkt` が使う Brain を選びます。カレントディレクトリから上に辿って
+見つかったローカルの `.spikuit/` が常に優先され、デフォルト Brain は
+その fallback です（どこからでも `spkt` を実行できるようにするため）。
+デフォルトはユーザーグローバル設定（`~/.config/spikuit/config.toml`）に
+保存されます。
+
+```bash
+spkt brain set-default ~/vaults/my-brain   # fallback の Brain を設定
+spkt brain current                         # ここで解決される Brain とデフォルトを表示
+spkt brain current --json
+```
+
 ### `spkt embed-all`
 
 エンベディング未生成のNeuronをまとめて処理します。
@@ -131,17 +145,6 @@ spkt neuron remove <neuron-id> --json
 ```bash
 spkt neuron merge <source-id-1> <source-id-2> --into <target-id>
 spkt neuron merge <id1> <id2> <id3> --into <target-id> --json
-```
-
-### `spkt neuron due`
-
-復習が必要なNeuronを表示します。自動生成Neuron
-（`_meta`ドメイン・`community_summary`タイプ）は対象外です。
-
-```bash
-spkt neuron due
-spkt neuron due -n 20
-spkt neuron due --json
 ```
 
 ### `spkt neuron fire`
@@ -371,18 +374,31 @@ spkt retrieve "GNN" --filter domain=cs --filter venue=NeurIPS
 | `--limit`, `-n` | 最大件数（デフォルト: 10） |
 | `--filter KEY=VALUE` | Neuronフィールド（`type`, `domain`）またはSourceのfilterableメタデータでフィルタ。複数指定可。キーが存在しないSourceは除外。 |
 
-## 復習
+## チューター
 
-### `spkt quiz`
+FSRS スケジュールによる復習と学習進捗。
+
+### `spkt tutor due`
+
+復習が必要なNeuronを表示します。自動生成Neuron
+（`_meta`ドメイン・`community_summary`タイプ）は対象外です。
+
+```bash
+spkt tutor due
+spkt tutor due -n 20
+spkt tutor due --json
+```
+
+### `spkt tutor quiz`
 
 インタラクティブなフラッシュカード復習セッション。
 理解度に応じた出題（Scaffold）で、Textual TUI 上でセルフグレーディングします。
 
 ```bash
-spkt quiz                 # Textual TUI（デフォルト）
-spkt quiz --limit 10
-spkt quiz --json          # 期限到来カードのRenderResponseを一括ダンプして終了
-spkt quiz --no-tui        # 標準入出力でJSONループ（1行=1カード）
+spkt tutor quiz                 # Textual TUI（デフォルト）
+spkt tutor quiz --limit 10
+spkt tutor quiz --json          # 期限到来カードのRenderResponseを一括ダンプして終了
+spkt tutor quiz --no-tui        # 標準入出力でJSONループ（1行=1カード）
 ```
 
 **TUIキー**
@@ -429,15 +445,15 @@ spkt diagnose
 spkt diagnose --json
 ```
 
-### `spkt progress`
+### `spkt tutor progress`
 
 学習の進捗レポートを生成します。復習状況、定着率、
 ドメインごとのカバレッジ、成長トレンドなどが確認できます。
 
 ```bash
-spkt progress
-spkt progress --format html -o progress.html
-spkt progress --json
+spkt tutor progress
+spkt tutor progress --format html -o progress.html
+spkt tutor progress --json
 ```
 
 ### `spkt manual`
@@ -653,7 +669,9 @@ git管理を使わない場合は `spkt init --no-git`、または
 | `spkt list` | `spkt neuron list` |
 | `spkt inspect` | `spkt neuron inspect` |
 | `spkt fire` | `spkt neuron fire` |
-| `spkt due` | `spkt neuron due` |
+| `spkt due` | `spkt tutor due` |
+| `spkt quiz` | `spkt tutor quiz` |
+| `spkt neuron due` | `spkt tutor due` |
 | `spkt link` | `spkt synapse add` |
 | `spkt learn` | `spkt source ingest` |
 | `spkt refresh` | `spkt source refresh` |

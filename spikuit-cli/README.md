@@ -36,7 +36,7 @@ spkt source ingest https://en.wikipedia.org/wiki/Monad_(category_theory) -d math
 spkt retrieve "What is a monad?"
 
 # Review what's due (FSRS)
-spkt neuron due
+spkt tutor due
 spkt neuron fire <id> -g fire
 
 # Export a read-only bundle for a server
@@ -47,15 +47,17 @@ spkt export qabot --output ./brain.db
 
 | Resource | Subcommands |
 |---|---|
-| `spkt neuron`    | `add`, `list`, `inspect`, `remove`, `merge`, `due`, `fire` |
+| `spkt neuron`    | `add`, `list`, `inspect`, `remove`, `merge`, `fire` |
 | `spkt synapse`   | `add`, `remove`, `weight`, `list` |
 | `spkt source`    | `learn`, `list`, `inspect`, `update`, `refresh` |
 | `spkt domain`    | `list`, `rename`, `merge`, `audit` |
 | `spkt community` | `detect`, `list` |
+| `spkt tutor`     | `due`, `quiz`, `progress` |
+| `spkt brain`     | `set-default`, `current` |
 | `spkt skills`    | `install`, `list` |
 
-Plus root commands: `init`, `config`, `stats`, `retrieve`, `quiz`,
-`visualize`, `embed-all`, `export`, `import`, `diagnose`, `progress`.
+Plus root commands: `init`, `config`, `stats`, `retrieve`,
+`visualize`, `embed-all`, `export`, `import`, `diagnose`.
 
 All commands support `--json` for machine-readable output and `--brain
 <path>` to target a specific Brain.

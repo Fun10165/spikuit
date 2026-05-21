@@ -53,6 +53,19 @@ spkt config
 spkt config --json
 ```
 
+### `spkt brain set-default` / `spkt brain current`
+
+Pick which Brain `spkt` uses. A local `.spikuit/` (found by walking up
+from the current directory) always wins; the default Brain is the
+fallback so `spkt` can be run from anywhere. The default is stored in
+the user-global config (`~/.config/spikuit/config.toml`).
+
+```bash
+spkt brain set-default ~/vaults/my-brain   # set the fallback Brain
+spkt brain current                         # show what resolves here + the default
+spkt brain current --json
+```
+
 ### `spkt embed-all`
 
 Backfill embeddings for existing neurons that don't have one yet.
@@ -132,17 +145,6 @@ target is re-embedded.
 ```bash
 spkt neuron merge <source-id-1> <source-id-2> --into <target-id>
 spkt neuron merge <id1> <id2> <id3> --into <target-id> --json
-```
-
-### `spkt neuron due`
-
-Show neurons due for review. Excludes auto-generated neurons
-(`_meta` domain and `community_summary` type).
-
-```bash
-spkt neuron due
-spkt neuron due -n 20
-spkt neuron due --json
 ```
 
 ### `spkt neuron fire`
@@ -372,18 +374,31 @@ spkt retrieve "GNN" --filter domain=cs --filter venue=NeurIPS
 | `--limit`, `-n` | Max results (default: 10) |
 | `--filter KEY=VALUE` | Filter by neuron field (`type`, `domain`) or source filterable metadata. Repeatable. Strict: missing key = excluded. |
 
-## Review
+## Tutor
 
-### `spkt quiz`
+FSRS-scheduled review and learning progress.
+
+### `spkt tutor due`
+
+Show neurons due for review. Excludes auto-generated neurons
+(`_meta` domain and `community_summary` type).
+
+```bash
+spkt tutor due
+spkt tutor due -n 20
+spkt tutor due --json
+```
+
+### `spkt tutor quiz`
 
 Interactive flashcard review session. Presents due neurons with
 scaffold-adaptive content and accepts self-grading via a Textual TUI.
 
 ```bash
-spkt quiz                 # Textual TUI (default)
-spkt quiz --limit 10
-spkt quiz --json          # Batch-dump all due quiz render payloads, then exit
-spkt quiz --no-tui        # stdin/stdout JSON loop (one response per line)
+spkt tutor quiz                 # Textual TUI (default)
+spkt tutor quiz --limit 10
+spkt tutor quiz --json          # Batch-dump all due quiz render payloads, then exit
+spkt tutor quiz --no-tui        # stdin/stdout JSON loop (one response per line)
 ```
 
 **TUI keys**
@@ -431,15 +446,15 @@ spkt diagnose
 spkt diagnose --json
 ```
 
-### `spkt progress`
+### `spkt tutor progress`
 
 Generate a learning progress report. Shows review activity, retention rates,
 domain coverage, and growth trends.
 
 ```bash
-spkt progress
-spkt progress --format html -o progress.html
-spkt progress --json
+spkt tutor progress
+spkt tutor progress --format html -o progress.html
+spkt tutor progress --json
 ```
 
 ### `spkt manual`
@@ -656,7 +671,9 @@ Use the resource-oriented form above.
 | `spkt list` | `spkt neuron list` |
 | `spkt inspect` | `spkt neuron inspect` |
 | `spkt fire` | `spkt neuron fire` |
-| `spkt due` | `spkt neuron due` |
+| `spkt due` | `spkt tutor due` |
+| `spkt quiz` | `spkt tutor quiz` |
+| `spkt neuron due` | `spkt tutor due` |
 | `spkt link` | `spkt synapse add` |
 | `spkt learn` | `spkt source ingest` |
 | `spkt refresh` | `spkt source refresh` |

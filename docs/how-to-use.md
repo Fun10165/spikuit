@@ -37,14 +37,14 @@ spkt synapse add <http-id> <grpc-id> -t contrasts
 
 ```bash
 # What's due?
-spkt neuron due
+spkt tutor due
 
 # Interactive flashcard session (Textual TUI)
 # Keys: Space=flip, 1-4=grade, n=note, q=quit
-spkt quiz
+spkt tutor quiz
 
 # Agent-facing: batch-dump all due quiz payloads
-spkt quiz --json
+spkt tutor quiz --json
 
 # Manual fire (after external review)
 spkt neuron fire <neuron-id> -g fire
@@ -129,8 +129,8 @@ spkt diagnose
 spkt domain audit
 
 # Learning progress report
-spkt progress
-spkt progress --format html -o progress.html
+spkt tutor progress
+spkt tutor progress --format html -o progress.html
 
 # Auto-generated user guide from brain contents
 spkt manual

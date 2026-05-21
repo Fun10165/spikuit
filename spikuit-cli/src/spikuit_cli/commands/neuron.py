@@ -1,4 +1,10 @@
-"""Neuron management commands: spkt neuron {add,list,inspect,remove,merge,due,fire}."""
+"""Neuron management commands: spkt neuron {add,list,inspect,remove,merge,fire}.
+
+``due`` is review scheduling, not neuron management — it is registered on
+the ``tutor`` group (``spkt tutor due``). ``neuron_due`` lives here only so
+the hidden ``spkt neuron due`` deprecation alias can share the implementation;
+``main.py`` registers it on ``tutor_app``.
+"""
 
 from __future__ import annotations
 
@@ -277,13 +283,16 @@ def neuron_merge(
     _run(_merge())
 
 
-@neuron_app.command(name="due")
 def neuron_due(
     limit: int = typer.Option(20, "--limit", "-n", help="Max neurons to show"),
     as_json: bool = typer.Option(False, "--json", help="Output as JSON"),
     brain: Optional[Path] = typer.Option(None, "--brain", "-b", help="Brain root directory"),
 ) -> None:
-    """Show neurons due for review."""
+    """Show neurons due for review.
+
+    Registered on the ``tutor`` group by ``main.py`` as ``spkt tutor due``
+    (review scheduling is a tutor concern). Not decorated here.
+    """
 
     async def _due():
         circuit = _get_circuit(brain)
@@ -317,6 +326,21 @@ def neuron_due(
             await circuit.close()
 
     _run(_due())
+
+
+@neuron_app.command(name="due", hidden=True)
+def neuron_due_deprecated(
+    limit: int = typer.Option(20, "--limit", "-n", help="Max neurons to show"),
+    as_json: bool = typer.Option(False, "--json", help="Output as JSON"),
+    brain: Optional[Path] = typer.Option(None, "--brain", "-b", help="Brain root directory"),
+) -> None:
+    """[Deprecated] Use 'spkt tutor due' instead."""
+    typer.echo(
+        "DeprecationWarning: 'spkt neuron due' is deprecated. "
+        "Use 'spkt tutor due' instead.",
+        err=True,
+    )
+    neuron_due(limit=limit, as_json=as_json, brain=brain)
 
 
 @neuron_app.command(name="fire")

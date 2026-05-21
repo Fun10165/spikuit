@@ -87,13 +87,13 @@ spkt neuron inspect <monad-id>
 
 ```bash
 # What's due for review?
-spkt neuron due
+spkt tutor due
 
 # Review a concept (grade: miss/weak/fire/strong)
 spkt neuron fire <neuron-id> --grade fire
 
 # Interactive quiz session
-spkt quiz
+spkt tutor quiz
 ```
 
 ## Search

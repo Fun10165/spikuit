@@ -86,13 +86,13 @@ spkt neuron inspect <monad-id>
 
 ```bash
 # 復習が必要なNeuronは？
-spkt neuron due
+spkt tutor due
 
 # 復習を記録（グレード: miss/weak/fire/strong）
 spkt neuron fire <neuron-id> --grade fire
 
 # インタラクティブなクイズセッション
-spkt quiz
+spkt tutor quiz
 ```
 
 ## 検索する

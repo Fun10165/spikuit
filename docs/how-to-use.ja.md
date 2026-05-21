@@ -37,14 +37,14 @@ spkt synapse add <http-id> <grpc-id> -t contrasts
 
 ```bash
 # 期限が来ているものは？
-spkt neuron due
+spkt tutor due
 
 # インタラクティブなフラッシュカードセッション（Textual TUI）
 # キー: Space=めくる, 1-4=成績, n=ノート, q=終了
-spkt quiz
+spkt tutor quiz
 
 # エージェント向け: 期限到来カードを一括JSON出力
-spkt quiz --json
+spkt tutor quiz --json
 
 # 手動で復習を記録（外部で復習した場合など）
 spkt neuron fire <neuron-id> -g fire
@@ -129,8 +129,8 @@ spkt diagnose
 spkt domain audit
 
 # 学習の進捗レポート
-spkt progress
-spkt progress --format html -o progress.html
+spkt tutor progress
+spkt tutor progress --format html -o progress.html
 
 # Brainの中身からユーザーガイドを自動生成
 spkt manual

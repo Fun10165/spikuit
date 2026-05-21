@@ -97,7 +97,7 @@ Curator: "math"ドメインが2つのコミュニティにまたがっていま�
 
 ```bash
 spkt retrieve "所有権 借用"                   # ナレッジグラフを検索
-spkt neuron due                             # 復習が必要なNeuronは？
+spkt tutor due                              # 復習が必要なNeuronは？
 spkt neuron fire <id> -g fire               # 復習を記録
 spkt diagnose                               # Brainの健全性チェック
 spkt consolidate                            # グラフ構造を最適化

@@ -1,5 +1,6 @@
 """Command modules for the spkt CLI."""
 
+from .brain import brain_app
 from .community import community_app
 from .domain import domain_app
 from .extractor import extractor_app
@@ -12,6 +13,7 @@ from .synapse import synapse_app
 skills_app.add_typer(extractor_app, name="extractor")
 
 __all__ = [
+    "brain_app",
     "branch_app",
     "community_app",
     "domain_app",

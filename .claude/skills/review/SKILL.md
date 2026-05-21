@@ -12,7 +12,7 @@ Run an interactive review session using the spkt CLI.
 ### 1. Get due neurons
 
 ```bash
-spkt neuron due --json
+spkt tutor due --json
 ```
 
 If no neurons are due, tell the user and stop.

@@ -148,7 +148,7 @@ Curator: Your "math" domain spans 2 communities (algebra vs. analysis).
 
 ```bash
 spkt retrieve "ownership borrow"           # search your knowledge graph
-spkt neuron due                            # what needs reviewing?
+spkt tutor due                             # what needs reviewing?
 spkt neuron fire <id> -g fire              # record a review
 spkt diagnose                              # brain health check
 spkt consolidate                           # optimize graph structure

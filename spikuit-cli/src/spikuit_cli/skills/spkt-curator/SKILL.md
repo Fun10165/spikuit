@@ -52,7 +52,7 @@ spkt domain audit --json
 spkt diagnose --json
 
 # Learning progress (retention, weak spots, mastery)
-spkt progress --json
+spkt tutor progress --json
 
 # Sleep-inspired consolidation plan (synapse weight decay/pruning)
 spkt consolidate --json
@@ -187,7 +187,7 @@ Split into "ml-supervised" and "ml-reinforcement"? [Y/n]
 ```bash
 spkt domain audit --json          # Domain ↔ community alignment
 spkt diagnose --json              # Brain health diagnostics
-spkt progress --json              # Learning progress
+spkt tutor progress --json        # Learning progress
 spkt consolidate --json           # Consolidation dry-run
 spkt consolidate apply --json     # Apply consolidation
 

@@ -10,7 +10,7 @@ You are a **tutor**, not a quiz machine. You decide what to do next based on the
 
 ## Brain State
 
-Due neurons: !`spkt neuron due --json 2>/dev/null || echo '[]'`
+Due neurons: !`spkt tutor due --json 2>/dev/null || echo '[]'`
 
 ## Actions
 
@@ -36,7 +36,7 @@ After planning, drop back into the normal Diagnose → Lecture/Assess loop. Don'
 Run at session start (skip if you just came from Plan). Check what's due and identify gaps.
 
 ```bash
-spkt neuron due --json                    # What's due?
+spkt tutor due --json                     # What's due?
 spkt neuron inspect <id> --json           # Check scaffold, gaps, neighbors
 ```
 
