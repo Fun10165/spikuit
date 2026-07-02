@@ -48,3 +48,17 @@ jobs:
 
       - name: Check substrate has no FSRS import
         run: python tools/check_core_no_fsrs.py
+
+  viz-js-tests:
+    # modes.js is pure (docs/design/graph-viz.md §9) — unit-testable under
+    # plain Node, no browser needed.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run viz mode encoding tests
+        run: node spikuit-cli/tests/js/test_modes.js
