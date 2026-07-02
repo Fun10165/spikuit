@@ -67,7 +67,7 @@ _ENGINE_SYMBOLS: dict[str, tuple[str, str]] = {
 }
 
 
-# Deprecated alias → canonical name. Removed in v0.7.
+# Deprecated alias → canonical name. Removed in v1.0.
 _DEPRECATED_ALIASES: dict[str, str] = {
     "LearnSession": "IngestSession",
 }

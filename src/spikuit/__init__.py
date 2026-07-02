@@ -6,4 +6,9 @@ Installing `spikuit` pulls in `spikuit-cli` (the `spkt` command) and
 empty and exists only to provide a single install target.
 """
 
-__version__ = "0.6.1"
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("spikuit")
+except PackageNotFoundError:  # running from a source tree without install
+    __version__ = "0.0.0+unknown"

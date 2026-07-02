@@ -1545,7 +1545,7 @@ def import_cmd(
 
 
 # -------------------------------------------------------------------
-# Deprecation wrappers (hidden, removed in v0.6.0)
+# Deprecation wrappers (hidden, removed in v1.0)
 # -------------------------------------------------------------------
 
 _DEPRECATION_MAP = {
