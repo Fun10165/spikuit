@@ -1,14 +1,23 @@
 name: Deploy Docs
 
+# Auto-deploy-on-push is PAUSED (see the comment further down) — GitHub
+# Pages' own deployment backend has been getting stuck in
+# "deployment_queued" for the full 10-minute actions/deploy-pages
+# timeout on this repo, independent of our workflow config (confirmed:
+# our concurrency/path-filter fixes work as intended, cancelling
+# superseded runs correctly, but the one deployment left standing each
+# time still hangs server-side). Re-enable the `push:` trigger below
+# once that's settled; until then, deploy manually:
+#   gh workflow run "Deploy Docs" --repo takyone/spikuit
 on:
-  push:
-    branches: [main]
-    paths:
-      - "docs/**"
-      - "mkdocs.yml"
-      - "README.md"
-      - "llms.txt"
-      - "**/*.py"
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "docs/**"
+  #     - "mkdocs.yml"
+  #     - "README.md"
+  #     - "llms.txt"
+  #     - "**/*.py"
   workflow_dispatch:
 
 permissions:
