@@ -87,6 +87,20 @@ async def test_plan_exam_due_neurons_includes_new(scheduler):
     assert {s.neuron_id for s in plan.steps} == {"n1", "n2", "n3"}
 
 
+@pytest.mark.asyncio
+async def test_plan_exam_domain_interleave_does_not_crash(scheduler):
+    """Regression test: _interleave_by_domain used to bind the winning
+    domain's *neuron-id list* to `dom_count` and then divide it by an int
+    (`dom_count / len(queue)`), raising TypeError whenever one domain
+    dominated the queue (n1/n2/n3 are all domain="math" here, so this
+    reaches that path on every call). The fix counts the list's length.
+    """
+    plan = await plan_exam(
+        scheduler, neuron_ids=["n1", "n2", "n3"], interleave_by=InterleaveMode.DOMAIN,
+    )
+    assert {s.neuron_id for s in plan.steps} == {"n1", "n2", "n3"}
+
+
 # -- TutorSession — happy path -----------------------------------------------
 
 

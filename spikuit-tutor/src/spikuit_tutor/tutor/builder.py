@@ -171,10 +171,10 @@ async def _interleave_by_domain(
     for nid, d in domain_of.items():
         neurons_by_domain.setdefault(d, []).append(nid)
 
-    dom_domain, dom_count = max(
+    dom_domain, dom_ids = max(
         neurons_by_domain.items(), key=lambda x: len(x[1])
     )
-    if dom_count / len(queue) <= 0.5:
+    if len(dom_ids) / len(queue) <= 0.5:
         return queue
 
     pull_n = max(1, math.ceil(len(queue) * pull_ratio))
