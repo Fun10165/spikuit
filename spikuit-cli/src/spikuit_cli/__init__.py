@@ -1,3 +1,8 @@
 """Spikuit CLI — spkt command."""
 
-__version__ = "0.6.3"
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("spikuit-cli")
+except PackageNotFoundError:  # running from a source tree without install
+    __version__ = "0.0.0+unknown"

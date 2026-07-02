@@ -18,9 +18,13 @@ helpful `ImportError` pointing at the install command.
 
 from __future__ import annotations
 
+from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING, Any
 
-__version__ = "0.6.3"
+try:
+    __version__ = version("spikuit-core")
+except PackageNotFoundError:  # running from a source tree without install
+    __version__ = "0.0.0+unknown"
 
 # -- Always available (lightweight) ---------------------------------------
 

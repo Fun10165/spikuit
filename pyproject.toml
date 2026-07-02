@@ -1,6 +1,6 @@
 [project]
 name = "spikuit"
-version = "0.9.0"
+dynamic = ["version"]
 description = "A knowledge base that gets smarter the more you use it"
 readme = "README.md"
 license = "Apache-2.0"
@@ -33,8 +33,11 @@ Issues = "https://github.com/takyone/spikuit/issues"
 "LLMs (llms.txt)" = "https://takyone.github.io/spikuit/llms.txt"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/spikuit"]
