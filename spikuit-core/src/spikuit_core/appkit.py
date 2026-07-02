@@ -15,11 +15,13 @@ from __future__ import annotations
 
 from ._appkit_protocols import NeuronView, SubstrateView
 from .db import normalize_journal_mode
-from .models import Grade, Spike
+from .models import Grade, QuizItem, QuizItemRole, Spike
 
 __all__ = [
     "Grade",
     "NeuronView",
+    "QuizItem",
+    "QuizItemRole",
     "Spike",
     "SubstrateView",
     "normalize_journal_mode",

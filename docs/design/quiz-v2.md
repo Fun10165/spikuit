@@ -2,8 +2,13 @@
 
 Design document for the Quiz rework shipping in v0.6.2 (#39) and v0.6.3 (#42).
 
-Status: **Draft** — targeting v0.6.2 for the abstraction and Flashcard TUI,
-v0.6.3 for additional quiz types and Tutor-driven generation/grading.
+Status: **Partially shipped** — the abstraction + Flashcard TUI shipped in
+v0.6.2, FreeResponse followed, and `Cloze` (scaffold-directional vocab
+recall) + `GeneratedQuiz` (type-agnostic renderer for stored `QuizItem`s,
+i.e. the "quiz from the DB" origin of Principle 2) shipped post-v0.9.0.
+MCQ / Reorder / Audio / ImageID, Tutor-driven generation, rubric grading,
+and the Web Quiz UI (#44) remain future work. Body text below is the
+original design and keeps its v0.6.x framing.
 
 ## Background
 
@@ -205,7 +210,7 @@ session can always see the learner's extra input, regardless of quiz type.
 | `Audio` | GUI | Tutor grader + optional mechanical | Pronunciation, listening |
 | `ImageID` | GUI | Mechanical or Tutor | Identify image content |
 
-v0.6.2 ships **Flashcard only**. Additional types land with #42 in v0.6.3.
+Shipped so far: `Flashcard`, `FreeText` (as `FreeResponseQuiz`), `Cloze`, plus `GeneratedQuiz` — not a row in this catalog but the renderer for any stored `QuizItem` regardless of type. The remaining rows are future work.
 
 ## Flashcard specifics
 
@@ -400,6 +405,7 @@ grade. Migration is additive and does not require user action.
 ## Out of scope for v0.6.2
 
 - Additional quiz types (MCQ / FreeText / Cloze / Reorder / Audio / ImageID)
+  — FreeText and Cloze have since shipped; see the Status header
 - Tutor-driven quiz generation
 - Rubric-driven Tutor grading
 - Web Quiz UI (#44)

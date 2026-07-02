@@ -1038,11 +1038,13 @@ def quiz(
     --no-tui: Stream one RenderResponse per line to stdout, read one
               QuizResponse per line from stdin, grade and record.
     """
-    from spikuit_tutor.quiz import Flashcard as NewFlashcard
+    from spikuit_tutor.quiz import BaseQuiz, Cloze, Flashcard as NewFlashcard, GeneratedQuiz
     from spikuit_tutor.quiz.models import QuizResponse as NewQuizResponse
     from spikuit_tutor import compute_scaffold
     from spikuit_core import Spike
+    from spikuit_core.appkit import QuizItemRole
     import dataclasses as _dc
+    import hashlib
 
     async def _quiz():
         circuit = _get_circuit(brain)
@@ -1060,15 +1062,36 @@ def quiz(
                 return
 
             # Build flashcard queue
-            queue: list[tuple[str, NewFlashcard]] = []
+            queue: list[tuple[str, BaseQuiz]] = []
             for nid in due_ids:
                 neuron = await circuit.get_neuron(nid)
                 if neuron is None:
                     continue
                 scaffold = compute_scaffold(scheduler, nid)
-                queue.append((nid, NewFlashcard(neuron, scaffold)))
+                # Path A: a generated/stored quiz for this neuron, if any.
+                # Items with no question text are malformed — skip them
+                # rather than rendering a blank front.
+                quiz_items = [
+                    item
+                    for item in await circuit.get_quiz_items(nid, role=QuizItemRole.PRIMARY)
+                    if item.question
+                ]
+                if quiz_items:
+                    # Deterministic per neuron: stable across separate `spkt`
+                    # invocations (e.g. a --json dump followed by --no-tui),
+                    # unlike random.choice which reseeds per process. Plain
+                    # hash() is not used here — it's salted per-process by
+                    # PYTHONHASHSEED and would not be stable across runs.
+                    digest = hashlib.sha256(nid.encode()).digest()
+                    picked = quiz_items[int.from_bytes(digest[:8], "big") % len(quiz_items)]
+                    quiz = GeneratedQuiz(picked, scaffold)
+                else:
+                    # Fallback: Cloze poses a real production/recognition
+                    # question for vocab-shaped neurons; Flashcard otherwise.
+                    quiz = Cloze.try_build(neuron, scaffold) or NewFlashcard(neuron, scaffold)
+                queue.append((nid, quiz))
 
-            def _render_payload(nid: str, fc: NewFlashcard) -> dict:
+            def _render_payload(nid: str, fc: BaseQuiz) -> dict:
                 rr = fc.render()
                 return {
                     "neuron_id": nid,
@@ -1125,7 +1148,9 @@ def quiz(
                         typer.echo(f"unknown grade: {self_grade_name}", err=True)
                         continue
                     note = data.get("notes")
-                    response = NewQuizResponse(self_grade=grade, notes=note)
+                    response = NewQuizResponse(
+                        self_grade=grade, notes=note, answer=data.get("answer")
+                    )
                     result = fc.grade(response)
                     final_grade = result.grade or grade
                     await scheduler.review(

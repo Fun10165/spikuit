@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .models import (
     QuizResponse,
@@ -18,6 +18,9 @@ from .models import (
     RenderMode,
     RenderResponse,
 )
+
+if TYPE_CHECKING:
+    from ..scaffold import Scaffold
 
 
 class BaseQuiz(ABC):
@@ -30,6 +33,7 @@ class BaseQuiz(ABC):
     """
 
     quiz_type: ClassVar[str]
+    scaffold: "Scaffold"
 
     def __init__(self) -> None:
         self._submitted: asyncio.Event = asyncio.Event()

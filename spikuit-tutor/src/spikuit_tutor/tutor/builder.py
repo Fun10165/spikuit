@@ -16,7 +16,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from ..quiz import BaseQuiz, Flashcard, FreeResponseQuiz
+from ..quiz import BaseQuiz, Cloze, Flashcard, FreeResponseQuiz
 from ..quiz._content import extract_title
 from ..scaffold import ScaffoldLevel, compute_scaffold
 from .plan import ExamPlan, ExamStep, FollowUp, FollowUpGenerator, InterleaveMode
@@ -126,11 +126,16 @@ async def plan_exam(
 
 def _choose_quiz(neuron: "NeuronView", scaffold) -> "BaseQuiz":
     """Desirable-difficulties mapping: strong cards (MINIMAL/NONE) get the
-    harder free-response prompt; weaker cards (FULL/GUIDED) get the
-    supportive Flashcard so the learner can rebuild the trace.
+    harder free-response prompt; weaker cards (FULL/GUIDED) get a Cloze when
+    the neuron is ``TERM — MEANING`` shaped (so the front poses a real
+    production question instead of leaking the answer), else the supportive
+    Flashcard so the learner can rebuild the trace.
     """
     if scaffold.level in (ScaffoldLevel.MINIMAL, ScaffoldLevel.NONE):
         return FreeResponseQuiz(neuron, scaffold)
+    cloze = Cloze.try_build(neuron, scaffold)
+    if cloze is not None:
+        return cloze
     return Flashcard(neuron, scaffold)
 
 
