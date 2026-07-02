@@ -4,8 +4,8 @@
 v0.7.1 released 2026-04-13 (adapter + conformance). This plan is now
 a reference record — further AMKB work is tracked under
 `v0.7.2`+ milestones. Written against `amkb-spec` v0.2.0 and
-`amkb-sdk` (consumed as an editable path source until
-`amkb==0.1.0` ships on PyPI).
+`amkb-sdk` (consumed as a git dependency pinned to an exact rev in
+`pyproject.toml`; switches to a PyPI pin once `amkb>=0.1.0` ships).
 
 **Goal.** Let any AMKB-aware consumer drive a Spikuit brain through
 the `amkb.Store` Protocol — without changing what existing
@@ -183,10 +183,11 @@ Milestone reordering is not required.
   feature is opt-in, but v1.0.0 needs a retention policy
   (separate issue).
 - **Adapter depends on `amkb==0.0.1` which is intentionally
-  unusable.** Resolved at ship time by consuming `amkb-sdk` as an
-  editable path source (`../amkb/amkb-sdk`) from the workspace
-  root `pyproject.toml`. A proper `amkb==0.1.x` PyPI pin still
-  needs to happen before this repo is published externally.
+  unusable.** Resolved by consuming `amkb-sdk` as a git dependency
+  pinned to an exact rev in the workspace root `pyproject.toml`
+  (originally an editable path source at ship time). A proper
+  `amkb>=0.1.0` PyPI pin still needs to happen before this repo is
+  published externally.
 
 ## Success criteria — all met as of v0.7.1 ship
 
