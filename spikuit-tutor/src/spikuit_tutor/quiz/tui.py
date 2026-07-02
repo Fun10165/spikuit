@@ -1,8 +1,8 @@
 """Textual TUI for Quiz v2.
 
-Runs a review session over a queue of BaseQuiz instances. For v0.6.2
-this is wired up only to Flashcard, but the screen is generic over
-BaseQuiz so future quiz types can reuse it.
+Runs a review session over a queue of BaseQuiz instances — Flashcard,
+Cloze, GeneratedQuiz, and FreeResponseQuiz all render through the same
+flip interaction (Space toggles front/back).
 """
 
 from __future__ import annotations
@@ -197,7 +197,7 @@ class QuizApp(App[ReviewSessionResult]):
             body_lines.append("")
         for hint in content.hints:
             body_lines.append(f"[dim]• {hint}[/dim]")
-        if not self.flipped and self._current_quiz.__class__.__name__ == "Flashcard":
+        if not self.flipped:
             body_lines.append("")
             body_lines.append("[dim italic](Recall, then press Space to flip)[/dim italic]")
         card.update("\n".join(body_lines))

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from spikuit_core import Grade, Neuron
+from spikuit_core import Grade, Neuron, QuizItem, QuizItemRole
 
-from spikuit_tutor.quiz import Flashcard
+from spikuit_tutor.quiz import Cloze, Flashcard, GeneratedQuiz
 from spikuit_tutor.scaffold import Scaffold, ScaffoldLevel
 from spikuit_tutor.quiz.tui import QuizApp
 
@@ -76,3 +76,30 @@ async def test_quiz_app_quit_early():
     assert records == []
     assert app.return_value.stopped_early is True
     assert app.return_value.reviewed == 0
+
+
+@pytest.mark.asyncio
+async def test_quiz_app_handles_cloze_and_generated_in_one_queue():
+    # Review finding 15: the flip hint used to be gated on
+    # __class__.__name__ == "Flashcard" — a Cloze or GeneratedQuiz card
+    # would render silently with no flip affordance. This just needs the
+    # session to run cleanly end to end for non-Flashcard types.
+    records: list[tuple[str, Grade, str | None]] = []
+    n = Neuron(id="n-1", content="# rôder (Verb)\n\nprowl, lurk, to prowl", type="vocabulary", domain="french")
+    cloze = Cloze.try_build(n, Scaffold(level=ScaffoldLevel.FULL))
+    assert cloze is not None
+    item = QuizItem(question="to prowl?", answer="rôder", neuron_ids={"n-2": QuizItemRole.PRIMARY})
+    generated = GeneratedQuiz(item, Scaffold(level=ScaffoldLevel.FULL))
+
+    queue = [("n-1", cloze), ("n-2", generated)]
+    app = QuizApp(queue, lambda n, g, nt: records.append((n, g, nt)))
+
+    async with app.run_test() as pilot:
+        await pilot.press("space")
+        await pilot.press("3")
+        await pilot.press("space")
+        await pilot.press("3")
+        await pilot.pause()
+
+    assert [r[0] for r in records] == ["n-1", "n-2"]
+    assert app.return_value.reviewed == 2
