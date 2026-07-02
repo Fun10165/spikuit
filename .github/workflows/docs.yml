@@ -3,6 +3,12 @@ name: Deploy Docs
 on:
   push:
     branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "README.md"
+      - "llms.txt"
+      - "**/*.py"
   workflow_dispatch:
 
 permissions:
