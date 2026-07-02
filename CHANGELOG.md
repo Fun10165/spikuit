@@ -7,7 +7,7 @@ carry breaking changes.
 
 This log begins at v0.9.0; earlier releases predate it.
 
-## [Unreleased]
+## [0.9.1] — 2026-07-02
 
 ### Added
 
