@@ -1216,8 +1216,34 @@ def visualize(
     output: Path = typer.Option("circuit.html", "--output", "-o", help="Output HTML path"),
     open_browser: bool = typer.Option(True, "--open/--no-open", help="Open in browser"),
     brain: Optional[Path] = typer.Option(None, "--brain", "-b", help="Brain root directory"),
+    as_json: bool = typer.Option(False, "--json", help="Dump the viz data payload as JSON instead of generating HTML"),
+    overlay: Optional[str] = typer.Option(None, "--overlay", help="Include the tutor overlay (only value: 'tutor')"),
+    size_by: str = typer.Option("centrality", "--size-by", help="Node size metric: centrality | pressure | stability"),
 ) -> None:
     """Generate an interactive graph visualization (HTML)."""
+    if as_json:
+        from .viz.payload import build_viz_payload
+
+        async def _visualize_json():
+            circuit = _get_circuit(brain)
+            await circuit.connect()
+            sched = None
+            if overlay == "tutor":
+                sched = _get_scheduler(circuit, brain)
+                await sched.open()
+            try:
+                payload = await build_viz_payload(
+                    circuit, overlay=overlay, size_by=size_by, scheduler=sched,
+                )
+                _out(payload, use_json=True)
+            finally:
+                if sched is not None:
+                    await sched.close()
+                await circuit.close()
+
+        _run(_visualize_json())
+        return
+
     from pyvis.network import Network as PyvisNetwork
 
     async def _visualize():
