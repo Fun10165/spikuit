@@ -11,8 +11,8 @@ contract: scaffolding reads FSRS card state, which the substrate no
 longer holds. `compute_scaffold` reads card state from the tutor's
 overlay store and graph topology from the substrate live, so it belongs
 with the tutor application package. The `appkit` surface that adapters
-program against is now `Grade`, `Spike`, `NeuronView`, and the
-`SubstrateView` structural protocol.
+program against is now `Grade`, `Spike`, `QuizItem`, `QuizItemRole`,
+`NeuronView`, and the `SubstrateView` structural protocol.
 
 ::: spikuit_tutor.compute_scaffold
 
@@ -30,3 +30,9 @@ in v0.7.x).
 ::: spikuit_tutor.quiz.BaseQuiz
 
 ::: spikuit_tutor.quiz.Flashcard
+
+::: spikuit_tutor.quiz.FreeResponseQuiz
+
+::: spikuit_tutor.quiz.Cloze
+
+::: spikuit_tutor.quiz.GeneratedQuiz
