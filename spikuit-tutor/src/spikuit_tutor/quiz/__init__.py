@@ -7,6 +7,7 @@ from .base import BaseQuiz
 from .cloze import Cloze
 from .flashcard import FLASHCARD_GRADE_CHOICES, Flashcard
 from .free_response import FreeResponseQuiz
+from .generated import GeneratedQuiz
 from .grader import LLMGrader
 from .models import (
     GradeChoice,
@@ -23,6 +24,7 @@ __all__ = [
     "FLASHCARD_GRADE_CHOICES",
     "Flashcard",
     "FreeResponseQuiz",
+    "GeneratedQuiz",
     "GradeChoice",
     "LLMGrader",
     "QuizResponse",
