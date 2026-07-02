@@ -19,6 +19,8 @@ def test_appkit_exports_exactly_the_documented_surface():
     assert sorted(appkit.__all__) == [
         "Grade",
         "NeuronView",
+        "QuizItem",
+        "QuizItemRole",
         "Spike",
         "SubstrateView",
         "normalize_journal_mode",
