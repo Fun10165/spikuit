@@ -18,7 +18,7 @@ classifiers = [
     "Topic :: Education",
 ]
 dependencies = [
-    "pyvis>=0.3.2",
+    "networkx>=3.2",
     "spikuit-core[engine]",
     "spikuit-tutor",
     "typer>=0.24.1",

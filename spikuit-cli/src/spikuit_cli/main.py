@@ -1220,201 +1220,45 @@ def visualize(
     overlay: Optional[str] = typer.Option(None, "--overlay", help="Include the tutor overlay (only value: 'tutor')"),
     size_by: str = typer.Option("centrality", "--size-by", help="Node size metric: centrality | pressure | stability"),
 ) -> None:
-    """Generate an interactive graph visualization (HTML)."""
-    if as_json:
-        from .viz.payload import build_viz_payload
+    """Generate an interactive graph visualization (HTML).
 
-        async def _visualize_json():
-            circuit = _get_circuit(brain)
-            await circuit.connect()
-            sched = None
-            if overlay == "tutor":
-                sched = _get_scheduler(circuit, brain)
-                await sched.open()
-            try:
-                payload = await build_viz_payload(
-                    circuit, overlay=overlay, size_by=size_by, scheduler=sched,
-                )
-                _out(payload, use_json=True)
-            finally:
-                if sched is not None:
-                    await sched.close()
-                await circuit.close()
-
-        _run(_visualize_json())
-        return
-
-    from pyvis.network import Network as PyvisNetwork
+    See docs/design/graph-viz.md for the app's mode system (Links /
+    Strength, with Activity / Memory / Health landing in a later phase).
+    """
+    from .viz.build import build_html
+    from .viz.payload import build_viz_payload
 
     async def _visualize():
         circuit = _get_circuit(brain)
         await circuit.connect()
-        scheduler = _get_scheduler(circuit, brain)
-        await scheduler.open()
+        sched = None
+        if overlay == "tutor":
+            sched = _get_scheduler(circuit, brain)
+            await sched.open()
         try:
-            graph = circuit.graph
-            if graph.number_of_nodes() == 0:
+            payload = await build_viz_payload(
+                circuit, overlay=overlay, size_by=size_by, scheduler=sched,
+            )
+            if as_json:
+                _out(payload, use_json=True)
+                return
+            if payload["meta"]["neuron_count"] == 0:
                 typer.echo("Circuit is empty — nothing to visualize.")
                 return
 
-            net = PyvisNetwork(
-                height="100vh",
-                width="100%",
-                directed=True,
-                bgcolor="#1a1a2e",
-                font_color="#e0e0e0",
-                select_menu=True,
-                cdn_resources="in_line",
-            )
-
-            net.set_options("""{
-                "physics": {
-                    "forceAtlas2Based": {
-                        "gravitationalConstant": -80,
-                        "centralGravity": 0.01,
-                        "springLength": 120,
-                        "springConstant": 0.08,
-                        "damping": 0.4
-                    },
-                    "solver": "forceAtlas2Based",
-                    "stabilization": {"iterations": 150}
-                },
-                "edges": {
-                    "arrows": {"to": {"enabled": true, "scaleFactor": 0.6}},
-                    "smooth": {"type": "curvedCW", "roundness": 0.15},
-                    "color": {"inherit": false}
-                },
-                "interaction": {
-                    "hover": true,
-                    "tooltipDelay": 100,
-                    "multiselect": true
-                }
-            }""")
-
-            _DOMAIN_COLORS = {
-                "math": "#e74c3c",
-                "cs": "#3498db",
-                "language": "#2ecc71",
-                "philosophy": "#9b59b6",
-            }
-            _COMMUNITY_PALETTE = [
-                "#e74c3c", "#3498db", "#2ecc71", "#9b59b6", "#f39c12",
-                "#1abc9c", "#e67e22", "#e91e63", "#00bcd4", "#8bc34a",
-                "#ff5722", "#607d8b", "#cddc39", "#795548", "#03a9f4",
-            ]
-            _DEFAULT_NODE_COLOR = "#5dade2"
-
-            # Determine coloring strategy: communities first, fallback to domain
-            cmap = circuit.community_map()
-            use_community_colors = len(cmap) > 0
-
-            # Compute degree centrality for node sizing
-            centrality_map: dict[str, float] = {}
-            if graph.number_of_nodes() > 1:
-                import networkx as nx_local
-                centrality_map = nx_local.degree_centrality(graph)
-
-            for nid in graph.nodes:
-                node_data = graph.nodes[nid]
-                neuron = await circuit.get_neuron(nid)
-                title = _extract_title(neuron.content) if neuron else nid
-                domain = node_data.get("domain")
-                pressure = node_data.get("pressure", 0.0)
-                community_id = node_data.get("community_id")
-
-                # Size: base + stability + centrality (not just pressure)
-                card = scheduler.get_card(nid)
-                stability = card.stability if card and card.stability else 0.0
-                centrality = centrality_map.get(nid, 0.0)
-                size = 12 + stability * 3 + centrality * 20 + min(pressure, 1.0) * 10
-
-                # Color: community-based or domain-based
-                if use_community_colors and community_id is not None:
-                    color = _COMMUNITY_PALETTE[community_id % len(_COMMUNITY_PALETTE)]
-                    group = community_id  # pyvis physics clustering
-                elif domain:
-                    color = _DOMAIN_COLORS.get(domain, _DEFAULT_NODE_COLOR)
-                    group = None
-                else:
-                    color = _DEFAULT_NODE_COLOR
-                    group = None
-
-                tooltip = f"<b>{title}</b><br>ID: {nid}"
-                if community_id is not None:
-                    tooltip += f"<br>community: {community_id}"
-                if card:
-                    if card.stability is not None:
-                        tooltip += f"<br>stability: {card.stability:.1f}"
-                    if card.difficulty is not None:
-                        tooltip += f"<br>difficulty: {card.difficulty:.1f}"
-                    tooltip += f"<br>state: {card.state.name}"
-                if pressure > 0:
-                    tooltip += f"<br>pressure: {pressure:.3f}"
-
-                kwargs = {"label": title, "title": tooltip, "size": size, "color": color, "font": {"size": 12}}
-                if group is not None:
-                    kwargs["group"] = group
-                net.add_node(nid, **kwargs)
-
-            _EDGE_STYLES = {
-                "requires": {"color": "#e74c3c", "dashes": False},
-                "extends": {"color": "#f39c12", "dashes": False},
-                "contrasts": {"color": "#9b59b6", "dashes": [5, 5]},
-                "relates_to": {"color": "#95a5a6", "dashes": [2, 4]},
-            }
-
-            for u, v, data in graph.edges(data=True):
-                syn_type = data.get("type", "relates_to")
-                weight = data.get("weight", 0.5)
-                co_fires = data.get("co_fires", 0)
-                style = _EDGE_STYLES.get(syn_type, _EDGE_STYLES["relates_to"])
-                edge_width = 1 + weight * 4
-                tooltip = f"{syn_type}<br>weight: {weight:.2f}<br>co_fires: {co_fires}"
-                net.add_edge(u, v, title=tooltip, width=edge_width, color=style["color"], dashes=style.get("dashes", False))
-
-            net.save_graph(str(output))
-
-            html = output.read_text()
-            css_inject = "<style>html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }</style>"
-
-            # Build legend HTML
-            legend_items = ""
-            if use_community_colors:
-                groups: dict[int, int] = {}
-                for nid, cid in cmap.items():
-                    groups[cid] = groups.get(cid, 0) + 1
-                for cid in sorted(groups):
-                    c = _COMMUNITY_PALETTE[cid % len(_COMMUNITY_PALETTE)]
-                    legend_items += (
-                        f'<div style="display:flex;align-items:center;gap:6px;margin:2px 0">'
-                        f'<span style="width:12px;height:12px;border-radius:50%;background:{c};display:inline-block"></span>'
-                        f'<span>Community {cid} ({groups[cid]})</span></div>'
-                    )
-            else:
-                for domain_name, c in _DOMAIN_COLORS.items():
-                    legend_items += (
-                        f'<div style="display:flex;align-items:center;gap:6px;margin:2px 0">'
-                        f'<span style="width:12px;height:12px;border-radius:50%;background:{c};display:inline-block"></span>'
-                        f'<span>{domain_name}</span></div>'
-                    )
-
-            legend_html = (
-                '<div id="legend" style="position:fixed;top:10px;right:10px;background:rgba(26,26,46,0.9);'
-                'padding:12px 16px;border-radius:8px;color:#e0e0e0;font:13px monospace;z-index:1000;'
-                f'max-height:50vh;overflow-y:auto">{legend_items}</div>'
-            )
-
-            html = html.replace("<head>", f"<head>{css_inject}", 1)
-            html = html.replace("</body>", f"{legend_html}</body>", 1)
+            html = build_html(payload)
             output.write_text(html)
-
-            typer.echo(f"Saved to {output} ({graph.number_of_nodes()} neurons, {graph.number_of_edges()} synapses)")
+            typer.echo(
+                f"Saved to {output} "
+                f"({payload['meta']['neuron_count']} neurons, {payload['meta']['synapse_count']} synapses)"
+            )
 
             if open_browser:
                 import webbrowser
                 webbrowser.open(f"file://{output.resolve()}")
         finally:
-            await scheduler.close()
+            if sched is not None:
+                await sched.close()
             await circuit.close()
 
     _run(_visualize())
