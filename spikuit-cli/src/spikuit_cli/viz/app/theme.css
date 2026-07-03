@@ -238,7 +238,55 @@ html, body {
 }
 
 .viz-slider-wrap input[type="range"] {
+  /* Native range inputs ignore a plain `width` in some browsers (notably
+     Safari) unless the native track/thumb chrome is reset first — without
+     this the control falls back to a huge intrinsic/flex-stretched size.
+     Reset to a bare track, then draw our own thumb/track so it looks the
+     same (small, theme-colored) everywhere. */
+  appearance: none;
+  -webkit-appearance: none;
   width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  flex: none;
+  flex-shrink: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--hairline);
+  outline: none;
+  margin: 0;
+}
+
+.viz-slider-wrap input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--hairline);
+}
+
+.viz-slider-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--text-1);
+  cursor: pointer;
+}
+
+.viz-slider-wrap input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--hairline);
+}
+
+.viz-slider-wrap input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--text-1);
+  cursor: pointer;
 }
 
 /* -- detail panel --------------------------------------------------------- */
