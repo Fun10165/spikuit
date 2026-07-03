@@ -117,3 +117,17 @@ def test_node_labels_use_the_theme_ink_token_not_sigmas_black_default():
     html = build_html(_payload())
     assert "labelColor" in html
     assert "ctx.tokens.text1" in html
+
+
+def test_label_density_is_tuned_down_from_sigma_defaults():
+    # Regression: a real ~230-node brain rendered with every node's label
+    # always on (labelRenderedSizeThreshold: 0) produced illegible text
+    # soup — sigma's default occlusion grid is keyed on node position, not
+    # label text width, so long bilingual labels overlapped even when
+    # nodes themselves weren't crowded. Labels are still reachable via
+    # hover/selection (forceLabel in the node reducer); this only trims
+    # the always-on set.
+    html = build_html(_payload())
+    assert "labelRenderedSizeThreshold: 0" not in html
+    assert "labelGridCellSize" in html
+    assert "labelDensity" in html

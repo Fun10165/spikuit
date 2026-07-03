@@ -77,10 +77,17 @@
       // and defaults to black text — invisible against the dark surface.
       // Follow the active theme's ink token instead.
       labelColor: { color: ctx.tokens.text1 || "#0b0b0b" },
-      // CVD relief rule (design doc §4): labels stay visible at default
-      // zoom regardless of node pixel size — sigma's own threshold would
-      // otherwise hide labels on small (e.g. cold/low-centrality) nodes.
-      labelRenderedSizeThreshold: 0,
+      // CVD relief rule (design doc §4): labels must stay ACCESSIBLE, which
+      // "always render every node's label regardless of density" doesn't
+      // actually serve — sigma's default grid-based culling is keyed on
+      // node position, not text width, so long labels overlap badly at
+      // real-brain node counts (~200+) even when nodes themselves aren't
+      // crowded. Every node's label is still guaranteed reachable via
+      // hover/selection (forceLabel below) — the relief is "never
+      // permanently hidden", not "always all rendered at once".
+      // labelRenderedSizeThreshold left at sigma's default (6).
+      labelGridCellSize: 150, // up from the 100px default: fewer, less-crowded simultaneous labels
+      labelDensity: 0.8, // slightly more selective than the default 1
       edgeProgramClasses: Sigma.rendering && Sigma.rendering.EdgeArrowProgram
         ? { arrow: Sigma.rendering.EdgeArrowProgram }
         : undefined,
