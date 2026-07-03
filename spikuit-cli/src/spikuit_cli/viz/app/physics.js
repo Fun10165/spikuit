@@ -32,6 +32,12 @@
         edgeWeightInfluence: 1,
         barnesHutOptimize: graph.order > 500,
         scalingRatio: 10,
+        // Weighted attraction otherwise collapses connected pairs onto the
+        // same point (verified on the real brain: neighbors rendered
+        // entirely inside each other, ego view showed one blob).
+        // adjustSizes makes repulsion respect each node's `size` attribute
+        // so no node ends up inside another.
+        adjustSizes: true,
       },
     });
 

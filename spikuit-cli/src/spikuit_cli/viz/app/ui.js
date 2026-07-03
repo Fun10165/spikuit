@@ -49,14 +49,36 @@
     searchWrap.appendChild(searchInput);
     searchWrap.appendChild(searchResults);
 
+    function clearSearch() {
+      searchInput.value = "";
+      searchResults.innerHTML = "";
+      searchResults.style.display = "none";
+    }
+
     searchInput.addEventListener("input", () => {
       const q = searchInput.value.trim().toLowerCase();
       searchResults.innerHTML = "";
       if (!q) { searchResults.style.display = "none"; return; }
-      const matches = payload.nodes.filter((n) => n.label.toLowerCase().includes(q)).slice(0, 20);
+      // Rank: label starts with the query > a word starts with it > bare
+      // substring. Plain .includes() alone surfaces junk — e.g. searching
+      // "un" matched every "(Noun)" POS tag before "un pari".
+      const scored = [];
+      for (const n of payload.nodes) {
+        const label = n.label.toLowerCase();
+        let score = -1;
+        if (label.startsWith(q)) score = 0;
+        else if (label.includes(" " + q) || label.includes("(" + q)) score = 1;
+        else if (label.includes(q)) score = 2;
+        if (score >= 0) scored.push([score, n]);
+      }
+      scored.sort((a, b) => a[0] - b[0] || a[1].label.localeCompare(b[1].label));
+      const matches = scored.slice(0, 20).map(([, n]) => n);
       if (!matches.length) { searchResults.style.display = "none"; return; }
       matches.forEach((n) => {
-        const row = el("div", { class: "viz-search-result", text: n.label, onClick: () => selectNode(n.id) });
+        const row = el("div", {
+          class: "viz-search-result", text: n.label,
+          onClick: () => { selectNode(n.id); clearSearch(); },
+        });
         searchResults.appendChild(row);
       });
       searchResults.style.display = "block";
@@ -115,8 +137,26 @@
       weightSlider,
     ]);
 
-    const filterRow = el("div", { class: "viz-row" }, [...groupChips, ...edgeChips, weightWrap]);
+    // Ego-mode indicator + exit — appears in the filter row while a local
+    // graph is active so the "why is most of my graph hidden" state is
+    // always visible and one click away from undoing.
+    const egoChip = el("button", {
+      class: "viz-chip", "data-active": "true", style: "display:none",
+      onClick: () => state.update({ ego: null }),
+    });
+
+    const filterRow = el("div", { class: "viz-row" }, [...groupChips, ...edgeChips, weightWrap, egoChip]);
     const topbar = el("div", { class: "viz-topbar" }, [topRow, filterRow]);
+
+    function renderEgoChip() {
+      const ego = state.get().ego;
+      if (ego) {
+        egoChip.textContent = "Local graph (depth " + ego.depth + ") — press Esc or click to exit";
+        egoChip.style.display = "inline-flex";
+      } else {
+        egoChip.style.display = "none";
+      }
+    }
 
     // -- legend --------------------------------------------------------------
 
@@ -257,17 +297,19 @@
       }
       if (s.ego !== prev.ego) {
         render.setEgo(s.ego ? s.ego.center : null, s.ego ? s.ego.depth : 0);
+        renderEgoChip();
       }
     });
 
     renderLegend();
     renderPanel();
+    renderEgoChip();
 
     // -- keyboard shortcuts --------------------------------------------------
 
     window.addEventListener("keydown", (ev) => {
       if (document.activeElement === searchInput) {
-        if (ev.key === "Escape") { searchInput.blur(); searchResults.style.display = "none"; }
+        if (ev.key === "Escape") { searchInput.blur(); clearSearch(); }
         return;
       }
       const mode = VizModes.MODES.find((m) => m.hotkey === ev.key);
