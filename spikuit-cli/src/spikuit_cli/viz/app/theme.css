@@ -73,6 +73,13 @@ html, body {
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+/* Keyboard focus must be visible (quality floor): a clear ink-colored ring,
+   only for keyboard focus — pointer clicks don't paint it. */
+.viz-root :focus-visible {
+  outline: 2px solid var(--text-1);
+  outline-offset: 1px;
+}
+
 .viz-root {
   position: relative;
   width: 100vw;

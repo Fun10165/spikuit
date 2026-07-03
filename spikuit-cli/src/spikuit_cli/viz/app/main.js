@@ -9,7 +9,8 @@
     sOther: "--s-other", muted: "--muted",
     ramp1: "--ramp-1", ramp2: "--ramp-2", ramp3: "--ramp-3",
     ramp4: "--ramp-4", ramp5: "--ramp-5", ramp6: "--ramp-6",
-    text1: "--text-1",
+    text1: "--text-1", panel: "--panel", hairline: "--hairline",
+    surface: "--surface",
   };
 
   function readTokens(rootEl) {
@@ -23,14 +24,28 @@
 
   function wireDrag(render) {
     const captor = render.renderer.getMouseCaptor();
+    const DRAG_THRESHOLD_PX = 3;
+    let pending = null; // { node, startX, startY } — mouse down, not yet a drag
     let dragging = null;
 
-    render.renderer.on("downNode", ({ node }) => {
-      dragging = node;
-      render.renderer.getCamera().disable();
+    render.renderer.on("downNode", ({ node, event }) => {
+      pending = { node, startX: event.x, startY: event.y };
     });
 
     captor.on("mousemovebody", (coords) => {
+      // Don't start dragging until the pointer actually travels: without a
+      // threshold, the 1px of jitter in an ordinary click moved the node
+      // and re-heated the whole layout — every selection click shifted the
+      // graph (verified in the QA screenshots via node positions drifting
+      // between interaction states).
+      if (pending && !dragging) {
+        const dx = coords.x - pending.startX;
+        const dy = coords.y - pending.startY;
+        if (Math.sqrt(dx * dx + dy * dy) >= DRAG_THRESHOLD_PX) {
+          dragging = pending.node;
+          render.renderer.getCamera().disable();
+        }
+      }
       if (!dragging) return;
       const pos = render.renderer.viewportToGraph(coords);
       render.graph.setNodeAttribute(dragging, "x", pos.x);
@@ -40,6 +55,7 @@
     });
 
     function release() {
+      pending = null;
       if (!dragging) return;
       dragging = null;
       render.renderer.getCamera().enable();

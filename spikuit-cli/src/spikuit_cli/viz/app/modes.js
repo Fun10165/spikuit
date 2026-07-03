@@ -163,16 +163,25 @@
       arrow: () => false,
     },
     panelExtras: (state, payload) => {
-      const top = payload.edges
-        .slice()
-        .sort((a, b) => b.weight - a.weight)
-        .slice(0, 10);
+      const labelOf = {};
+      for (const n of payload.nodes) labelOf[n.id] = n.label;
+      // Bidirectional synapse types (contrasts / relates_to) exist as two
+      // directed edges in the payload — list each unordered pair once.
+      const seenPairs = new Set();
+      const top = [];
+      for (const e of payload.edges.slice().sort((a, b) => b.weight - a.weight)) {
+        const pairKey = [e.source, e.target].sort().join("↔") + "|" + e.type;
+        if (seenPairs.has(pairKey)) continue;
+        seenPairs.add(pairKey);
+        top.push(e);
+        if (top.length === 10) break;
+      }
       return [
         {
           title: "Strongest synapses",
           items: top.map((e) => ({
             id: e.source + "->" + e.target,
-            label: e.source + " — " + e.target,
+            label: (labelOf[e.source] || e.source) + " — " + (labelOf[e.target] || e.target),
             sublabel: e.type + ", w=" + e.weight.toFixed(2),
             payload: e,
           })),
@@ -185,6 +194,15 @@
         kind: "ramp-step",
         color: ctx.tokens["ramp" + i],
       }));
+      // Degenerate case: every synapse carries the same weight (common in
+      // young brains where nothing has been reinforced yet) — a quintile
+      // readout of identical numbers is noise, say the true thing instead.
+      if (q5 - q0 < 1e-9) {
+        return [
+          { kind: "section", title: "Synapse weight" },
+          { kind: "text", text: "All synapses currently share the same weight (" + q0.toFixed(2) + ") — reviews that co-fire neurons will differentiate them." },
+        ];
+      }
       return [
         { kind: "section", title: "Synapse weight (quintile)" },
         { kind: "ramp", steps: rampItems },
