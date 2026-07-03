@@ -131,3 +131,19 @@ def test_label_density_is_tuned_down_from_sigma_defaults():
     assert "labelRenderedSizeThreshold: 0" not in html
     assert "labelGridCellSize" in html
     assert "labelDensity" in html
+
+
+def test_weight_slider_resets_native_appearance():
+    # Regression: a real browser (reported directly by the user) rendered
+    # the weight-threshold range input at ~8-10x its intended size — a
+    # plain `width: 90px` doesn't reliably override a native range input's
+    # own chrome in every browser/OS combination (observed correct in this
+    # project's own headless Chromium and WebKit test runs, but not in the
+    # user's actual browser, most likely due to OS-level control scaling).
+    # `appearance: none` + custom thumb/track pseudo-elements is the
+    # standard, fully robust fix — it removes native chrome entirely
+    # rather than trying to override it.
+    html = build_html(_payload())
+    assert "appearance: none" in html
+    assert "::-webkit-slider-thumb" in html
+    assert "::-moz-range-thumb" in html
