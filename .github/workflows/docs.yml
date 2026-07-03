@@ -1,36 +1,32 @@
 name: Deploy Docs
 
-# Auto-deploy-on-push is PAUSED (see the comment further down) — GitHub
-# Pages' own deployment backend has been getting stuck in
-# "deployment_queued" for the full 10-minute actions/deploy-pages
-# timeout on this repo, independent of our workflow config (confirmed:
-# our concurrency/path-filter fixes work as intended, cancelling
-# superseded runs correctly, but the one deployment left standing each
-# time still hangs server-side). Re-enable the `push:` trigger below
-# once that's settled; until then, deploy manually:
-#   gh workflow run "Deploy Docs" --repo takyone/spikuit
+# Branch-based Pages (mkdocs gh-deploy -> gh-pages branch), not the
+# Actions-artifact-based Deployments API. The latter (actions/deploy-pages)
+# repeatedly got stuck in "deployment_queued" for its full 10-minute
+# timeout on this repo — GitHub-side backend flakiness, confirmed
+# independent of this workflow's own config. Branch-based Pages has no
+# comparable async deployment queue: a push to gh-pages is just served as
+# static files. Repo Pages source is set to "Deploy from a branch: gh-pages".
 on:
-  # push:
-  #   branches: [main]
-  #   paths:
-  #     - "docs/**"
-  #     - "mkdocs.yml"
-  #     - "README.md"
-  #     - "llms.txt"
-  #     - "**/*.py"
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "README.md"
+      - "llms.txt"
+      - "**/*.py"
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write # mkdocs gh-deploy pushes to the gh-pages branch
 
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -44,21 +40,10 @@ jobs:
       - name: Install dependencies
         run: uv sync --dev
 
-      - name: Build docs
-        run: uv run mkdocs build
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site/
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Build and deploy docs
+        run: uv run mkdocs gh-deploy --force --clean
