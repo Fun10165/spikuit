@@ -106,3 +106,14 @@ def test_no_adversarial_content_leaks_outside_the_data_island():
     html = build_html(evil)
     before_island = html.split('<script type="application/json" id="graph-data">')[0]
     assert "onerror" not in before_island
+
+
+def test_node_labels_use_the_theme_ink_token_not_sigmas_black_default():
+    # Regression: sigma's node-label canvas layer is separate from the
+    # CSS-themed chrome and defaults to black text, which is invisible
+    # against the dark surface. render.js must pass an explicit
+    # labelColor sourced from the --text-1 token (white in dark mode)
+    # rather than relying on sigma's own default.
+    html = build_html(_payload())
+    assert "labelColor" in html
+    assert "ctx.tokens.text1" in html
