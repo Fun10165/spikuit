@@ -9,6 +9,7 @@
     sOther: "--s-other", muted: "--muted",
     ramp1: "--ramp-1", ramp2: "--ramp-2", ramp3: "--ramp-3",
     ramp4: "--ramp-4", ramp5: "--ramp-5", ramp6: "--ramp-6",
+    text1: "--text-1",
   };
 
   function readTokens(rootEl) {

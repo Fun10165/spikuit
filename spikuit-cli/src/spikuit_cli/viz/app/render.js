@@ -73,6 +73,10 @@
     const renderer = new Sigma(graph, container, {
       renderEdgeLabels: false,
       defaultEdgeType: "line",
+      // Sigma's label layer is a separate canvas from the CSS-themed chrome
+      // and defaults to black text — invisible against the dark surface.
+      // Follow the active theme's ink token instead.
+      labelColor: { color: ctx.tokens.text1 || "#0b0b0b" },
       // CVD relief rule (design doc §4): labels stay visible at default
       // zoom regardless of node pixel size — sigma's own threshold would
       // otherwise hide labels on small (e.g. cold/low-centrality) nodes.
