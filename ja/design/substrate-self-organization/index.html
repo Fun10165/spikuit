@@ -1,0 +1,1825 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A knowledge base that gets smarter the more you use it">
+      
+      
+      
+        <link rel="canonical" href="https://takyone.github.io/spikuit/ja/design/substrate-self-organization/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="../../../design/substrate-self-organization/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="ja">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Substrate Self-Organization — Noise Resilience & Sub-Linear MAC - Spikuit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/charts.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#substrate-self-organization-noise-resilience-sub-linear-mac" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../../" title="Spikuit" class="md-header__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spikuit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Substrate Self-Organization — Noise Resilience &amp; Sub-Linear MAC
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../design/substrate-self-organization/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/takyone/spikuit" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Spikuit" class="md-nav__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spikuit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/takyone/spikuit" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ホーム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使い方
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RAG
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rag/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クイックスタート
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    コンセプト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix: アルゴリズムと技術的詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/neuroscience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    計算神経科学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/psychology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    認知・発達心理学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/spaced-repetition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    間隔反復システム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ナレッジグラフとグラフベースML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    情報検索とRAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    実装詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    APIリファレンス
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    データ
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    データ
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    エンジン
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    エンジン
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/circuit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/propagation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    伝播
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/embedder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学習
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学習
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/scaffold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaffold & Learn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    セッション
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-why-this-is-a-spikuit-doc-not-an-amkb-spec-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Why this is a Spikuit doc, not an amkb-spec change
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-positioning-spikuits-differentiator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Positioning — Spikuit's differentiator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-substrate-behaviors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Substrate behaviors
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Substrate behaviors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-signed-use-signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Signed use signal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-cold-component-retrieve-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Cold-component retrieve mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-dispute-driven-demotion-as-a-curation-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Dispute-driven demotion as a curation policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-new-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 New events
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-new-stat-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 New stat metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-what-changes-in-amkb-nothing-almost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. What changes in amkb (nothing, almost)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-relationship-to-the-app-layer-split" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Relationship to the app-layer split
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-sage-correspondence-sanity-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. SAGE correspondence (sanity check)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-open-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Open questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-cross-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Cross-references
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="substrate-self-organization-noise-resilience-sub-linear-mac">Substrate Self-Organization — Noise Resilience &amp; Sub-Linear MAC<a class="headerlink" href="#substrate-self-organization-noise-resilience-sub-linear-mac" title="Permanent link">&para;</a></h1>
+<p><strong>Status.</strong> <strong>Design proposal (draft).</strong> Scheduled as the v0.8.x
+milestone — see <code>roadmap.md</code> §4.2 and §5 for the per-release
+breakdown. Companion to <code>amkb-integration-plan.md</code> (shipped v0.7.x)
+and <code>amkb-core-plumbing-spec.md</code>. Written 2026-05-20.</p>
+<p><strong>Provenance.</strong> This document re-homes the substrate-facing half of
+an <code>rl-research</code> design session (#33 SAGE). That session's working
+note —
+<code>agent-workspace/contexts/active/spikuit-amkb-v03-tutor-extraction.md</code>
+— originally framed the ideas below as an <strong>amkb protocol v0.3</strong>
+extension (a "7-verb cognitive API"). Reading the actual <code>amkb-spec</code>
+showed that framing was wrong: the verbs proposed there describe the
+<em>Spikuit substrate</em>, not the protocol. This doc is the corrected
+home for them. See §1.</p>
+<h2 id="1-why-this-is-a-spikuit-doc-not-an-amkb-spec-change">1. Why this is a Spikuit doc, not an amkb-spec change<a class="headerlink" href="#1-why-this-is-a-spikuit-doc-not-an-amkb-spec-change" title="Permanent link">&para;</a></h2>
+<p>The rl-research note proposed adding verbs (<code>encode</code>, <code>record_use</code>,
+<code>curate</code>, <code>stat</code>) and a new conformance level to <code>amkb-spec</code>. That
+is not viable, and not because of a naming clash:</p>
+<ul>
+<li><code>amkb-spec</code> v0.2 is a <strong>17-operation transaction-owned graph
+  protocol</strong> (<code>create</code>/<code>rewrite</code>/<code>retire</code>/<code>merge</code>/<code>link</code>/<code>unlink</code>/
+  <code>get</code>/<code>find_by_attr</code>/<code>neighbors</code>/<code>retrieve</code>/<code>begin</code>/<code>commit</code>/
+  <code>abort</code>/<code>history</code>/<code>diff</code>/<code>revert</code>/<code>events</code>). The proposed 7 verbs
+  would <em>replace</em> that model, not extend it.</li>
+<li>The protocol <strong>deliberately excludes</strong> exactly what the proposal
+  adds. <code>00-overview</code> lists "scheduling and activation dynamics …
+  pressure/decay" as a non-goal: "An AMKB is a graph store with
+  lineage and events; it is not a learning system." Rationale R4
+  rejects an <code>ingest</code>/<code>encode</code> operation (ingestion is a transaction
+  pattern). R8 rejects a retrieval-quality benchmark in the spec
+  ("would force all implementations toward a single retrieval
+  strategy"). R13 makes relevance implementation-defined.</li>
+<li>Conformance levels L1–L5 (Core / Lineage / Transactional /
+  Structural+Intent / Policy) are all assigned; there is no free
+  "Resilience" slot, and per R8 a resilience benchmark would not
+  belong in the spec anyway.</li>
+</ul>
+<p>The shipped architecture already draws the line in the right place.
+<code>amkb-integration-plan.md</code> constraint 1: <strong>"No core-logic leakage
+into AMKB surface. APPNP, FSRS, pressure dynamics, community
+detection, and embedder internals MUST NOT appear in any type,
+method, or event that the adapter exposes."</strong> Noise resilience is
+built <em>from</em> exactly those internals. It is therefore a property of
+<code>spikuit-core</code> (the substrate), surfaced — if at all — as a Spikuit
+extension, never as an amkb operation.</p>
+<p><strong>Decision (2026-05-20, with user).</strong> <code>amkb-spec</code> stays as-is. The
+behaviors below are <code>spikuit-core</code> substrate design. The amkb
+adapter is unaffected unless §4 says otherwise.</p>
+<h2 id="2-positioning-spikuits-differentiator">2. Positioning — Spikuit's differentiator<a class="headerlink" href="#2-positioning-spikuits-differentiator" title="Permanent link">&para;</a></h2>
+<p>Most RAG/KB research optimizes one of two axes: retrieval precision
+(HyDE, GraphRAG, rerankers) or explainability (citations, source
+highlighting). Spikuit's substrate competes on a third, near-empty
+axis: <strong>self-organization</strong> — the store stays clean and cheap to
+maintain <em>on its own</em> as noisy material accumulates.</p>
+<p>Concretely, the substrate aims to make two claims true:</p>
+<ol>
+<li><strong>Noise resilience.</strong> Material later judged wrong is demoted by
+   accumulated human dispute signal, and stops surfacing in
+   retrieval — without a human editing the graph by hand.</li>
+<li><strong>Sub-linear MAC.</strong> <em>Maintenance-Attention Cost</em> — human
+   intervention time — grows sub-linearly in ingested volume. This
+   is the Spikuit-paper H2 hypothesis (see
+   <code>contexts/active/spikuit-cognitive-memory-model.md</code>).</li>
+</ol>
+<p>These are <strong>Spikuit</strong> claims, measured by a <strong>Spikuit</strong> (or future
+<code>amkb-bench</code>-style) evaluation harness — not amkb conformance. Per
+R8 the protocol does not pick a retrieval winner; Spikuit is free to.</p>
+<h2 id="3-substrate-behaviors">3. Substrate behaviors<a class="headerlink" href="#3-substrate-behaviors" title="Permanent link">&para;</a></h2>
+<p>The rl-research note's "7 verbs" are not new operations. They are a
+coarse conceptual view of substrate capabilities, most of which
+already exist. The table separates what ships today from what this
+doc proposes.</p>
+<table>
+<thead>
+<tr>
+<th>Conceptual verb</th>
+<th>Existing <code>spikuit-core</code> reality</th>
+<th>Proposed in this doc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>encode</code></td>
+<td><code>add_neuron</code> + ingest paths</td>
+<td>— (no change)</td>
+</tr>
+<tr>
+<td><code>link</code></td>
+<td><code>add_synapse</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>retrieve</code></td>
+<td><code>circuit.retrieve</code> (APPNP + semantic + FSRS)</td>
+<td>§3.2 cold-component mode</td>
+</tr>
+<tr>
+<td><code>record_use</code></td>
+<td><code>circuit.fire(id, grade)</code></td>
+<td>§3.1 signed weight</td>
+</tr>
+<tr>
+<td><code>curate</code></td>
+<td><code>merge_neurons</code>, soft-retire, <code>spkt domain audit</code>, curator agent</td>
+<td>§3.3 dispute-driven demotion policy</td>
+</tr>
+<tr>
+<td><code>subscribe</code></td>
+<td><code>circuit.events()</code></td>
+<td>§3.4 two new event kinds</td>
+</tr>
+<tr>
+<td><code>stat</code></td>
+<td><code>spkt stats</code></td>
+<td>§3.5 four new metrics</td>
+</tr>
+</tbody>
+</table>
+<h3 id="31-signed-use-signal">3.1 Signed use signal<a class="headerlink" href="#31-signed-use-signal" title="Permanent link">&para;</a></h3>
+<p><code>circuit.fire</code> today takes a grade — <code>miss</code> / <code>weak</code> / <code>fire</code> /
+<code>strong</code> — that drives FSRS (Again/Hard/Good/Easy) plus STDP edge
+updates and APPNP propagation.</p>
+<p>A failed recall (<code>miss</code>) is <strong>not</strong> the same as disputed content.
+<code>miss</code> means "the learner could not retrieve this"; it is a
+scheduling signal. The substrate currently has no signal for "this
+atom is <em>wrong</em>". This doc adds that second axis as a <strong>signed real
+weight</strong> <code>w ∈ [-1, +1]</code> accepted alongside (or derived from) the
+grade:</p>
+<table>
+<thead>
+<tr>
+<th><code>w</code></th>
+<th>meaning</th>
+<th>substrate response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+1.0</code></td>
+<td>correct / strongly used</td>
+<td>STDP LTP, retrieval pressure up</td>
+</tr>
+<tr>
+<td><code>+0.3</code></td>
+<td>weak hit</td>
+<td>mild LTP</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>neutral (debug read)</td>
+<td>no change</td>
+</tr>
+<tr>
+<td><code>-0.3</code></td>
+<td>hit but not adopted</td>
+<td>mild LTD</td>
+</tr>
+<tr>
+<td><code>-1.0</code></td>
+<td>explicit dispute</td>
+<td>strong LTD, synapse decay</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Threshold response (mandatory).</strong> A single <code>-1.0</code> MUST NOT retire
+an atom. Demotion requires <strong>N independent dispute signals from
+distinct contexts</strong> (N tunable, default ≥ 3). This guards against a
+single mistaken downvote erasing knowledge. Demotion is
+soft-retire-adjacent: the atom loses retrieval pressure first, and
+is only soft-retired (<code>amkb-core-plumbing-spec.md</code> §2.1) once
+disputes pass the retire threshold.</p>
+<p>This is the corrected form of the note's <code>record_use</code> verb. It is
+<code>fire</code> generalized, not a new API surface.</p>
+<h3 id="32-cold-component-retrieve-mode">3.2 Cold-component retrieve mode<a class="headerlink" href="#32-cold-component-retrieve-mode" title="Permanent link">&para;</a></h3>
+<p>As the graph grows, isolated/low-traffic components ("cold
+islands") add retrieval cost without adding value. Proposed:
+<code>retrieve</code> gains a mode — <code>default</code> / <code>deep</code> / <code>all</code>:</p>
+<ul>
+<li><code>default</code> — skip components below a heat threshold. Cheaper,
+  hides stale islands.</li>
+<li><code>deep</code> — include cold components (the false-negative safety net).</li>
+<li><code>all</code> — no component filtering.</li>
+</ul>
+<p><strong>amkb boundary.</strong> <code>amkb-spec</code> fixes <code>retrieve(intent, *, k, layer,
+filters)</code>. The mode is <strong>not</strong> a new protocol parameter. Options:
+(a) Spikuit-only kwarg on <code>circuit.retrieve</code>, invisible to the
+adapter; (b) carry it through the <code>filters</code> algebra under an <code>ext:</code>
+namespace (the spec explicitly permits <code>ext:</code> filter kinds). Prefer
+(a) for the substrate; expose via (b) only if an amkb consumer
+needs it. Either way the protocol surface is unchanged.</p>
+<p>An audit hatch — <code>stat("hidden_islands")</code> — lists what <code>default</code>
+mode is currently suppressing, so cold filtering never becomes a
+silent black hole. An external link into a cold component re-warms
+it on the next propagation pass.</p>
+<h3 id="33-dispute-driven-demotion-as-a-curation-policy">3.3 Dispute-driven demotion as a curation policy<a class="headerlink" href="#33-dispute-driven-demotion-as-a-curation-policy" title="Permanent link">&para;</a></h3>
+<p><code>curate</code> in the note is not a missing operation — Spikuit already
+curates via <code>merge_neurons</code>, soft-retire, <code>spkt domain audit</code>, and
+the curator agent. What is new is a <strong>policy</strong>: the substrate
+should, on its own schedule, act on accumulated dispute signal
+(§3.1) and cold-component state (§3.2) to demote and eventually
+soft-retire noise, with a dry-run/apply split so the curator agent
+can preview. This reuses the shipped transaction + event log; no
+new primitive.</p>
+<h3 id="34-new-events">3.4 New events<a class="headerlink" href="#34-new-events" title="Permanent link">&para;</a></h3>
+<p>Two <code>spikuit-core</code> event kinds, additive to the <code>event</code> table's
+<code>op</code> enum (<code>amkb-core-plumbing-spec.md</code> §2.4):</p>
+<ul>
+<li><code>atom.demoted</code> — an atom crossed the dispute threshold and lost
+  retrieval pressure.</li>
+<li><code>component.cooled</code> — a component dropped below the heat threshold
+  and is now <code>default</code>-mode hidden.</li>
+</ul>
+<p>Whether these reach the <strong>adapter's</strong> amkb event stream is a
+mapping-layer decision. The plumbing spec already filters
+core-internal drift (pressure, STDP, FSRS) out of amkb-visible
+events (§5). <code>atom.demoted</code> is structural-ish and could surface;
+<code>component.cooled</code> is substrate-internal and probably should not.
+Decide when the mapping layer is revisited — not now.</p>
+<h3 id="35-new-stat-metrics">3.5 New stat metrics<a class="headerlink" href="#35-new-stat-metrics" title="Permanent link">&para;</a></h3>
+<p><code>spkt stats</code> gains four fields, additive exactly like
+<code>neurons_retired</code> was in v0.7.0 (<code>amkb-core-plumbing-spec.md</code> §7.6):</p>
+<table>
+<thead>
+<tr>
+<th>metric</th>
+<th>definition (sketch)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>noise_resilience_score</code></td>
+<td>precision recovery rate after injected dispute — the headline eval number</td>
+</tr>
+<tr>
+<td><code>island_count</code></td>
+<td>number of disconnected components</td>
+</tr>
+<tr>
+<td><code>cold_component_ratio</code></td>
+<td>cold components / total components</td>
+</tr>
+<tr>
+<td><code>dispute_recovery_rate</code></td>
+<td>fraction of disputed atoms demoted within K subsequent queries</td>
+</tr>
+</tbody>
+</table>
+<p><code>noise_resilience_score</code> is the metric a Spikuit eval harness (or
+<code>amkb-bench</code>) would track over time. It is <strong>not</strong> an amkb
+conformance test.</p>
+<h2 id="4-what-changes-in-amkb-nothing-almost">4. What changes in amkb (nothing, almost)<a class="headerlink" href="#4-what-changes-in-amkb-nothing-almost" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>amkb-spec</code>: no change.</strong> No new verb, no new conformance level.</li>
+<li><strong><code>amkb-sdk</code>: no change.</strong></li>
+<li><strong>The adapter (<code>spikuit-agents/amkb/</code>):</strong> unchanged unless §3.4
+  decides to surface <code>atom.demoted</code>. If a richer retrieval hit is
+  ever wanted (the note's S1: <code>provenance</code>, <code>confidence_breakdown</code>,
+  <code>component_id</code>, <code>component_heat</code>), it should be a <strong>Spikuit
+  extension hit type</strong> with extra attributes — amkb consumers keep
+  seeing <code>RetrievalHit{ref, score}</code>. No <code>amkb-spec</code> PR is needed for
+  any of this.</li>
+</ul>
+<h2 id="5-relationship-to-the-app-layer-split">5. Relationship to the app-layer split<a class="headerlink" href="#5-relationship-to-the-app-layer-split" title="Permanent link">&para;</a></h2>
+<p>A separate workstream — extracting <code>spikuit-tutor</code> and
+<code>spikuit-agent-rag</code> packages and treating FSRS as a tutor-app
+overlay — is tracked in
+<code>contexts/active/spikuit-amkb-v03-tutor-extraction.md</code> (H3, staged
+extraction). It is <strong>not</strong> in scope here. The only connection: once
+that split lands, the substrate behaviors above stay entirely inside
+<code>spikuit-core</code>, and the tutor/rag apps observe them through
+<code>amkb.Store</code> plus a Spikuit-core extension interface — never via raw
+<code>from spikuit_core import</code>.</p>
+<h2 id="6-sage-correspondence-sanity-check">6. SAGE correspondence (sanity check)<a class="headerlink" href="#6-sage-correspondence-sanity-check" title="Permanent link">&para;</a></h2>
+<p>The SAGE paper's layers map onto this substrate, confirming the
+design is not missing a structural piece:</p>
+<table>
+<thead>
+<tr>
+<th>SAGE component</th>
+<th>Spikuit substrate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>triple-extraction Writer</td>
+<td>Neuron + Synapse creation</td>
+</tr>
+<tr>
+<td>graph-structure learning</td>
+<td>community detection / spectral / eigentheme</td>
+</tr>
+<tr>
+<td>soft addressing (all-node scoring)</td>
+<td>APPNP + R×I×R</td>
+</tr>
+<tr>
+<td>evaluation propagation</td>
+<td>STDP + signed use signal (§3.1)</td>
+</tr>
+<tr>
+<td>Writer/Reader co-training (RL)</td>
+<td><strong>no counterpart</strong> — Spikuit evolves via human + curator agent, not co-trained RL</td>
+</tr>
+</tbody>
+</table>
+<p>Writer/Reader co-training is deferred to a post-v1.0 evaluation; if
+adopted it is digested inside the substrate and needs no protocol
+change.</p>
+<h2 id="7-open-questions">7. Open questions<a class="headerlink" href="#7-open-questions" title="Permanent link">&para;</a></h2>
+<p>These are flagged for review, not decided.</p>
+<ol>
+<li><strong>Dispute threshold N</strong> and what counts as an "independent
+   context" — needs a concrete rule before §3.1 is implementable.</li>
+<li><strong>Heat metric</strong> for cold-component detection — reuse APPNP
+   stationary mass, or a separate decay counter?</li>
+<li><strong>Do <code>atom.demoted</code> events surface through the adapter?</strong> (§3.4)</li>
+<li><strong>Milestone.</strong> ~~L3 transactional conformance is already the named
+   v0.8 debt; does self-organization share v0.8?~~ <strong>Resolved in
+   <code>roadmap.md</code></strong> (OQ4): L3 is pulled forward to v0.7.2 as a
+   prerequisite, and substrate self-organization owns v0.8.0–v0.8.2.</li>
+</ol>
+<h2 id="8-cross-references">8. Cross-references<a class="headerlink" href="#8-cross-references" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>amkb-integration-plan.md</code> — shipped v0.7.x core/adapter split.</li>
+<li><code>amkb-core-plumbing-spec.md</code> — event log, soft-retire, transaction
+  wrapper this doc builds on.</li>
+<li><code>agent-workspace/contexts/active/spikuit-amkb-v03-tutor-extraction.md</code>
+  — originating rl-research note + app-layer split (H3).</li>
+<li><code>agent-workspace/contexts/active/spikuit-cognitive-memory-model.md</code>
+  — MAC sub-linearity (H2), R×I×R.</li>
+<li><code>amkb-spec</code> <code>spec/00-overview.md</code> (non-goals), <code>spec/99-rationale.md</code>
+  (R4, R8, R13) — why none of this belongs in the protocol.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.code.annotate", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      
+        <script src="../../../javascripts/charts.js"></script>
+      
+    
+  </body>
+</html>

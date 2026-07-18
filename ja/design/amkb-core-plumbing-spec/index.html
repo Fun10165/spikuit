@@ -1,0 +1,2154 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A knowledge base that gets smarter the more you use it">
+      
+      
+      
+        <link rel="canonical" href="https://takyone.github.io/spikuit/ja/design/amkb-core-plumbing-spec/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="../../../design/amkb-core-plumbing-spec/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="ja">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>AMKB Core Plumbing Spec — Spikuit v0.7.0 - Spikuit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/charts.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#amkb-core-plumbing-spec-spikuit-v070" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../../" title="Spikuit" class="md-header__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spikuit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AMKB Core Plumbing Spec — Spikuit v0.7.0
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../design/amkb-core-plumbing-spec/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/takyone/spikuit" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Spikuit" class="md-nav__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spikuit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/takyone/spikuit" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ホーム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使い方
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RAG
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rag/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クイックスタート
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    コンセプト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix: アルゴリズムと技術的詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/neuroscience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    計算神経科学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/psychology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    認知・発達心理学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/spaced-repetition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    間隔反復システム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ナレッジグラフとグラフベースML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    情報検索とRAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    実装詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    APIリファレンス
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    データ
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    データ
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    エンジン
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    エンジン
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/circuit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/propagation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    伝播
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/embedder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学習
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学習
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/scaffold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaffold & Learn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    セッション
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-summary-of-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Summary of additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-db-migrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. DB migrations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. DB migrations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-neuronretired_at" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 neuron.retired_at
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-synapseretired_at" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 synapse.retired_at
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-changeset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 changeset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 event
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-neuron_predecessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 neuron_predecessor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-api-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. API additions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. API additions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-circuittransaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 circuit.transaction()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-circuitremove_neuronneuron_id-soft-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 circuit.remove_neuron(neuron_id) — soft only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-circuitmerge_neurons-always-soft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 circuit.merge_neurons(...) — always soft
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-read-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Read APIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-spkt-history-prune" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 spkt history prune
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-canonical-exceptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Canonical exceptions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-hot-path-cost-containment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Hot-path cost containment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-test-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Test strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Test strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-regression-guards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Regression guards
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-new-tests-v070-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 New tests (v0.7.0 only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-adapter-tests-v071-noted-here-for-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Adapter tests (v0.7.1, noted here for context)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-live-query-discipline-mandatory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Live-query discipline (mandatory)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Live-query discipline (mandatory)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-query-fragment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Query fragment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-networkx-graph-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 NetworkX graph construction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-sqlite-vec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 sqlite-vec
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-fsrs-due-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 FSRS due queue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-content-re-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 Content re-add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 Stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-open-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Open questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-review-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Review checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="amkb-core-plumbing-spec-spikuit-v070">AMKB Core Plumbing Spec — Spikuit v0.7.0<a class="headerlink" href="#amkb-core-plumbing-spec-spikuit-v070" title="Permanent link">&para;</a></h1>
+<p><strong>Status.</strong> <strong>Shipped with v0.7.0 (2026-04-13).</strong> Companion to
+<code>amkb-integration-plan.md</code>. Defines the concrete <code>spikuit-core</code>
+changes that enabled the v0.7.1 adapter to satisfy AMKB
+L1/L2/L4a/L4b conformance.</p>
+<p><strong>Audience.</strong> Reviewers of the v0.7.0 PR. Nothing in this doc
+touches <code>spikuit-agents/amkb/</code> — the adapter is v0.7.1.</p>
+<p><strong>Ground rule restated.</strong> Nothing named in this spec is allowed to
+import from <code>amkb.*</code>. The adapter reads these primitives and
+translates. If a primitive cannot be explained in pure
+Spikuit/neuroscience vocabulary, it does not belong here.</p>
+<h2 id="1-summary-of-additions">1. Summary of additions<a class="headerlink" href="#1-summary-of-additions" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Addition</th>
+<th>Layer</th>
+<th>Tables / Modules touched</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Soft-retire for Neuron/Synapse (sole delete path)</td>
+<td>core</td>
+<td><code>neuron</code>, <code>synapse</code> (+ column), <code>db.py</code>, <code>circuit.py</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Event log</td>
+<td>core</td>
+<td><code>changeset</code>, <code>event</code> (new), <code>db.py</code>, <code>circuit.py</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Transaction wrapper</td>
+<td>core</td>
+<td><code>circuit.py</code> (new <code>transaction()</code> cm)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Predecessor junction</td>
+<td>core</td>
+<td><code>neuron_predecessor</code> (new), merge path</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Canonical exception classes</td>
+<td>core</td>
+<td><code>spikuit_core/errors.py</code> (new or extended)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Read APIs for adapter</td>
+<td>core</td>
+<td><code>circuit.events()</code>, <code>circuit.predecessors_of_lineage()</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>_live_neurons_sql</code> query fragment + audit</td>
+<td>core</td>
+<td><code>db.py</code>, all SELECT sites</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>spkt history prune</code> physical purge</td>
+<td>cli</td>
+<td><code>spikuit_cli/commands/history.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>All six are additive. None rename, drop, or repurpose existing
+columns. Existing code paths that do not opt in keep behaving
+exactly as today.</p>
+<h2 id="2-db-migrations">2. DB migrations<a class="headerlink" href="#2-db-migrations" title="Permanent link">&para;</a></h2>
+<p>Migration file: <code>spikuit-core/src/spikuit_core/migrations/0007_amkb_plumbing.sql</code>
+(filename reflects current migration counter — adjust at PR time).
+Runs idempotently via the existing migration runner in <code>db.py</code>.</p>
+<h3 id="21-neuronretired_at">2.1 <code>neuron.retired_at</code><a class="headerlink" href="#21-neuronretired_at" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">neuron</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">retired_at</span><span class="w"> </span><span class="nb">REAL</span><span class="p">;</span><span class="w">  </span><span class="c1">-- nullable UNIX seconds</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_neuron_retired_at</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">neuron</span><span class="p">(</span><span class="n">retired_at</span><span class="p">);</span>
+</code></pre></div>
+<p>Semantics:
+- <code>retired_at IS NULL</code> → live neuron. Existing rows get NULL by
+  default on migration.
+- <code>retired_at IS NOT NULL</code> → soft-retired. The row stays in
+  <code>neuron</code>, its FSRS columns stay intact, but <strong>every</strong> live-path
+  query in <code>circuit.py</code> / <code>db.py</code> / propagation / community
+  detection MUST filter it out. See §7 on the query-fragment
+  discipline that enforces this.
+- <strong>Soft-retire is the only delete path.</strong> <code>remove_neuron</code> no
+  longer physically deletes. <code>spkt neuron remove</code> routes to the
+  soft path. Physical purging is a separate, explicit operation
+  exposed as <code>spkt history prune</code> (§3.5) — never implicit in a
+  remove call.
+- <strong>Vector index is physically cleaned on retire.</strong> Retiring a
+  neuron deletes its row from the <code>sqlite-vec</code> virtual table in
+  the same SQLite transaction. The <code>neuron</code> row stays for event
+  history and lineage; the vector does not. Rationale: keep ANN
+  recall undegraded regardless of how many retired nodes
+  accumulate. See §5.</p>
+<h3 id="22-synapseretired_at">2.2 <code>synapse.retired_at</code><a class="headerlink" href="#22-synapseretired_at" title="Permanent link">&para;</a></h3>
+<p>Same shape:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">synapse</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">retired_at</span><span class="w"> </span><span class="nb">REAL</span><span class="p">;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_synapse_retired_at</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">synapse</span><span class="p">(</span><span class="n">retired_at</span><span class="p">);</span>
+</code></pre></div>
+<p>Retiring a neuron cascade-retires its synapses in the same
+transaction (sets <code>retired_at</code>, does not DELETE). Synapses also
+disappear from the NetworkX graph used by APPNP and community
+detection — see §7.</p>
+<h3 id="23-changeset">2.3 <code>changeset</code><a class="headerlink" href="#23-changeset" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">changeset</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">id</span><span class="w">            </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">     </span><span class="c1">-- ULID</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">tag</span><span class="w">           </span><span class="nb">TEXT</span><span class="p">,</span><span class="w">                 </span><span class="c1">-- caller-supplied label</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">actor_id</span><span class="w">      </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">        </span><span class="c1">-- free-form, &quot;cli:takyone&quot; etc.</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">actor_kind</span><span class="w">    </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">        </span><span class="c1">-- &quot;human&quot; | &quot;agent&quot; | &quot;system&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="n">started_at</span><span class="w">    </span><span class="nb">REAL</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="n">committed_at</span><span class="w">  </span><span class="nb">REAL</span><span class="p">,</span><span class="w">                 </span><span class="c1">-- NULL while in-flight</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="n">status</span><span class="w">        </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w">         </span><span class="c1">-- &quot;open&quot; | &quot;committed&quot; | &quot;aborted&quot;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">);</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_changeset_committed_at</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">changeset</span><span class="p">(</span><span class="n">committed_at</span><span class="p">);</span>
+</code></pre></div>
+<p>One row per <code>async with circuit.transaction(...)</code> block. Auto-commit
+paths (existing <code>add_neuron</code> etc.) still insert one <code>changeset</code> row
+per call — the wrapper is just implicit there.</p>
+<h3 id="24-event">2.4 <code>event</code><a class="headerlink" href="#24-event" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="n">id</span><span class="w">             </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">    </span><span class="c1">-- ULID</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">changeset_id</span><span class="w">   </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">changeset</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">seq</span><span class="w">            </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">    </span><span class="c1">-- order within changeset</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">op</span><span class="w">             </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">       </span><span class="c1">-- &quot;neuron.add&quot; | &quot;neuron.retire&quot;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">                                        </span><span class="c1">-- | &quot;neuron.merge&quot; | &quot;neuron.update&quot;</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">                                        </span><span class="c1">-- | &quot;synapse.add&quot; | &quot;synapse.retire&quot;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">                                        </span><span class="c1">-- | &quot;synapse.update&quot;</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">target_kind</span><span class="w">    </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">       </span><span class="c1">-- &quot;neuron&quot; | &quot;synapse&quot;</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="n">target_id</span><span class="w">      </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="n">before_json</span><span class="w">    </span><span class="nb">TEXT</span><span class="p">,</span><span class="w">                </span><span class="c1">-- snapshot or NULL on create</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="n">after_json</span><span class="w">     </span><span class="nb">TEXT</span><span class="p">,</span><span class="w">                </span><span class="c1">-- snapshot or NULL on retire</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="k">at</span><span class="w">             </span><span class="nb">REAL</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="p">);</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_event_changeset</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">event</span><span class="p">(</span><span class="n">changeset_id</span><span class="p">,</span><span class="w"> </span><span class="n">seq</span><span class="p">);</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_event_target</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">event</span><span class="p">(</span><span class="n">target_kind</span><span class="p">,</span><span class="w"> </span><span class="n">target_id</span><span class="p">);</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_event_at</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">event</span><span class="p">(</span><span class="k">at</span><span class="p">);</span>
+</code></pre></div>
+<p>Snapshots are JSON blobs with exactly the Spikuit row shape (id,
+content, type, domain, stability, …). The adapter reshapes them
+into AMKB <code>Node</code>/<code>Edge</code> snapshots — <code>spikuit-core</code> never learns the
+AMKB schema.</p>
+<h3 id="25-neuron_predecessor">2.5 <code>neuron_predecessor</code><a class="headerlink" href="#25-neuron_predecessor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">neuron_predecessor</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="n">child_id</span><span class="w">   </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">neuron</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="n">parent_id</span><span class="w">  </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">neuron</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="k">at</span><span class="w">         </span><span class="nb">REAL</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">child_id</span><span class="p">,</span><span class="w"> </span><span class="n">parent_id</span><span class="p">)</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">);</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_neuron_predecessor_parent</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">neuron_predecessor</span><span class="p">(</span><span class="n">parent_id</span><span class="p">);</span>
+</code></pre></div>
+<p>Populated by <code>merge_neurons</code>: for target <code>T</code> with sources
+<code>S1…Sn</code>, insert <code>(T, S1)…(T, Sn)</code>. This is <strong>lineage</strong>, distinct
+from graph adjacency returned by <code>circuit.predecessors(id)</code> (which
+walks synapses). To avoid confusion the new read API is named
+<code>predecessors_of_lineage(id)</code> — see §4.</p>
+<p>Existing neurons get no rows; <code>ancestors(id)</code> returning the empty
+set for them is the correct answer (they have no recorded
+lineage). No backfill.</p>
+<h2 id="3-api-additions">3. API additions<a class="headerlink" href="#3-api-additions" title="Permanent link">&para;</a></h2>
+<h3 id="31-circuittransaction">3.1 <code>circuit.transaction()</code><a class="headerlink" href="#31-circuittransaction" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># spikuit_core/circuit.py</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">asynccontextmanager</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nd">@asynccontextmanager</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">transaction</span><span class="p">(</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">actor_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">actor_kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;human&quot;</span><span class="p">,</span> <span class="s2">&quot;agent&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;agent&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">):</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="o">...</span>
+</code></pre></div>
+<p>Behavior:
+- On entry: insert <code>changeset</code> row with <code>status='open'</code>.
+- All mutations inside the block append to an in-memory event
+  buffer keyed by the changeset id.
+- On exit without exception: a single SQLite transaction writes
+  all <code>event</code> rows, sets <code>changeset.committed_at</code>, sets
+  <code>status='committed'</code>. One atomic commit.
+- On exit with exception: discard the buffer, set
+  <code>status='aborted'</code>. Underlying row writes that already hit
+  SQLite are rolled back via a BEGIN/ROLLBACK that wraps the full
+  block.
+- Nested <code>transaction()</code> calls: not supported in v0.7.0. Raise
+  <code>TransactionNestingError</code>. AMKB spec does not require nesting.</p>
+<p>Auto-commit path (existing callers): <code>add_neuron</code>, <code>add_synapse</code>,
+<code>remove_neuron</code>, <code>update_neuron</code>, <code>merge_neurons</code>, <code>fire</code> each wrap
+their work in a one-op <code>transaction(actor_id="system",
+actor_kind="system", tag=None)</code> if no transaction is already
+active. Their return values and signatures do not change.</p>
+<p><strong>Critical:</strong> <code>fire</code> (FSRS update + APPNP propagation + STDP edge
+weight changes) is an existing hot path. Wrapping it in a
+changeset must not measurably slow it down. Mitigation: the
+implicit wrapper uses a fast path that skips event emission for
+pure-pressure updates. AMKB only cares about structural
+mutations, not pressure/weight drift. This is formalized in §5.</p>
+<h3 id="32-circuitremove_neuronneuron_id-soft-only">3.2 <code>circuit.remove_neuron(neuron_id)</code> — soft only<a class="headerlink" href="#32-circuitremove_neuronneuron_id-soft-only" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">remove_neuron</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</code></pre></div>
+<p>Single code path:
+1. Set <code>neuron.retired_at = now()</code>
+2. Cascade: set <code>retired_at</code> on every synapse where <code>pre_id =
+   neuron_id</code> or <code>post_id = neuron_id</code>
+3. Delete the neuron's row from the <code>sqlite-vec</code> virtual table
+4. Emit <code>neuron.retire</code> + N × <code>synapse.retire</code> events in the
+   current (or auto-commit) changeset</p>
+<p>No <code>hard</code> kwarg. No <code>DELETE FROM neuron</code>. <code>spkt neuron remove</code>
+routes here. Existing behavioral differences between CLI and
+adapter disappear — both go through this one path.</p>
+<p>Physical deletion is only reachable through <code>spkt history
+prune</code> (§3.5), which is an explicit, operator-driven operation
+separate from removal semantics.</p>
+<h3 id="33-circuitmerge_neurons-always-soft">3.3 <code>circuit.merge_neurons(...)</code> — always soft<a class="headerlink" href="#33-circuitmerge_neurons-always-soft" title="Permanent link">&para;</a></h3>
+<p>Today <code>merge_neurons</code> calls <code>remove_neuron(source_id)</code> internally
+at circuit.py:500 (hard-delete). Change:</p>
+<ol>
+<li>Create the merged target neuron (unchanged)</li>
+<li>Insert one <code>neuron_predecessor</code> row per source pointing at
+   the target</li>
+<li>Call the new soft <code>remove_neuron</code> for each source (retires
+   row, cascades synapses, cleans vector index, emits events)</li>
+<li>All of the above runs inside one changeset so the merge
+   appears as a single atomic event sequence</li>
+</ol>
+<p>No <code>soft</code> kwarg. CLI <code>spkt neuron merge</code> routes here.</p>
+<h3 id="34-read-apis">3.4 Read APIs<a class="headerlink" href="#34-read-apis" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">events</span><span class="p">(</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">since</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">target_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">EventRow</span><span class="p">]:</span> <span class="o">...</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">predecessors_of_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p>These are adapter-only. They do not appear in <code>spkt</code> output and
+are not documented in the user-facing CLI manual. They exist so
+the adapter can implement <code>Store.events()</code> and lineage queries
+without reaching into <code>db.py</code> directly.</p>
+<p><code>EventRow</code> is a plain <code>msgspec.Struct</code> in <code>spikuit_core/models.py</code>
+— not an AMKB type.</p>
+<h3 id="35-spkt-history-prune">3.5 <code>spkt history prune</code><a class="headerlink" href="#35-spkt-history-prune" title="Permanent link">&para;</a></h3>
+<p>New CLI command; core API <code>circuit.prune_retired(before: float)</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>spkt<span class="w"> </span><span class="nb">history</span><span class="w"> </span>prune<span class="w"> </span>--before<span class="w"> </span><span class="m">2026</span>-01-01<span class="w">    </span><span class="c1"># purge retired-before-date</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>spkt<span class="w"> </span><span class="nb">history</span><span class="w"> </span>prune<span class="w"> </span>--all<span class="w">                  </span><span class="c1"># purge every retired row</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>spkt<span class="w"> </span><span class="nb">history</span><span class="w"> </span>prune<span class="w"> </span>--dry-run<span class="w">              </span><span class="c1"># preview counts, no writes</span>
+</code></pre></div>
+<p>Behavior:
+- Hard-delete every <code>neuron</code> row with <code>retired_at &lt; before</code> and
+  every <code>synapse</code> row with <code>retired_at &lt; before</code>
+- Delete matching <code>neuron_predecessor</code> rows (child or parent
+  physically gone)
+- Delete matching <code>event</code> rows whose <code>target_id</code> is purged, to
+  avoid dangling references
+- Never touches live (<code>retired_at IS NULL</code>) rows
+- Runs inside its own changeset with <code>actor_kind="system"</code>,
+  <code>tag="prune"</code>; the prune itself emits no per-row events (it's
+  garbage collection, not a protocol mutation)
+- Requires confirmation at the CLI unless <code>--yes</code> is passed</p>
+<p>Included in v0.7.0 scope so soft-retire has a physical escape
+hatch from day one. Retention policy (auto-prune) stays out of
+scope — operator-driven only.</p>
+<h2 id="4-canonical-exceptions">4. Canonical exceptions<a class="headerlink" href="#4-canonical-exceptions" title="Permanent link">&para;</a></h2>
+<p>File: <code>spikuit-core/src/spikuit_core/errors.py</code> (may already exist
+with <code>ReadOnlyError</code> — extend it).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">SpikuitError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">NotFoundError</span><span class="p">(</span><span class="n">SpikuitError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">ConflictError</span><span class="p">(</span><span class="n">SpikuitError</span><span class="p">):</span> <span class="o">...</span>       <span class="c1"># version / optimistic concurrency</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">InvariantError</span><span class="p">(</span><span class="n">SpikuitError</span><span class="p">):</span> <span class="o">...</span>      <span class="c1"># cross-layer, self-loop, empty content</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">class</span><span class="w"> </span><span class="nc">TransactionNestingError</span><span class="p">(</span><span class="n">SpikuitError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">TransactionAbortedError</span><span class="p">(</span><span class="n">SpikuitError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="k">class</span><span class="w"> </span><span class="nc">ReadOnlyError</span><span class="p">(</span><span class="n">SpikuitError</span><span class="p">):</span> <span class="o">...</span>       <span class="c1"># existing, re-parented</span>
+</code></pre></div>
+<p>The adapter maps these to <code>amkb.errors.*</code> codes at the boundary.
+<code>spikuit-core</code> does not import <code>amkb.errors</code> — same one-way rule.</p>
+<p>Mapping table (lives in the adapter, shown here for reference only):</p>
+<table>
+<thead>
+<tr>
+<th>Spikuit</th>
+<th>AMKB code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NotFoundError</code></td>
+<td><code>E_NOT_FOUND</code></td>
+</tr>
+<tr>
+<td><code>ConflictError</code></td>
+<td><code>E_CONFLICT</code></td>
+</tr>
+<tr>
+<td><code>InvariantError</code></td>
+<td><code>E_INVALID</code> (+ subcode from message)</td>
+</tr>
+<tr>
+<td><code>TransactionNestingError</code></td>
+<td><code>E_INVALID</code></td>
+</tr>
+<tr>
+<td><code>TransactionAbortedError</code></td>
+<td><code>E_TX_ABORTED</code></td>
+</tr>
+<tr>
+<td><code>ReadOnlyError</code></td>
+<td><code>E_READONLY</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-hot-path-cost-containment">5. Hot-path cost containment<a class="headerlink" href="#5-hot-path-cost-containment" title="Permanent link">&para;</a></h2>
+<p>The event log must not regress <code>fire</code> latency. Rules:</p>
+<ol>
+<li><code>fire</code> does not emit events for pressure/weight drift. Those
+   are not AMKB-visible state — AMKB consumers see nodes and
+   edges, not pressure scalars.</li>
+<li><code>fire</code>'s FSRS update (stability/difficulty/due) does not emit
+   an event in v0.7.0. Rationale: FSRS numbers live in the
+   <code>Node.attrs</code> dict from the adapter's point of view, and we
+   have not yet decided whether attr drift should appear in the
+   event stream. When we decide, it becomes a v0.7.2 addition.</li>
+<li>STDP edge-weight updates do not emit <code>synapse.update</code> events.
+   Same reason.</li>
+</ol>
+<p>Net effect: <code>fire</code> appends <strong>zero</strong> event rows and spends only
+the fixed cost of ensuring a one-op changeset row exists. A
+micro-benchmark (added under <code>spikuit-core/tests/bench/</code>) must
+show ≤5% overhead vs. v0.6.2 for 1000 sequential fires. If it
+fails, the implicit wrapper is made lazy (insert <code>changeset</code> row
+only when the first event would be emitted).</p>
+<h2 id="6-test-strategy">6. Test strategy<a class="headerlink" href="#6-test-strategy" title="Permanent link">&para;</a></h2>
+<p>Goal: <strong>every test passing on v0.6.2 must still pass, byte-identical, on the v0.7.0 branch.</strong></p>
+<h3 id="61-regression-guards">6.1 Regression guards<a class="headerlink" href="#61-regression-guards" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>uv run --package spikuit-core pytest spikuit-core/tests/ -v</code>
+  must be green at every commit in the v0.7.0 series, not just at
+  the tip.</li>
+<li><code>uv run --package spikuit-cli pytest spikuit-cli/tests/ -v</code>
+  must be green — CLI output format, JSON shape, exit codes.</li>
+<li>Run <code>spkt</code> against a golden fixture Brain before/after each
+  commit; diff <code>spkt stats --json</code>, <code>spkt neuron list --json</code>,
+  <code>spkt retrieve "foo" --json</code>. Expected diff: empty.</li>
+</ul>
+<h3 id="62-new-tests-v070-only">6.2 New tests (v0.7.0 only)<a class="headerlink" href="#62-new-tests-v070-only" title="Permanent link">&para;</a></h3>
+<p>Per addition:</p>
+<ol>
+<li><strong>Soft-retire</strong> — <code>test_retire_soft.py</code>: retire a neuron, confirm
+   it disappears from <code>retrieve</code>, <code>list</code>, <code>due</code>, and from
+   propagation; confirm the row still exists in the DB with
+   <code>retired_at</code> set; confirm its synapses are cascade-retired.</li>
+<li><strong>Event log</strong> — <code>test_event_log.py</code>: wrap mutations in a
+   transaction, assert the event rows exist in order, before/after
+   snapshots round-trip via JSON, aborted transactions leave no
+   committed rows.</li>
+<li><strong>Transaction wrapper</strong> — <code>test_transaction.py</code>: auto-commit
+   path produces a single changeset per call; explicit block
+   produces one changeset for N ops; exception inside block
+   rolls back all row writes and marks status aborted; nested
+   call raises <code>TransactionNestingError</code>.</li>
+<li><strong>Predecessor</strong> — <code>test_predecessor.py</code>: <code>merge_neurons(...,
+   soft=True)</code> inserts lineage rows; <code>predecessors_of_lineage</code>
+   returns them; <code>soft=False</code> (default) leaves the table empty so
+   existing merge tests are unaffected.</li>
+<li><strong>Errors</strong> — <code>test_errors.py</code>: <code>NotFoundError</code>, <code>ConflictError</code>,
+   <code>InvariantError</code> are raised in the documented cases; the legacy
+   <code>ReadOnlyError</code> still derives from <code>SpikuitError</code>.</li>
+<li><strong>Hot path benchmark</strong> — <code>bench_fire.py</code>: 1000 fires on a
+   fixture Brain, assert wall time within 5% of the v0.6.2
+   baseline (checked in as JSON).</li>
+</ol>
+<h3 id="63-adapter-tests-v071-noted-here-for-context">6.3 Adapter tests (v0.7.1, noted here for context)<a class="headerlink" href="#63-adapter-tests-v071-noted-here-for-context" title="Permanent link">&para;</a></h3>
+<p>The v0.7.1 PR adds <code>spikuit-agents/amkb/tests/</code> with
+<code>test_conformance.py</code> that wires <code>SpikuitStore</code> into
+<code>amkb.conformance</code>. Not in scope for this spec, but the design
+above is what makes that test file trivial to write: every
+AMKB primitive maps directly to a read API defined in §3-4.</p>
+<h2 id="7-live-query-discipline-mandatory">7. Live-query discipline (mandatory)<a class="headerlink" href="#7-live-query-discipline-mandatory" title="Permanent link">&para;</a></h2>
+<p>Because soft-retire is the only delete path, <strong>every</strong> read path
+in <code>spikuit-core</code> must exclude retired rows or we regress
+behavior. This section is the audit checklist — a PR that
+misses any of these is a bug.</p>
+<h3 id="71-query-fragment">7.1 Query fragment<a class="headerlink" href="#71-query-fragment" title="Permanent link">&para;</a></h3>
+<p>Add to <code>spikuit_core/db.py</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Canonical &quot;live row&quot; SQL fragments. Every SELECT on neuron /</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1"># synapse that serves live behavior MUST use these.</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">LIVE_NEURON</span> <span class="o">=</span> <span class="s2">&quot;n.retired_at IS NULL&quot;</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">LIVE_SYNAPSE</span> <span class="o">=</span> <span class="s2">&quot;s.retired_at IS NULL&quot;</span>
+</code></pre></div>
+<p>Every SELECT in <code>db.py</code> / <code>circuit.py</code> is audited to use one of
+these fragments. Exceptions (event log reads, lineage reads,
+<code>history prune</code>) are explicit and commented.</p>
+<h3 id="72-networkx-graph-construction">7.2 NetworkX graph construction<a class="headerlink" href="#72-networkx-graph-construction" title="Permanent link">&para;</a></h3>
+<p><code>propagation.py</code> builds a NetworkX DiGraph from <code>synapse</code> rows
+before running APPNP. The SQL that feeds it MUST join with
+<code>neuron</code> on both endpoints and apply <code>LIVE_NEURON</code> on both plus
+<code>LIVE_SYNAPSE</code> on the edge. A retired neuron must not appear as
+a node; a retired synapse must not appear as an edge.</p>
+<p>Same rule for community detection — it consumes the same graph.</p>
+<h3 id="73-sqlite-vec">7.3 sqlite-vec<a class="headerlink" href="#73-sqlite-vec" title="Permanent link">&para;</a></h3>
+<p>Because retire physically removes the vector row (§2.1), ANN
+top-k results never contain retired neurons. No post-filter
+needed. A unit test verifies this invariant by retiring N
+neurons and asserting <code>retrieve</code> never returns them even at
+large k.</p>
+<h3 id="74-fsrs-due-queue">7.4 FSRS due queue<a class="headerlink" href="#74-fsrs-due-queue" title="Permanent link">&para;</a></h3>
+<p><code>circuit.neuron_due()</code> joins <code>neuron</code> and must apply
+<code>LIVE_NEURON</code>. Retired neurons never become due.</p>
+<h3 id="75-content-re-add">7.5 Content re-add<a class="headerlink" href="#75-content-re-add" title="Permanent link">&para;</a></h3>
+<p>If a user adds a neuron with content identical to a retired
+one, it is created as a fresh row with a new id. The retired
+row is untouched. This is the resurrection non-goal expressed
+concretely: no attempt is made to detect or reuse retired
+content. Duplicate detection is a separate concern handled at
+ingest time, not at retire boundary.</p>
+<h3 id="76-stats">7.6 Stats<a class="headerlink" href="#76-stats" title="Permanent link">&para;</a></h3>
+<p><code>spkt stats</code> adds two fields to the existing JSON output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">&quot;neurons&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">123</span><span class="p">,</span><span class="w">        </span><span class="c1">// existing, now = live count</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">&quot;neurons_retired&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="p">,</span><span class="w"> </span><span class="c1">// new</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="err">...</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">}</span>
+</code></pre></div>
+<p>This is the one deliberate break from v0.6.2 byte-identical
+CLI output. The <code>neurons</code> field keeps its semantics
+(user-visible knowledge count), and <code>neurons_retired</code> is purely
+additive. <code>integration-plan.md</code> success criteria is updated to
+reflect this.</p>
+<h2 id="8-open-questions">8. Open questions<a class="headerlink" href="#8-open-questions" title="Permanent link">&para;</a></h2>
+<p>These are called out for review, not decided.</p>
+<ol>
+<li><strong>FSRS current values on <code>Node.attrs</code>.</strong> Plan: expose
+   <code>fsrs_stability</code>, <code>fsrs_due</code>, <code>fsrs_difficulty</code>,
+   <code>fsrs_last_review</code> as attrs in the v0.7.1 mapping layer. No
+   eventing of drift. Confirmed direction; formalize in
+   mapping.py design when v0.7.1 starts.</li>
+<li><strong>Lineage for pre-v0.7.0 neurons.</strong> No backfill. Empty
+   ancestor set is the correct answer for neurons that predate
+   this feature.</li>
+<li><strong>Naming of <code>predecessors_of_lineage</code>.</strong> Still ugly.
+   Alternatives: <code>lineage_parents</code>, <code>merge_parents</code>. Kept the
+   long name for now to avoid colliding with the existing
+   graph-adjacency <code>predecessors()</code> used by APPNP.</li>
+<li><strong>Prune confirmation UX.</strong> <code>spkt history prune</code> asks for
+   confirmation by default. Should <code>--yes</code> also be required for
+   scripted adapters? Probably yes — prune is irreversible.</li>
+</ol>
+<h2 id="9-review-checklist">9. Review checklist<a class="headerlink" href="#9-review-checklist" title="Permanent link">&para;</a></h2>
+<ul>
+<li>[ ] No <code>amkb</code> import in <code>spikuit-core/</code> after this PR</li>
+<li>[ ] Every new column is nullable or has a default</li>
+<li>[ ] Every new table is additive (no FK changes to existing
+      tables beyond the junction table)</li>
+<li>[ ] Every existing test in <code>spikuit-core/tests/</code> passes
+      unchanged (CLI tests may need updating only for the new
+      <code>neurons_retired</code> field in <code>spkt stats</code>)</li>
+<li>[ ] <code>spkt</code> CLI output diff against v0.6.2 golden fixtures is
+      empty <strong>except</strong> for the two new additive fields in
+      <code>spkt stats --json</code> (<code>neurons_retired</code>, any related
+      counts). No other field changes semantics.</li>
+<li>[ ] <code>fire</code> hot path within 5% of v0.6.2 baseline</li>
+<li>[ ] <code>retrieve</code> recall@k unchanged vs v0.6.2 for a fixture
+      with 0 retired nodes, and within noise for a fixture
+      where 30% of nodes are retired</li>
+<li>[ ] Every SELECT on <code>neuron</code> / <code>synapse</code> in <code>circuit.py</code> /
+      <code>db.py</code> / <code>propagation.py</code> uses <code>LIVE_NEURON</code> /
+      <code>LIVE_SYNAPSE</code> fragments (grep-audited in CI)</li>
+<li>[ ] Migration is idempotent (runs twice with no error)</li>
+<li>[ ] Error classes mapped one-to-one in the adapter table (§4)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.code.annotate", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      
+        <script src="../../../javascripts/charts.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,3668 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A knowledge base that gets smarter the more you use it">
+      
+      
+      
+        <link rel="canonical" href="https://takyone.github.io/spikuit/cli/">
+      
+      
+        <link rel="prev" href="../concepts/">
+      
+      
+        <link rel="next" href="../appendix/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../ja/cli/" hreflang="ja">
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>CLI Reference - Spikuit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/charts.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cli-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Spikuit" class="md-header__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spikuit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CLI Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../ja/cli/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Spikuit" class="md-nav__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spikuit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Use
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RAG
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rag/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brain-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brain Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Brain Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt init
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-brain-set-default-spkt-brain-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt brain set-default / spkt brain current
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-embed-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt embed-all
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neuron-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neuron Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Neuron Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-inspect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron inspect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron remove
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron merge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-fire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron fire
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synapse-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Synapse Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Synapse Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-weight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse weight
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse remove
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Source Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-ingest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source ingest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-inspect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source inspect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source refresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#domain-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Domain Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Domain Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-rename" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain rename
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain merge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#community-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Community Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Community Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-community-detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt community detect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-community-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt community list
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Search">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-retrieve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt retrieve
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tutor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tutor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tutor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-tutor-due" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt tutor due
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-tutor-quiz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt tutor quiz
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brain-health-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brain Health &amp; Insights
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Brain Health &amp; Insights">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-diagnose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt diagnose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-tutor-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt tutor progress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-manual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt manual
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consolidation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consolidation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consolidation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-consolidate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt consolidate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-consolidate-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt consolidate apply
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Visualization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-visualize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt visualize
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export / Import
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Export / Import">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt import
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extractors-spkt-skills-extractor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extractors (spkt skills extractor)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extractors (spkt skills extractor)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-show-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor show &lt;name&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-fork-name-new-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor fork &lt;name&gt; [&lt;new-name&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-add-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor add &lt;path&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-remove-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor remove &lt;name&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor refresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versioning-git-backed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versioning (Git-backed)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Versioning (Git-backed)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-branch-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt branch start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-branch-finish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt branch finish
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-branch-abandon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt branch abandon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt history
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-undo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt undo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deprecated-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix: Algorithms &amp; Technical Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/neuroscience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computational Neuroscience
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/psychology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cognitive & Developmental Psychology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/spaced-repetition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spaced Repetition Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Graphs & Graph-Based ML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Information Retrieval & RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engine
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engine
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/circuit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/propagation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Propagation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/embedder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/scaffold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaffold & Learn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brain-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brain Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Brain Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt init
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-brain-set-default-spkt-brain-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt brain set-default / spkt brain current
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-embed-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt embed-all
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neuron-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neuron Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Neuron Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-inspect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron inspect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron remove
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron merge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-neuron-fire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt neuron fire
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synapse-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Synapse Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Synapse Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-weight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse weight
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-synapse-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt synapse remove
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Source Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-ingest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source ingest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-inspect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source inspect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-source-refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt source refresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#domain-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Domain Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Domain Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-rename" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain rename
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain merge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-domain-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt domain audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#community-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Community Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Community Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-community-detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt community detect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-community-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt community list
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Search">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-retrieve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt retrieve
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tutor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tutor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tutor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-tutor-due" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt tutor due
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-tutor-quiz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt tutor quiz
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brain-health-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brain Health &amp; Insights
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Brain Health &amp; Insights">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-diagnose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt diagnose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-tutor-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt tutor progress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-manual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt manual
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consolidation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consolidation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consolidation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-consolidate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt consolidate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-consolidate-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt consolidate apply
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Visualization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-visualize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt visualize
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export / Import
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Export / Import">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt import
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extractors-spkt-skills-extractor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extractors (spkt skills extractor)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extractors (spkt skills extractor)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-show-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor show &lt;name&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-fork-name-new-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor fork &lt;name&gt; [&lt;new-name&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-add-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor add &lt;path&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-remove-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor remove &lt;name&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-skills-extractor-refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt skills extractor refresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versioning-git-backed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versioning (Git-backed)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Versioning (Git-backed)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spkt-branch-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt branch start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-branch-finish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt branch finish
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-branch-abandon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt branch abandon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt history
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spkt-undo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spkt undo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deprecated-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="cli-reference">CLI Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h1>
+<p>All commands support <code>--json</code> for machine-readable output.</p>
+<h2 id="global-options">Global Options<a class="headerlink" href="#global-options" title="Permanent link">&para;</a></h2>
+<p>Most commands accept these flags:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--brain</code>, <code>-b</code></td>
+<td>Brain root directory (overrides auto-discovery)</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>Machine-readable JSON output</td>
+</tr>
+</tbody>
+</table>
+<h2 id="brain-management">Brain Management<a class="headerlink" href="#brain-management" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-init"><code>spkt init</code><a class="headerlink" href="#spkt-init" title="Permanent link">&para;</a></h3>
+<p>Initialize a new Brain in the current directory. Without flags, starts an
+interactive wizard. With <code>--json</code> or explicit <code>--provider</code>, runs non-interactively.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$ spkt init
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Brain name [my-project]:
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Configure embeddings? [y/N]: y
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  Providers: openai-compat, ollama
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  Provider [openai-compat]:
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  Base URL [http://localhost:1234/v1]:
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  Model [text-embedding-nomic-embed-text-v1.5]:
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  Dimension [768]:
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>--- Summary ---
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>...
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Create brain? [Y/n]:
+</code></pre></div>
+<p>Non-interactive (for scripts and agents):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>spkt<span class="w"> </span>init<span class="w"> </span>-p<span class="w"> </span>none<span class="w">                      </span><span class="c1"># No embeddings</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>spkt<span class="w"> </span>init<span class="w"> </span>--name<span class="w"> </span>my-brain<span class="w"> </span>-p<span class="w"> </span>openai-compat<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--base-url<span class="w"> </span>http://localhost:1234/v1<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>--model<span class="w"> </span>text-embedding-nomic-embed-text-v1.5
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>spkt<span class="w"> </span>init<span class="w"> </span>-p<span class="w"> </span>ollama<span class="w"> </span>--json<span class="w">             </span><span class="c1"># JSON output for agents</span>
+</code></pre></div>
+<h3 id="spkt-config"><code>spkt config</code><a class="headerlink" href="#spkt-config" title="Permanent link">&para;</a></h3>
+<p>Show the current brain configuration.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>spkt<span class="w"> </span>config
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>spkt<span class="w"> </span>config<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-brain-set-default-spkt-brain-current"><code>spkt brain set-default</code> / <code>spkt brain current</code><a class="headerlink" href="#spkt-brain-set-default-spkt-brain-current" title="Permanent link">&para;</a></h3>
+<p>Pick which Brain <code>spkt</code> uses. A local <code>.spikuit/</code> (found by walking up
+from the current directory) always wins; the default Brain is the
+fallback so <code>spkt</code> can be run from anywhere. The default is stored in
+the user-global config (<code>~/.config/spikuit/config.toml</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>spkt<span class="w"> </span>brain<span class="w"> </span>set-default<span class="w"> </span>~/vaults/my-brain<span class="w">   </span><span class="c1"># set the fallback Brain</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>spkt<span class="w"> </span>brain<span class="w"> </span>current<span class="w">                         </span><span class="c1"># show what resolves here + the default</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>spkt<span class="w"> </span>brain<span class="w"> </span>current<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-embed-all"><code>spkt embed-all</code><a class="headerlink" href="#spkt-embed-all" title="Permanent link">&para;</a></h3>
+<p>Backfill embeddings for existing neurons that don't have one yet.
+Shows a plan (neuron count + estimated tokens) before proceeding.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>spkt<span class="w"> </span>embed-all<span class="w">              </span><span class="c1"># Interactive — shows plan, asks for confirmation</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>spkt<span class="w"> </span>embed-all<span class="w"> </span>--yes<span class="w">        </span><span class="c1"># Skip confirmation</span>
+</code></pre></div>
+<h2 id="neuron-commands">Neuron Commands<a class="headerlink" href="#neuron-commands" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-neuron-add"><code>spkt neuron add</code><a class="headerlink" href="#spkt-neuron-add" title="Permanent link">&para;</a></h3>
+<p>Add a new Neuron to the circuit.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;# Functor\n\nA mapping between categories.&quot;</span><span class="w"> </span>-t<span class="w"> </span>concept<span class="w"> </span>-d<span class="w"> </span>math
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;Content here&quot;</span><span class="w"> </span>--type<span class="w"> </span>fact<span class="w"> </span>--domain<span class="w"> </span>physics
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;Content&quot;</span><span class="w"> </span>-t<span class="w"> </span>concept<span class="w"> </span>--source-url<span class="w"> </span><span class="s2">&quot;https://example.com/paper.pdf&quot;</span><span class="w"> </span>--source-title<span class="w"> </span><span class="s2">&quot;A Paper&quot;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-t</code>, <code>--type</code></td>
+<td>Neuron type (e.g. <code>concept</code>, <code>fact</code>, <code>procedure</code>)</td>
+</tr>
+<tr>
+<td><code>-d</code>, <code>--domain</code></td>
+<td>Knowledge domain (e.g. <code>math</code>, <code>french</code>)</td>
+</tr>
+<tr>
+<td><code>--source-url</code></td>
+<td>Source URL for citation tracking</td>
+</tr>
+<tr>
+<td><code>--source-title</code></td>
+<td>Source title (used with <code>--source-url</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="spkt-neuron-list"><code>spkt neuron list</code><a class="headerlink" href="#spkt-neuron-list" title="Permanent link">&para;</a></h3>
+<p>List neurons with optional filters. Also supports metadata discovery.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>list
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>list<span class="w"> </span>-t<span class="w"> </span>concept<span class="w"> </span>-d<span class="w"> </span>math
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>list<span class="w"> </span>--limit<span class="w"> </span><span class="m">50</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># Metadata discovery</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>list<span class="w"> </span>--meta-keys<span class="w"> </span>--json<span class="w">          </span><span class="c1"># All filterable/searchable keys across sources</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>list<span class="w"> </span>--meta-values<span class="w"> </span>year<span class="w"> </span>--json<span class="w">   </span><span class="c1"># Distinct values for a key (with counts)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-t</code>, <code>--type</code></td>
+<td>Filter by neuron type</td>
+</tr>
+<tr>
+<td><code>-d</code>, <code>--domain</code></td>
+<td>Filter by domain</td>
+</tr>
+<tr>
+<td><code>--limit</code></td>
+<td>Max results</td>
+</tr>
+<tr>
+<td><code>--meta-keys</code></td>
+<td>List all metadata keys (filterable + searchable)</td>
+</tr>
+<tr>
+<td><code>--meta-values KEY</code></td>
+<td>List distinct values for a metadata key</td>
+</tr>
+</tbody>
+</table>
+<h3 id="spkt-neuron-inspect"><code>spkt neuron inspect</code><a class="headerlink" href="#spkt-neuron-inspect" title="Permanent link">&para;</a></h3>
+<p>Show detailed information about a neuron: content, FSRS state,
+pressure, sources, community, and connected synapses.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>inspect<span class="w"> </span>&lt;neuron-id&gt;
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>inspect<span class="w"> </span>&lt;neuron-id&gt;<span class="w"> </span>--json<span class="w">    </span><span class="c1"># includes sources[] and community_id</span>
+</code></pre></div>
+<h3 id="spkt-neuron-remove"><code>spkt neuron remove</code><a class="headerlink" href="#spkt-neuron-remove" title="Permanent link">&para;</a></h3>
+<p>Remove a neuron and all its synapses.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>remove<span class="w"> </span>&lt;neuron-id&gt;
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>remove<span class="w"> </span>&lt;neuron-id&gt;<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-neuron-merge"><code>spkt neuron merge</code><a class="headerlink" href="#spkt-neuron-merge" title="Permanent link">&para;</a></h3>
+<p>Merge multiple neurons into one. Content is concatenated, synapses are
+redirected to the target, source attachments are transferred, and the
+target is re-embedded.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>merge<span class="w"> </span>&lt;source-id-1&gt;<span class="w"> </span>&lt;source-id-2&gt;<span class="w"> </span>--into<span class="w"> </span>&lt;target-id&gt;
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>merge<span class="w"> </span>&lt;id1&gt;<span class="w"> </span>&lt;id2&gt;<span class="w"> </span>&lt;id3&gt;<span class="w"> </span>--into<span class="w"> </span>&lt;target-id&gt;<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-neuron-fire"><code>spkt neuron fire</code><a class="headerlink" href="#spkt-neuron-fire" title="Permanent link">&para;</a></h3>
+<p>Record a review event (fire a spike). Cannot be used on auto-generated neurons.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>fire<span class="w"> </span>&lt;neuron-id&gt;<span class="w"> </span>--grade<span class="w"> </span>fire
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>spkt<span class="w"> </span>neuron<span class="w"> </span>fire<span class="w"> </span>&lt;neuron-id&gt;<span class="w"> </span>-g<span class="w"> </span>strong
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Grade</th>
+<th>Meaning</th>
+<th>FSRS Rating</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>miss</code></td>
+<td>Failed recall</td>
+<td>Again</td>
+</tr>
+<tr>
+<td><code>weak</code></td>
+<td>Uncertain</td>
+<td>Hard</td>
+</tr>
+<tr>
+<td><code>fire</code></td>
+<td>Correct</td>
+<td>Good</td>
+</tr>
+<tr>
+<td><code>strong</code></td>
+<td>Perfect</td>
+<td>Easy</td>
+</tr>
+</tbody>
+</table>
+<h2 id="synapse-commands">Synapse Commands<a class="headerlink" href="#synapse-commands" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-synapse-add"><code>spkt synapse add</code><a class="headerlink" href="#spkt-synapse-add" title="Permanent link">&para;</a></h3>
+<p>Create a synapse between two neurons.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>add<span class="w"> </span>&lt;pre-id&gt;<span class="w"> </span>&lt;post-id&gt;<span class="w"> </span>--type<span class="w"> </span>requires
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>add<span class="w"> </span>&lt;a-id&gt;<span class="w"> </span>&lt;b-id&gt;<span class="w"> </span>--type<span class="w"> </span>relates_to
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Direction</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requires</code></td>
+<td>Directed</td>
+<td>A requires understanding B</td>
+</tr>
+<tr>
+<td><code>extends</code></td>
+<td>Directed</td>
+<td>A extends B</td>
+</tr>
+<tr>
+<td><code>contrasts</code></td>
+<td>Bidirectional</td>
+<td>A contrasts with B</td>
+</tr>
+<tr>
+<td><code>relates_to</code></td>
+<td>Bidirectional</td>
+<td>General association</td>
+</tr>
+<tr>
+<td><code>summarizes</code></td>
+<td>Directed</td>
+<td>Community summary → member</td>
+</tr>
+</tbody>
+</table>
+<h3 id="spkt-synapse-list"><code>spkt synapse list</code><a class="headerlink" href="#spkt-synapse-list" title="Permanent link">&para;</a></h3>
+<p>List synapses with optional filters.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>list
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>list<span class="w"> </span>--neuron<span class="w"> </span>&lt;neuron-id&gt;<span class="w">     </span><span class="c1"># Synapses connected to a neuron</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>requires<span class="w">          </span><span class="c1"># Filter by type</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>list<span class="w"> </span>--json
+</code></pre></div>
+<p>Output includes confidence tags (<code>[inferred]</code>, <code>[ambiguous]</code>) when applicable.</p>
+<h3 id="spkt-synapse-weight"><code>spkt synapse weight</code><a class="headerlink" href="#spkt-synapse-weight" title="Permanent link">&para;</a></h3>
+<p>Set the weight of an existing synapse.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>weight<span class="w"> </span>&lt;pre-id&gt;<span class="w"> </span>&lt;post-id&gt;<span class="w"> </span><span class="m">0</span>.8
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>weight<span class="w"> </span>&lt;pre-id&gt;<span class="w"> </span>&lt;post-id&gt;<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-synapse-remove"><code>spkt synapse remove</code><a class="headerlink" href="#spkt-synapse-remove" title="Permanent link">&para;</a></h3>
+<p>Remove a synapse between two neurons.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>remove<span class="w"> </span>&lt;pre-id&gt;<span class="w"> </span>&lt;post-id&gt;
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>spkt<span class="w"> </span>synapse<span class="w"> </span>remove<span class="w"> </span>&lt;pre-id&gt;<span class="w"> </span>&lt;post-id&gt;<span class="w"> </span>--json
+</code></pre></div>
+<h2 id="source-commands">Source Commands<a class="headerlink" href="#source-commands" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-source-ingest"><code>spkt source ingest</code><a class="headerlink" href="#spkt-source-ingest" title="Permanent link">&para;</a></h3>
+<p>Ingest a URL, file, or directory. Creates Source records, extracts content,
+and outputs it for agent-driven chunking.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Single URL</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>ingest<span class="w"> </span><span class="s2">&quot;https://example.com/article&quot;</span><span class="w"> </span>-d<span class="w"> </span>cs<span class="w"> </span>--json
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Single file</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>ingest<span class="w"> </span>./notes.md<span class="w"> </span>-d<span class="w"> </span>math<span class="w"> </span>--json
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># Directory (batch ingestion)</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>ingest<span class="w"> </span>./papers/<span class="w"> </span>-d<span class="w"> </span>cs<span class="w"> </span>--json
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-d</code>, <code>--domain</code></td>
+<td>Domain tag for ingested content</td>
+</tr>
+<tr>
+<td><code>--title</code></td>
+<td>Override source title (single file/URL only)</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Truncate oversized searchable metadata instead of aborting</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Directory ingestion</strong> reads all text files (<code>.md</code>, <code>.txt</code>, <code>.rst</code>, <code>.html</code>, etc.)
+from the directory. Place a <code>metadata.jsonl</code> sidecar file to attach metadata:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>{&quot;file_name&quot;: &quot;paper1.md&quot;, &quot;title&quot;: &quot;Paper One&quot;, &quot;filterable&quot;: {&quot;year&quot;: &quot;2024&quot;, &quot;venue&quot;: &quot;NeurIPS&quot;}, &quot;searchable&quot;: {&quot;abstract&quot;: &quot;We propose...&quot;}}
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>{&quot;file_name&quot;: &quot;paper2.md&quot;, &quot;filterable&quot;: {&quot;year&quot;: &quot;2023&quot;}}
+</code></pre></div>
+<p>If any file's searchable metadata exceeds <code>max_searchable_chars</code> (default: 500),
+the command aborts with a per-file report. Use <code>--force</code> to truncate instead.</p>
+<h3 id="spkt-source-list"><code>spkt source list</code><a class="headerlink" href="#spkt-source-list" title="Permanent link">&para;</a></h3>
+<p>List all sources with neuron counts.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>list
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>list<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-source-inspect"><code>spkt source inspect</code><a class="headerlink" href="#spkt-source-inspect" title="Permanent link">&para;</a></h3>
+<p>Show source details and attached neurons.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>inspect<span class="w"> </span>&lt;source-id&gt;
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>inspect<span class="w"> </span>&lt;source-id&gt;<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-source-update"><code>spkt source update</code><a class="headerlink" href="#spkt-source-update" title="Permanent link">&para;</a></h3>
+<p>Update source metadata (URL, title, author).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>update<span class="w"> </span>&lt;source-id&gt;<span class="w"> </span>--url<span class="w"> </span><span class="s2">&quot;https://new-url.com&quot;</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>update<span class="w"> </span>&lt;source-id&gt;<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;New Title&quot;</span><span class="w"> </span>--author<span class="w"> </span><span class="s2">&quot;Author Name&quot;</span>
+</code></pre></div>
+<h3 id="spkt-source-refresh"><code>spkt source refresh</code><a class="headerlink" href="#spkt-source-refresh" title="Permanent link">&para;</a></h3>
+<p>Re-fetch URL sources to check for content changes. Uses conditional GET
+(ETag / Last-Modified) to minimize bandwidth. Updated content triggers
+re-embedding of affected neurons.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>refresh<span class="w"> </span>&lt;source-id&gt;<span class="w">          </span><span class="c1"># Refresh a specific source</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>refresh<span class="w"> </span>--stale<span class="w"> </span><span class="m">30</span><span class="w">           </span><span class="c1"># Refresh sources not fetched in 30+ days</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>spkt<span class="w"> </span><span class="nb">source</span><span class="w"> </span>refresh<span class="w"> </span>--all<span class="w">                </span><span class="c1"># Refresh all URL sources</span>
+</code></pre></div>
+<p>Sources returning 404 are flagged as <code>unreachable</code>.</p>
+<h2 id="domain-commands">Domain Commands<a class="headerlink" href="#domain-commands" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-domain-list"><code>spkt domain list</code><a class="headerlink" href="#spkt-domain-list" title="Permanent link">&para;</a></h3>
+<p>List all domains with neuron counts.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>spkt<span class="w"> </span>domain<span class="w"> </span>list
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>spkt<span class="w"> </span>domain<span class="w"> </span>list<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-domain-rename"><code>spkt domain rename</code><a class="headerlink" href="#spkt-domain-rename" title="Permanent link">&para;</a></h3>
+<p>Rename a domain across all neurons.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>spkt<span class="w"> </span>domain<span class="w"> </span>rename<span class="w"> </span>old-name<span class="w"> </span>new-name
+</code></pre></div>
+<h3 id="spkt-domain-merge"><code>spkt domain merge</code><a class="headerlink" href="#spkt-domain-merge" title="Permanent link">&para;</a></h3>
+<p>Merge multiple domains into one.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>spkt<span class="w"> </span>domain<span class="w"> </span>merge<span class="w"> </span>domain1<span class="w"> </span>domain2<span class="w"> </span>--into<span class="w"> </span>target-domain
+</code></pre></div>
+<h3 id="spkt-domain-audit"><code>spkt domain audit</code><a class="headerlink" href="#spkt-domain-audit" title="Permanent link">&para;</a></h3>
+<p>Analyze domain ↔ community alignment. Compares user-assigned domain labels
+against the graph's natural community structure to find mismatches:</p>
+<ul>
+<li><strong>Split</strong>: a domain spans multiple communities (suggest sub-domains)</li>
+<li><strong>Merge</strong>: multiple domains converge in one community (suggest merging)</li>
+</ul>
+<p>Includes TF-IDF keyword extraction per community for naming hints.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>spkt<span class="w"> </span>domain<span class="w"> </span>audit
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>spkt<span class="w"> </span>domain<span class="w"> </span>audit<span class="w"> </span>--json
+</code></pre></div>
+<h2 id="community-commands">Community Commands<a class="headerlink" href="#community-commands" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-community-detect"><code>spkt community detect</code><a class="headerlink" href="#spkt-community-detect" title="Permanent link">&para;</a></h3>
+<p>Run community detection using the Louvain algorithm.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>spkt<span class="w"> </span>community<span class="w"> </span>detect
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>spkt<span class="w"> </span>community<span class="w"> </span>detect<span class="w"> </span>-r<span class="w"> </span><span class="m">2</span>.0<span class="w">              </span><span class="c1"># Higher resolution = more communities</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>spkt<span class="w"> </span>community<span class="w"> </span>detect<span class="w"> </span>--summarize<span class="w">          </span><span class="c1"># Also generate summary neurons per community</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>spkt<span class="w"> </span>community<span class="w"> </span>detect<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-community-list"><code>spkt community list</code><a class="headerlink" href="#spkt-community-list" title="Permanent link">&para;</a></h3>
+<p>Show current community assignments.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>spkt<span class="w"> </span>community<span class="w"> </span>list
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>spkt<span class="w"> </span>community<span class="w"> </span>list<span class="w"> </span>--json
+</code></pre></div>
+<h2 id="search">Search<a class="headerlink" href="#search" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-retrieve"><code>spkt retrieve</code><a class="headerlink" href="#spkt-retrieve" title="Permanent link">&para;</a></h3>
+<p>Graph-weighted search combining keyword matching, semantic similarity,
+FSRS retrievability, graph centrality, and review pressure.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>spkt<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;category theory&quot;</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>spkt<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;functor&quot;</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># Filtered retrieval</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>spkt<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;attention&quot;</span><span class="w"> </span>--filter<span class="w"> </span><span class="nv">year</span><span class="o">=</span><span class="m">2017</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>spkt<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;GNN&quot;</span><span class="w"> </span>--filter<span class="w"> </span><span class="nv">domain</span><span class="o">=</span>cs<span class="w"> </span>--filter<span class="w"> </span><span class="nv">venue</span><span class="o">=</span>NeurIPS
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--limit</code>, <code>-n</code></td>
+<td>Max results (default: 10)</td>
+</tr>
+<tr>
+<td><code>--filter KEY=VALUE</code></td>
+<td>Filter by neuron field (<code>type</code>, <code>domain</code>) or source filterable metadata. Repeatable. Strict: missing key = excluded.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tutor">Tutor<a class="headerlink" href="#tutor" title="Permanent link">&para;</a></h2>
+<p>FSRS-scheduled review and learning progress.</p>
+<h3 id="spkt-tutor-due"><code>spkt tutor due</code><a class="headerlink" href="#spkt-tutor-due" title="Permanent link">&para;</a></h3>
+<p>Show neurons due for review. Excludes auto-generated neurons
+(<code>_meta</code> domain and <code>community_summary</code> type).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>due
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>due<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>due<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-tutor-quiz"><code>spkt tutor quiz</code><a class="headerlink" href="#spkt-tutor-quiz" title="Permanent link">&para;</a></h3>
+<p>Interactive flashcard review session. Presents due neurons with
+scaffold-adaptive content and accepts self-grading via a Textual TUI.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>quiz<span class="w">                 </span><span class="c1"># Textual TUI (default)</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>quiz<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>quiz<span class="w"> </span>--json<span class="w">          </span><span class="c1"># Batch-dump all due quiz render payloads, then exit</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>quiz<span class="w"> </span>--no-tui<span class="w">        </span><span class="c1"># stdin/stdout JSON loop (one response per line)</span>
+</code></pre></div>
+<p><strong>TUI keys</strong></p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Space</code></td>
+<td>Flip card (front ↔ back)</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>Grade: Forgot (MISS)</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>Grade: Uncertain (WEAK)</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>Grade: Got it (FIRE)</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td>Grade: Perfect (STRONG)</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td>Add a note to the current card</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>Quit session</td>
+</tr>
+</tbody>
+</table>
+<p>Notes typed with <code>n</code> are persisted to <code>spike.notes</code> and unlock
+future features like conflict detection and feedback queues.</p>
+<p><strong>Agent-facing modes</strong></p>
+<ul>
+<li><code>--json</code> dumps <code>{status, count, items: [RenderResponse...]}</code> for all
+  due cards at once. Use this when the agent renders the UI itself.</li>
+<li><code>--no-tui</code> streams one <code>RenderResponse</code> JSON line per card to stdout
+  and reads one <code>QuizResponse</code> line from stdin (shape:
+  <code>{"self_grade": "FIRE", "notes": "..."}</code>). Send <code>{"action": "quit"}</code>
+  to stop early.</li>
+</ul>
+<h2 id="brain-health-insights">Brain Health &amp; Insights<a class="headerlink" href="#brain-health-insights" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-stats"><code>spkt stats</code><a class="headerlink" href="#spkt-stats" title="Permanent link">&para;</a></h3>
+<p>Show circuit statistics: neuron count, synapse count, graph density.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>spkt<span class="w"> </span>stats
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>spkt<span class="w"> </span>stats<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-diagnose"><code>spkt diagnose</code><a class="headerlink" href="#spkt-diagnose" title="Permanent link">&para;</a></h3>
+<p>Run brain health diagnostics. Detects orphan neurons, weak synapses,
+overdue reviews, and other potential issues.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>spkt<span class="w"> </span>diagnose
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>spkt<span class="w"> </span>diagnose<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-tutor-progress"><code>spkt tutor progress</code><a class="headerlink" href="#spkt-tutor-progress" title="Permanent link">&para;</a></h3>
+<p>Generate a learning progress report. Shows review activity, retention rates,
+domain coverage, and growth trends.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>progress
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>progress<span class="w"> </span>--format<span class="w"> </span>html<span class="w"> </span>-o<span class="w"> </span>progress.html
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>spkt<span class="w"> </span>tutor<span class="w"> </span>progress<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-manual"><code>spkt manual</code><a class="headerlink" href="#spkt-manual" title="Permanent link">&para;</a></h3>
+<p>Auto-generate a user guide from the brain's contents: domains, topics,
+review cutoffs, and sources.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>spkt<span class="w"> </span>manual
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>spkt<span class="w"> </span>manual<span class="w"> </span>--format<span class="w"> </span>html<span class="w"> </span>-o<span class="w"> </span>manual.html
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>spkt<span class="w"> </span>manual<span class="w"> </span>--write-meta<span class="w">                   </span><span class="c1"># Also write guide as _meta neurons</span>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>spkt<span class="w"> </span>manual<span class="w"> </span>--json
+</code></pre></div>
+<h2 id="consolidation">Consolidation<a class="headerlink" href="#consolidation" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-consolidate"><code>spkt consolidate</code><a class="headerlink" href="#spkt-consolidate" title="Permanent link">&para;</a></h3>
+<p>Sleep-inspired knowledge consolidation. Analyzes the brain and generates
+a plan to prune weak synapses, decay unused connections, and tighten the graph.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>spkt<span class="w"> </span>consolidate<span class="w">                           </span><span class="c1"># Dry-run — shows the plan</span>
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>spkt<span class="w"> </span>consolidate<span class="w"> </span>--domain<span class="w"> </span>math<span class="w">             </span><span class="c1"># Limit to a domain</span>
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>spkt<span class="w"> </span>consolidate<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-consolidate-apply"><code>spkt consolidate apply</code><a class="headerlink" href="#spkt-consolidate-apply" title="Permanent link">&para;</a></h3>
+<p>Apply a consolidation plan. Validates the plan against the current graph
+state (hash check) to ensure nothing has changed since the plan was generated.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>spkt<span class="w"> </span>consolidate<span class="w"> </span>apply<span class="w">                     </span><span class="c1"># Apply after reviewing the dry-run</span>
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>spkt<span class="w"> </span>consolidate<span class="w"> </span>apply<span class="w"> </span>--json
+</code></pre></div>
+<h2 id="visualization">Visualization<a class="headerlink" href="#visualization" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-visualize"><code>spkt visualize</code><a class="headerlink" href="#spkt-visualize" title="Permanent link">&para;</a></h3>
+<p>Generate an interactive HTML graph visualization.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>spkt<span class="w"> </span>visualize
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>spkt<span class="w"> </span>visualize<span class="w"> </span>-o<span class="w"> </span>my-graph.html
+</code></pre></div>
+<h2 id="export-import">Export / Import<a class="headerlink" href="#export-import" title="Permanent link">&para;</a></h2>
+<h3 id="spkt-export"><code>spkt export</code><a class="headerlink" href="#spkt-export" title="Permanent link">&para;</a></h3>
+<p>Export a Brain for backup, sharing, or deployment.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="c1"># Tarball (full backup)</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>spkt<span class="w"> </span><span class="nb">export</span><span class="w"> </span>-o<span class="w"> </span>backup.tar.gz
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="c1"># JSON bundle (portable, human-readable)</span>
+<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>spkt<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>-o<span class="w"> </span>brain.json
+<a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a>spkt<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--include-embeddings<span class="w"> </span>-o<span class="w"> </span>brain-full.json
+<a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a>
+<a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a><span class="c1"># QABot bundle (read-only SQLite for deployment)</span>
+<a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a>spkt<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--format<span class="w"> </span>qabot<span class="w"> </span>-o<span class="w"> </span>qa-bundle.db
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Contents</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tar</code> (default)</td>
+<td>Full <code>.spikuit/</code> directory</td>
+<td>Backup, migration</td>
+</tr>
+<tr>
+<td><code>json</code></td>
+<td>Neurons, synapses, sources as JSON</td>
+<td>Sharing, inspection</td>
+</tr>
+<tr>
+<td><code>qabot</code></td>
+<td>Minimal SQLite with embeddings</td>
+<td>Portable RAG deployment</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>QABot bundle</strong> is a self-contained SQLite file that includes neurons,
+synapses, embeddings, and source citations — but excludes FSRS state,
+review history, and raw source files. Load it with <code>Circuit(read_only=True)</code>.</p>
+<h3 id="spkt-import"><code>spkt import</code><a class="headerlink" href="#spkt-import" title="Permanent link">&para;</a></h3>
+<p>Import a tarball backup.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>spkt<span class="w"> </span>import<span class="w"> </span>backup.tar.gz
+</code></pre></div>
+<h2 id="extractors-spkt-skills-extractor">Extractors (<code>spkt skills extractor</code>)<a class="headerlink" href="#extractors-spkt-skills-extractor" title="Permanent link">&para;</a></h2>
+<p>Extractors are pluggable ingestion strategies — each is a <code>SKILL.md</code> +
+<code>manifest.toml</code> bundle that an Agent CLI invokes during <code>spkt source ingest</code>.
+They live in two tiers, with brain-local shadowing system on name collision
+(shadcn-style):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>1. &lt;BRAIN&gt;/.spikuit/extractors/&lt;name&gt;/                       (brain, wins)
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>2. &lt;spkt-install&gt;/skills/spkt-ingest/extractors/&lt;name&gt;/      (system)
+</code></pre></div>
+<p>Spikuit ships with a <code>default</code> extractor (generic markdown chunker) and a
+<code>_template/</code> skeleton for new extractors.</p>
+<h3 id="spkt-skills-extractor-list"><code>spkt skills extractor list</code><a class="headerlink" href="#spkt-skills-extractor-list" title="Permanent link">&para;</a></h3>
+<p>Show all resolved extractors and which tier they came from.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>spkt<span class="w"> </span>skills<span class="w"> </span>extractor<span class="w"> </span>list
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>spkt<span class="w"> </span>skills<span class="w"> </span>extractor<span class="w"> </span>list<span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-skills-extractor-status"><code>spkt skills extractor status</code><a class="headerlink" href="#spkt-skills-extractor-status" title="Permanent link">&para;</a></h3>
+<p>Probe each extractor's <code>[requires]</code> section against the host environment
+(commands on PATH, importable Python packages). Use this to decide whether
+an extractor can run, or whether the user needs to install something first.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>spkt<span class="w"> </span>skills<span class="w"> </span>extractor<span class="w"> </span>status<span class="w">              </span><span class="c1"># all extractors</span>
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>spkt<span class="w"> </span>skills<span class="w"> </span>extractor<span class="w"> </span>status<span class="w"> </span>pdf-paper<span class="w">    </span><span class="c1"># one</span>
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>spkt<span class="w"> </span>skills<span class="w"> </span>extractor<span class="w"> </span>status<span class="w"> </span>--json
+</code></pre></div>
+<p>JSON output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="p">[</span>
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;default&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;available&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;missing_commands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;missing_python_packages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]},</span>
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pdf-paper&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;available&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;missing_commands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;missing_python_packages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;pymupdf&quot;</span><span class="p">]}</span>
+<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a><span class="p">]</span>
+</code></pre></div>
+<h3 id="spkt-skills-extractor-show-name"><code>spkt skills extractor show &lt;name&gt;</code><a class="headerlink" href="#spkt-skills-extractor-show-name" title="Permanent link">&para;</a></h3>
+<p>Print the manifest plus the full SKILL.md for one extractor.</p>
+<h3 id="spkt-skills-extractor-fork-name-new-name"><code>spkt skills extractor fork &lt;name&gt; [&lt;new-name&gt;]</code><a class="headerlink" href="#spkt-skills-extractor-fork-name-new-name" title="Permanent link">&para;</a></h3>
+<p>Copy a system extractor into the brain so you can edit it. Omit <code>&lt;new-name&gt;</code>
+to keep the same name and shadow the system version.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>spkt<span class="w"> </span>skills<span class="w"> </span>extractor<span class="w"> </span>fork<span class="w"> </span>default<span class="w">               </span><span class="c1"># shadow system default</span>
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>spkt<span class="w"> </span>skills<span class="w"> </span>extractor<span class="w"> </span>fork<span class="w"> </span>default<span class="w"> </span>my-default<span class="w">    </span><span class="c1"># new brain-local name</span>
+</code></pre></div>
+<h3 id="spkt-skills-extractor-add-path"><code>spkt skills extractor add &lt;path&gt;</code><a class="headerlink" href="#spkt-skills-extractor-add-path" title="Permanent link">&para;</a></h3>
+<p>Install an external extractor directory (must contain <code>manifest.toml</code> +
+<code>SKILL.md</code>) into the brain.</p>
+<h3 id="spkt-skills-extractor-remove-name"><code>spkt skills extractor remove &lt;name&gt;</code><a class="headerlink" href="#spkt-skills-extractor-remove-name" title="Permanent link">&para;</a></h3>
+<p>Delete a brain-local extractor. System extractors cannot be removed.</p>
+<h3 id="spkt-skills-extractor-refresh"><code>spkt skills extractor refresh</code><a class="headerlink" href="#spkt-skills-extractor-refresh" title="Permanent link">&para;</a></h3>
+<p>Regenerate <code>&lt;brain&gt;/.spikuit/extractors/_registry.toml</code> after manual edits.</p>
+<h2 id="versioning-git-backed">Versioning (Git-backed)<a class="headerlink" href="#versioning-git-backed" title="Permanent link">&para;</a></h2>
+<p><code>spkt init</code> creates a git repository inside the brain so every change is
+tracked. Agents are expected to cut a short-lived branch before any batch
+work, then fast-forward into <code>main</code> once the result is reviewed.</p>
+<h3 id="spkt-branch-start"><code>spkt branch start</code><a class="headerlink" href="#spkt-branch-start" title="Permanent link">&para;</a></h3>
+<p>Cut a new ingest/consolidate branch from <code>main</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>spkt<span class="w"> </span>branch<span class="w"> </span>start<span class="w"> </span>papers-2026-04<span class="w">        </span><span class="c1"># → ingest/papers-2026-04</span>
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>spkt<span class="w"> </span>branch<span class="w"> </span>start<span class="w"> </span>consolidate-2026-04<span class="w">   </span><span class="c1"># → consolidate/2026-04</span>
+</code></pre></div>
+<h3 id="spkt-branch-finish"><code>spkt branch finish</code><a class="headerlink" href="#spkt-branch-finish" title="Permanent link">&para;</a></h3>
+<p>Fast-forward merge the current branch into <code>main</code> and delete it. Refuses
+to operate on <code>main</code> or any non-<code>ingest/</code>/<code>consolidate/</code> branch.</p>
+<h3 id="spkt-branch-abandon"><code>spkt branch abandon</code><a class="headerlink" href="#spkt-branch-abandon" title="Permanent link">&para;</a></h3>
+<p>Discard the current branch and switch back to <code>main</code>. Same guardrail as
+<code>finish</code>.</p>
+<h3 id="spkt-history"><code>spkt history</code><a class="headerlink" href="#spkt-history" title="Permanent link">&para;</a></h3>
+<p>List recent brain commits (a <code>git log</code> wrapper).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>spkt<span class="w"> </span><span class="nb">history</span><span class="w"> </span>-n<span class="w"> </span><span class="m">20</span>
+<a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>spkt<span class="w"> </span><span class="nb">history</span><span class="w"> </span>--grep<span class="w"> </span>ingest
+<a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>spkt<span class="w"> </span><span class="nb">history</span><span class="w"> </span>--json
+</code></pre></div>
+<h3 id="spkt-undo"><code>spkt undo</code><a class="headerlink" href="#spkt-undo" title="Permanent link">&para;</a></h3>
+<p>Revert commits via <code>git revert</code> — history is preserved, never rewritten.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>spkt<span class="w"> </span>undo<span class="w">                               </span><span class="c1"># revert HEAD (asks first)</span>
+<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>spkt<span class="w"> </span>undo<span class="w"> </span>--to<span class="w"> </span>&lt;sha&gt;<span class="w">                    </span><span class="c1"># revert everything since &lt;sha&gt;</span>
+<a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>spkt<span class="w"> </span>undo<span class="w"> </span>--ingest-tag<span class="w"> </span>papers-2026-04<span class="w">   </span><span class="c1"># revert all commits matching ingest(papers-2026-04)</span>
+<a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a>spkt<span class="w"> </span>undo<span class="w"> </span>-y<span class="w">                            </span><span class="c1"># skip confirmation</span>
+</code></pre></div>
+<p>To opt out of git-backed versioning, run <code>spkt init --no-git</code> or set
+<code>[git] auto_commit = false</code> in <code>.spikuit/config.toml</code>.</p>
+<h2 id="deprecated-commands">Deprecated Commands<a class="headerlink" href="#deprecated-commands" title="Permanent link">&para;</a></h2>
+<p>Old flat commands still work but show deprecation warnings on stderr.
+Use the resource-oriented form above.</p>
+<table>
+<thead>
+<tr>
+<th>Old command</th>
+<th>New command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>spkt add</code></td>
+<td><code>spkt neuron add</code></td>
+</tr>
+<tr>
+<td><code>spkt list</code></td>
+<td><code>spkt neuron list</code></td>
+</tr>
+<tr>
+<td><code>spkt inspect</code></td>
+<td><code>spkt neuron inspect</code></td>
+</tr>
+<tr>
+<td><code>spkt fire</code></td>
+<td><code>spkt neuron fire</code></td>
+</tr>
+<tr>
+<td><code>spkt due</code></td>
+<td><code>spkt tutor due</code></td>
+</tr>
+<tr>
+<td><code>spkt quiz</code></td>
+<td><code>spkt tutor quiz</code></td>
+</tr>
+<tr>
+<td><code>spkt neuron due</code></td>
+<td><code>spkt tutor due</code></td>
+</tr>
+<tr>
+<td><code>spkt link</code></td>
+<td><code>spkt synapse add</code></td>
+</tr>
+<tr>
+<td><code>spkt learn</code></td>
+<td><code>spkt source ingest</code></td>
+</tr>
+<tr>
+<td><code>spkt refresh</code></td>
+<td><code>spkt source refresh</code></td>
+</tr>
+<tr>
+<td><code>spkt communities</code></td>
+<td><code>spkt community list</code> / <code>spkt community detect</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.code.annotate", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      
+        <script src="../javascripts/charts.js"></script>
+      
+    
+  </body>
+</html>

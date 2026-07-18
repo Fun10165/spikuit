@@ -1,0 +1,92 @@
+/* ------------------------------------------------------------------ */
+/*  Chart containers                                                   */
+/* ------------------------------------------------------------------ */
+
+.chart-container {
+  max-width: 560px;
+  margin: 1.5em auto;
+  padding: 8px 0;
+}
+
+.chart-container canvas {
+  display: block;
+}
+
+/* ------------------------------------------------------------------ */
+/*  ZPD nested-box diagram                                             */
+/* ------------------------------------------------------------------ */
+
+.zpd-diagram {
+  max-width: 420px;
+  margin: 1.2em auto;
+  font-family: system-ui, sans-serif;
+}
+
+.zpd-outer,
+.zpd-mid,
+.zpd-inner {
+  border-radius: 12px;
+  border-width: 2px;
+  border-style: solid;
+  padding: 14px 18px;
+}
+
+.zpd-outer {
+  background: #FFEBEE;
+  border-color: #E53935;
+}
+
+.zpd-mid {
+  background: #E3F2FD;
+  border-color: #1976D2;
+  margin-top: 10px;
+}
+
+.zpd-inner {
+  background: #E8F5E9;
+  border-color: #388E3C;
+  margin-top: 10px;
+  text-align: center;
+  padding: 18px;
+}
+
+.zpd-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.zpd-outer > .zpd-label { color: #C62828; }
+.zpd-mid   > .zpd-label { color: #1565C0; }
+.zpd-inner > .zpd-label { color: #2E7D32; }
+
+.zpd-sublabel {
+  display: block;
+  font-size: 0.82rem;
+  margin-top: 2px;
+}
+
+.zpd-inner > .zpd-sublabel { color: #2E7D32; }
+
+/* ------------------------------------------------------------------ */
+/*  Dark mode overrides                                                */
+/* ------------------------------------------------------------------ */
+
+[data-md-color-scheme="slate"] .zpd-outer {
+  background: #3e2222;
+  border-color: #ef5350;
+}
+[data-md-color-scheme="slate"] .zpd-outer > .zpd-label { color: #ef9a9a; }
+
+[data-md-color-scheme="slate"] .zpd-mid {
+  background: #1a2a3e;
+  border-color: #42a5f5;
+}
+[data-md-color-scheme="slate"] .zpd-mid > .zpd-label { color: #90caf9; }
+
+[data-md-color-scheme="slate"] .zpd-inner {
+  background: #1e3e1e;
+  border-color: #66bb6a;
+}
+[data-md-color-scheme="slate"] .zpd-inner > .zpd-label,
+[data-md-color-scheme="slate"] .zpd-inner > .zpd-sublabel { color: #a5d6a7; }

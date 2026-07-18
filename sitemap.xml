@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://takyone.github.io/spikuit/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/cli/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/cli/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/cli/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/concepts/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/concepts/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/concepts/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/getting-started/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/getting-started/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/getting-started/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/how-to-use/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/how-to-use/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/how-to-use/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/agent-reflection/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/agent-reflection/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/agent-reflection/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/cognitive-retrieval/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/cognitive-retrieval/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/cognitive-retrieval/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/emergent-structure/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/emergent-structure/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/emergent-structure/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/graph/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/graph/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/graph/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/implementation/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/implementation/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/implementation/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/neuroscience/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/neuroscience/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/neuroscience/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/psychology/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/psychology/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/psychology/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/retrieval/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/retrieval/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/retrieval/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/spaced-repetition/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/spaced-repetition/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/spaced-repetition/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/appendix/spike-circuit/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/spike-circuit/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/spike-circuit/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/amkb-core-plumbing-spec/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/amkb-core-plumbing-spec/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/amkb-core-plumbing-spec/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/amkb-integration-plan/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/amkb-integration-plan/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/amkb-integration-plan/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/coaching-theory/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/coaching-theory/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/coaching-theory/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/exam-plan/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/exam-plan/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/exam-plan/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/graph-viz/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/graph-viz/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/graph-viz/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/neuron-importance/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/neuron-importance/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/neuron-importance/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/quiz-v2/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/quiz-v2/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/quiz-v2/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/roadmap/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/roadmap/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/substrate-self-organization/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/substrate-self-organization/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/substrate-self-organization/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/tutor-extraction-stage1/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/tutor-extraction-stage1/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/tutor-extraction-stage1/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/design/tutor-extraction-stage2/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/tutor-extraction-stage2/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/tutor-extraction-stage2/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/rag/quickstart/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/rag/quickstart/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/rag/quickstart/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/circuit/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/circuit/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/circuit/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/config/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/config/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/config/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/embedder/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/embedder/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/embedder/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/models/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/models/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/models/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/propagation/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/propagation/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/propagation/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/scaffold/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/scaffold/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/scaffold/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/reference/sessions/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/sessions/"/>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/sessions/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/cli/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/cli/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/cli/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/concepts/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/concepts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/concepts/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/getting-started/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/getting-started/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/getting-started/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/how-to-use/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/how-to-use/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/how-to-use/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/agent-reflection/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/agent-reflection/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/agent-reflection/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/cognitive-retrieval/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/cognitive-retrieval/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/cognitive-retrieval/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/emergent-structure/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/emergent-structure/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/emergent-structure/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/graph/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/graph/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/graph/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/implementation/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/implementation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/implementation/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/neuroscience/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/neuroscience/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/neuroscience/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/psychology/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/psychology/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/psychology/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/retrieval/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/retrieval/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/retrieval/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/spaced-repetition/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/spaced-repetition/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/spaced-repetition/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/appendix/spike-circuit/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/appendix/spike-circuit/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/appendix/spike-circuit/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/amkb-core-plumbing-spec/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/amkb-core-plumbing-spec/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/amkb-core-plumbing-spec/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/amkb-integration-plan/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/amkb-integration-plan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/amkb-integration-plan/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/coaching-theory/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/coaching-theory/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/coaching-theory/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/exam-plan/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/exam-plan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/exam-plan/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/graph-viz/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/graph-viz/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/graph-viz/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/neuron-importance/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/neuron-importance/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/neuron-importance/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/quiz-v2/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/quiz-v2/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/quiz-v2/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/roadmap/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/roadmap/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/substrate-self-organization/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/substrate-self-organization/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/substrate-self-organization/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/tutor-extraction-stage1/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/tutor-extraction-stage1/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/tutor-extraction-stage1/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/design/tutor-extraction-stage2/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/design/tutor-extraction-stage2/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/design/tutor-extraction-stage2/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/rag/quickstart/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/rag/quickstart/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/rag/quickstart/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/circuit/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/circuit/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/circuit/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/config/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/config/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/config/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/embedder/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/embedder/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/embedder/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/models/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/models/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/models/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/propagation/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/propagation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/propagation/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/scaffold/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/scaffold/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/scaffold/"/>
+    </url>
+    <url>
+        <loc>https://takyone.github.io/spikuit/ja/reference/sessions/</loc>
+        <lastmod>2026-07-18</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ja" href="https://takyone.github.io/spikuit/ja/reference/sessions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://takyone.github.io/spikuit/reference/sessions/"/>
+    </url>
+</urlset>

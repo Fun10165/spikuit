@@ -1,0 +1,2225 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A knowledge base that gets smarter the more you use it">
+      
+      
+      
+        <link rel="canonical" href="https://takyone.github.io/spikuit/design/tutor-extraction-stage2/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../ja/design/tutor-extraction-stage2/" hreflang="ja">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Tutor extraction — Stage 2 design - Spikuit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/charts.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tutor-extraction-stage-2-design" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Spikuit" class="md-header__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spikuit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tutor extraction — Stage 2 design
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ja/design/tutor-extraction-stage2/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Spikuit" class="md-nav__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spikuit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Use
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RAG
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rag/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix: Algorithms &amp; Technical Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/neuroscience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computational Neuroscience
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/psychology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cognitive & Developmental Psychology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/spaced-repetition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spaced Repetition Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Graphs & Graph-Based ML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Information Retrieval & RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engine
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engine
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/circuit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/propagation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Propagation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/embedder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/scaffold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaffold & Learn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Purpose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-current-coupling-the-facts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Current coupling — the facts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Current coupling — the facts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-the-fsrs_state-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 The fsrs_state table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-the-_cards-in-memory-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 The _cards in-memory cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-full-circuit-fsrs-use-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Full Circuit FSRS-use inventory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-compute_scaffold-stage-1s-deferred-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 compute_scaffold — Stage 1's deferred problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-cli-direct-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 CLI direct use
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-the-headline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 The headline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-what-the-migration-must-achieve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. What the migration must achieve
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. What the migration must achieve">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-non-goals-scope-guards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Non-goals (scope guards)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Design
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Design">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-the-two-database-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 The two-database model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-splitting-fire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Splitting fire()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-decoupling-the-substrates-own-fsrs-reads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Decoupling the substrate's own FSRS reads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-lazy-card-creation-the-new-neuron-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Lazy card creation &amp; the "new neuron" question
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-compute_scaffold-moves-to-the-tutor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 compute_scaffold moves to the tutor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-appkit-contract-evolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 appkit contract evolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#47-dbpy-and-cli-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7 db.py and CLI changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-recommended-stage-2-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Recommended Stage 2 plan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-migration-script-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Migration script &amp; rollback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ci-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. CI &amp; verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-open-questions-for-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Open questions for review
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-effort-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Effort &amp; risk
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cross-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Cross-references
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="tutor-extraction-stage-2-design">Tutor extraction — Stage 2 design<a class="headerlink" href="#tutor-extraction-stage-2-design" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Reviewed — round 1 (2026-05-20) resolved Q1–Q8 (§8).
+Design only, no implementation in this doc.
+<strong>Slot:</strong> v0.9.0 (per <code>roadmap.md</code> §6 — "Not additive, needs its own
+session and migration plan"). Current version 0.7.1.
+<strong>Extends:</strong> <code>tutor-extraction-stage1.md</code> (Stage 1, merged PR #68) and
+<code>roadmap.md</code> §6. <strong>Refines</strong> <code>tutor-extraction-stage1.md</code> §7's
+Stage-2 prediction — see §4.6.</p>
+<h2 id="1-purpose">1. Purpose<a class="headerlink" href="#1-purpose" title="Permanent link">&para;</a></h2>
+<p>Stage 1 gave the app layer a curated contract (<code>spikuit_core.appkit</code>)
+and an enforced import boundary. It deliberately left the database
+alone: FSRS scheduling state still lives in <code>spikuit-core</code>, in the
+<code>fsrs_state</code> table, managed entirely inside <code>Circuit</code>.</p>
+<p>Stage 2 finishes the extraction. It <strong>retires <code>fsrs_state</code> from
+<code>spikuit-core</code></strong> and re-homes FSRS card state into a
+<code>spikuit-tutor</code>-owned SQLite store, joined to the substrate by
+<code>neuron_id</code>. This is the "FSRS-as-overlay" decision (context doc
+decision Q-B = α: <em>tutor-app independent SQLite</em>) made concrete.</p>
+<p>After Stage 2:</p>
+<ul>
+<li><code>spikuit-core</code> is a knowledge-graph substrate with <strong>no learner
+  model</strong> — it does not know what a "review" or a "due card" is.</li>
+<li><code>spikuit-core</code> no longer depends on the <code>fsrs</code> package.</li>
+<li>FSRS scheduling — cards, ratings, retrievability, the review loop —
+  is wholly owned by <code>spikuit-tutor</code>.</li>
+<li>The substrate keeps <code>Spike</code>/<code>Grade</code> (its plasticity pipeline is
+  grade-driven) but stops <em>scheduling</em> on them.</li>
+</ul>
+<p>This is <strong>not additive and not trivially reversible</strong>: it is a
+multi-file substrate refactor plus a data migration. It needs the
+care a schema migration deserves — hence this doc before any code.</p>
+<h2 id="2-current-coupling-the-facts">2. Current coupling — the facts<a class="headerlink" href="#2-current-coupling-the-facts" title="Permanent link">&para;</a></h2>
+<p>Measured against <code>main</code> after PR #68 (Stage 1 merged). All line
+numbers are <code>spikuit-core/src/spikuit_core/circuit.py</code> unless noted.</p>
+<h3 id="21-the-fsrs_state-table">2.1 The <code>fsrs_state</code> table<a class="headerlink" href="#21-the-fsrs_state-table" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">fsrs_state</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">neuron_id</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">neuron</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">card_json</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">);</span>
+</code></pre></div>
+<p>Core DB default path is <code>~/.spikuit/spikuit.db</code> (<code>db.py</code>
+<code>DEFAULT_DB_PATH</code>). <em>Note: the Stage-2 kickoff guide in the context
+doc said <code>circuit.db</code> — that is wrong; the real filename is
+<code>spikuit.db</code>. No DB file exists on the current dev machine, so this
+analysis is from code and schema, not a live DB.</em></p>
+<p><code>db.py</code> touches the table in: <code>upsert_fsrs_card</code>, <code>get_fsrs_card_json</code>,
+<code>get_due_neurons</code> (the last is dead — <code>Circuit</code> never calls it),
+<code>delete_neuron</code> (<code>DELETE FROM fsrs_state WHERE neuron_id=?</code>), and the
+<code>CREATE TABLE</code>. <code>soft_retire_neuron</code> deliberately <em>preserves</em> FSRS
+state across a soft retire.</p>
+<h3 id="22-the-_cards-in-memory-cache">2.2 The <code>_cards</code> in-memory cache<a class="headerlink" href="#22-the-_cards-in-memory-cache" title="Permanent link">&para;</a></h3>
+<p><code>Circuit.__init__</code> builds <code>_scheduler = Scheduler()</code> and
+<code>_cards: dict[str, Card] = {}</code>. <code>connect()</code> calls <code>_load_cards()</code>,
+which does <code>SELECT neuron_id, card_json FROM fsrs_state</code> and
+deserializes every row into <code>_cards</code>. Every FSRS read in <code>Circuit</code>
+goes through this dict, not the DB.</p>
+<h3 id="23-full-circuit-fsrs-use-inventory">2.3 Full <code>Circuit</code> FSRS-use inventory<a class="headerlink" href="#23-full-circuit-fsrs-use-inventory" title="Permanent link">&para;</a></h3>
+<p>Stage 1 §2.3 found that <code>spikuit-tutor</code> never touches <code>fsrs_state</code>
+columns directly — true, and it framed the contract as "the <code>Circuit</code>
+method subset." <strong>Stage 2 reveals the deeper fact: <code>Circuit</code> itself
+uses FSRS state in far more than the four <code>SchedulerCircuit</code> methods.</strong>
+Six more methods read it. Moving the table forces a decision at each
+site.</p>
+<table>
+<thead>
+<tr>
+<th>Site</th>
+<th>What it does with FSRS</th>
+<th>Stage-2 verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>__init__</code> (109–110)</td>
+<td>builds <code>Scheduler</code> + <code>_cards</code> cache</td>
+<td><strong>Remove</strong> from core</td>
+</tr>
+<tr>
+<td><code>connect</code>→<code>_load_cards</code> (213, 237)</td>
+<td>bulk-loads <code>fsrs_state</code> into <code>_cards</code></td>
+<td><strong>Remove</strong></td>
+</tr>
+<tr>
+<td><code>add_neuron</code> (318)</td>
+<td>eager <code>Card()</code> + <code>upsert_fsrs_card</code></td>
+<td><strong>Remove</strong> — lazy in tutor (§4.4)</td>
+</tr>
+<tr>
+<td><code>upsert_meta_neuron</code> (806)</td>
+<td>eager <code>Card()</code> for meta-neuron</td>
+<td><strong>Remove</strong></td>
+</tr>
+<tr>
+<td><code>generate_community_summaries</code> (1532, 1578)</td>
+<td>eager <code>Card()</code> + stale <code>_cards.pop</code></td>
+<td><strong>Remove</strong></td>
+</tr>
+<tr>
+<td><code>remove_neuron</code> (400)</td>
+<td><code>_cards.pop</code></td>
+<td><strong>Remove</strong></td>
+</tr>
+<tr>
+<td><code>fire</code> (931–1020)</td>
+<td>spike + <code>review_card</code> + propagation + pressure + STDP; returns <code>Card</code></td>
+<td><strong>Split</strong> (§4.2)</td>
+</tr>
+<tr>
+<td><code>get_card</code> (1024)</td>
+<td>reads <code>_cards</code></td>
+<td><strong>Move</strong> to tutor</td>
+</tr>
+<tr>
+<td><code>due_neurons</code> / <code>near_due_neurons</code> (1036, 1053)</td>
+<td>iterate <code>_cards</code> by <code>card.due</code></td>
+<td><strong>Move</strong> to tutor (§4.4)</td>
+</tr>
+<tr>
+<td><code>retrieve</code> (1123)</td>
+<td><code>get_card_retrievability</code> as a ranking-score term</td>
+<td><strong>Decouple</strong> (§4.3)</td>
+</tr>
+<tr>
+<td><code>consolidate</code> (1612)</td>
+<td><code>card.stability</code> for <code>removable</code> / <code>forget</code> triage</td>
+<td><strong>Decouple</strong> (§4.3)</td>
+</tr>
+<tr>
+<td><code>diagnose</code> (1902)</td>
+<td><code>card.stability</code> for <code>dangling_prerequisites</code></td>
+<td><strong>Decouple</strong> (§4.3)</td>
+</tr>
+<tr>
+<td><code>progress</code> (2234)</td>
+<td>stability / retrievability / retention learner report</td>
+<td><strong>Move</strong> wholesale to tutor (§4.3)</td>
+</tr>
+<tr>
+<td><code>stats</code> (1886)</td>
+<td><code>cards_loaded</code> count</td>
+<td><strong>Drop</strong> — tutor reports its own</td>
+</tr>
+</tbody>
+</table>
+<p><code>domain_audit</code> (2060–2233) was checked and does <strong>not</strong> read FSRS
+state — it stays clean.</p>
+<h3 id="24-compute_scaffold-stage-1s-deferred-problem">2.4 <code>compute_scaffold</code> — Stage 1's deferred problem<a class="headerlink" href="#24-compute_scaffold-stage-1s-deferred-problem" title="Permanent link">&para;</a></h3>
+<p><code>scaffold.py</code>'s <code>compute_scaffold(circuit, neuron_id)</code> reads
+<code>circuit.get_card</code>, <code>card.state</code>, <code>card.stability</code>, imports
+<code>fsrs.State</code>, and walks graph topology (<code>circuit.neighbors</code>,
+<code>circuit.predecessors</code>, raw <code>circuit.graph[a][b]["type"]</code>).</p>
+<p>Stage 1 §2.4 kept it in core <em>because</em> it needs both FSRS state and
+graph topology, and §7 predicted it would be dropped from <code>appkit</code> at
+Stage 2. Stage 2 confirms the relocation but for a sharper reason:
+once <code>fsrs_state</code> leaves core, <code>compute_scaffold</code> <strong>can no longer read
+FSRS state from inside core</strong> — it has no choice but to move to
+<code>spikuit-tutor</code>, where the cards now live. See §4.5.</p>
+<h3 id="25-cli-direct-use">2.5 CLI direct use<a class="headerlink" href="#25-cli-direct-use" title="Permanent link">&para;</a></h3>
+<p><code>spikuit-cli</code> is the wiring layer and is <em>not</em> under the import ban.
+It uses FSRS in three places: <code>helpers.py</code> <code>_neuron_dict</code> calls
+<code>circuit.get_card</code> to build an <code>fsrs</code> JSON block; <code>main.py</code> imports
+<code>compute_scaffold</code> directly for the quiz command; <code>neuron.py:332</code>
+does <code>card = await circuit.fire(spike)</code> for <code>spkt neuron fire</code>. All
+three need rewiring once FSRS moves (§4.7).</p>
+<h3 id="26-the-headline">2.6 The headline<a class="headerlink" href="#26-the-headline" title="Permanent link">&para;</a></h3>
+<p>The substrate today does not merely <em>store</em> the learner's memory
+model — it <strong>ranks and curates by it</strong>. <code>retrieve</code> boosts results by
+FSRS retrievability; <code>consolidate</code> and <code>diagnose</code> triage by FSRS
+stability. Under the FSRS-as-overlay framing (and the AMKB principle
+that the substrate "is not a learning system" — context doc §H4),
+<strong>the substrate must stop reading the learner model entirely.</strong> That
+is the real content of Stage 2, and §4.3 is where it is decided.</p>
+<h2 id="3-what-the-migration-must-achieve">3. What the migration must achieve<a class="headerlink" href="#3-what-the-migration-must-achieve" title="Permanent link">&para;</a></h2>
+<ol>
+<li><code>fsrs_state</code> is no longer a <code>spikuit-core</code> table. FSRS card state
+   lives in a <code>spikuit-tutor</code>-owned store.</li>
+<li><code>spikuit-core/src/**</code> has <strong>zero</strong> <code>import fsrs</code> — verified by CI.</li>
+<li><code>spikuit-core</code> ranking (<code>retrieve</code>) and curation (<code>consolidate</code>,
+   <code>diagnose</code>) compute from substrate-native signals only.</li>
+<li>Existing user databases migrate cleanly, with a tested rollback.</li>
+<li><code>appkit</code> changes are deliberate and version-gated, not accidental
+   (§4.6).</li>
+<li>No regression in the tutor's externally-observable behaviour
+   (review loop, due queue, scaffolding) beyond the documented
+   <code>retrieve</code> re-ranking (§4.3).</li>
+</ol>
+<h3 id="31-non-goals-scope-guards">3.1 Non-goals (scope guards)<a class="headerlink" href="#31-non-goals-scope-guards" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Not</strong> migrating <code>quiz_item</code> / <code>quiz_item_neuron</code>. Quiz items are
+  arguably tutor-domain too, but that is a separate table move with
+  its own join and migration — out of Stage 2.</li>
+<li><strong>Not</strong> adopting the substrate-doc signed-weight <code>record_use</code>
+  redesign. Stage 2 keeps the current <code>Spike</code>/<code>Grade</code> interface; the
+  signed-weight convergence is <code>substrate-self-organization.md</code>'s
+  concern (§4.2).</li>
+<li><strong>Not</strong> building a live event-driven orphan reaper. Stage 2 ships
+  reconcile-on-open; the reaper is a later refinement (§4.4).</li>
+<li><strong>Not</strong> building tutor-populated memory-aware retrieval. Stage 2
+  drops the FSRS retrieval term; <em>re-adding</em> it via <code>retrieval_boost</code>
+  is a follow-up tutor feature (§4.3).</li>
+<li><strong>Not</strong> designing per-overlay vs shared plasticity for the
+  multi-overlay case (§4.1 forward note).</li>
+<li><strong>Not</strong> touching <code>amkb-spec</code>.</li>
+</ul>
+<h2 id="4-design">4. Design<a class="headerlink" href="#4-design" title="Permanent link">&para;</a></h2>
+<h3 id="41-the-two-database-model">4.1 The two-database model<a class="headerlink" href="#41-the-two-database-model" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Owner</th>
+<th>Path</th>
+<th>Holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Substrate DB</td>
+<td><code>spikuit-core</code></td>
+<td><code>~/.spikuit/&lt;brain&gt;.db</code></td>
+<td>neuron, synapse, spike, retrieve_log, retrieval_boost, quiz_item<em>, source</em>, changeset, event, neuron_vec*</td>
+</tr>
+<tr>
+<td>Tutor store</td>
+<td><code>spikuit-tutor</code></td>
+<td>configurable; default <code>&lt;substrate-stem&gt;.tutor.db</code></td>
+<td><code>fsrs_card</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why a separate DB, not extra tables in the core DB.</strong> The decisive
+reason is <em>plurality of overlays</em>. One substrate KB is meant to be
+shared by several apps — <code>spikuit-tutor</code>, <code>spikuit-agent-rag</code>, even a
+second tutor instance (a different learner, an experiment). If FSRS
+state lived in core tables, a second overlay on the same KB would
+collide on it immediately. With per-overlay DB files the substrate
+does not even know overlays exist: each app instance is configured
+with <code>(substrate DB path, its own overlay DB path)</code>. The overlay path
+is therefore <strong>configurable</strong>, not a fixed sibling name — the default
+<code>&lt;substrate-stem&gt;.tutor.db</code> only serves the common single-tutor case.</p>
+<p>Join key is <code>neuron_id</code> (= core <code>neuron.id</code>). The overlay stores <strong>no
+graph data</strong> — no synapse, no topology copy. <code>compute_scaffold</code> and
+every topology read go to the substrate live through the contract
+(§4.5). So the cross-DB "link" is a single TEXT column, not a
+relational mapping; the only real integrity concern is orphaned cards,
+handled by reconcile-on-open (§4.4).</p>
+<p><strong>SQLite cannot enforce a cross-file foreign key.</strong> Referential
+integrity between <code>fsrs_card.neuron_id</code> and <code>neuron.id</code> is the tutor's
+responsibility, via reconcile-on-open — not a live reaper.</p>
+<p>Proposed <code>fsrs_card</code> schema (minimal — no <code>due</code> index for Stage 2;
+the tutor loads all cards into memory on open, exactly as <code>Circuit</code>
+does today):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsrs_card</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">neuron_id</span><span class="w">   </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">   </span><span class="c1">-- logical join to core neuron.id</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">card_json</span><span class="w">   </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">reviewed_at</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span><span class="w">               </span><span class="c1">-- last review timestamp</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">created_at</span><span class="w">  </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Forward note (out of Stage 2 scope).</strong> When multiple overlays
+review against one shared substrate, each <code>fire()</code> writes
+STDP/pressure back to the <em>shared</em> graph. Whether that collective
+plasticity is desirable, or whether plasticity should be
+per-overlay, is a real question for the multi-overlay milestone. It
+does not affect Stage 2, which extracts a single tutor.</p>
+</blockquote>
+<h3 id="42-splitting-fire">4.2 Splitting <code>fire()</code><a class="headerlink" href="#42-splitting-fire" title="Permanent link">&para;</a></h3>
+<p><code>Circuit.fire</code> today does eight steps. They cleave cleanly:</p>
+<table>
+<thead>
+<tr>
+<th>Steps</th>
+<th>Belongs to</th>
+<th>After Stage 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 spike insert; 5 APPNP propagation; 6 pressure reset; 7 STDP; 8 last-fire timestamp</td>
+<td><strong>substrate</strong> — plasticity, grade-driven</td>
+<td>stays in <code>Circuit.fire</code></td>
+</tr>
+<tr>
+<td>2 get/create card; 3 <code>scheduler.review_card</code>; 4 persist card</td>
+<td><strong>tutor</strong> — FSRS scheduling</td>
+<td>moves to <code>spikuit-tutor</code></td>
+</tr>
+</tbody>
+</table>
+<p>The substrate method <strong>keeps the name <code>fire</code></strong> — a neuron firing is
+the native spike metaphor of Spikuit (spike + circuit), and <code>spkt
+neuron fire</code> is a documented CLI command. Stage 2 only shrinks its
+body (drop the FSRS steps 2–4) and changes its return type: it no
+longer returns a <code>Card</code>, it returns <code>None</code> or a small substrate-side
+summary. It still consumes <code>spike.grade</code> — <code>compute_propagation</code> and
+<code>compute_stdp</code> are both grade-driven — so <code>Grade</code> and <code>Spike</code> remain
+substrate types.</p>
+<p><strong>Orchestration inverts.</strong> Today <code>Circuit.fire</code> is the orchestrator
+and the tutor calls it. After Stage 2 the <strong>tutor session is the
+orchestrator</strong>: on a review it (a) loads the card from its store,
+(b) <code>card, log = scheduler.review_card(card, rating, at)</code>, (c) persists
+the card, (d) calls <code>substrate.fire(spike)</code>. The substrate becomes a
+callee, not the conductor.</p>
+<p><strong>No rename.</strong> An earlier draft proposed renaming the method to
+<code>record_use</code> to match the AMKB verb vocabulary; review round 1
+rejected that. <code>record_use</code> stays a <em>conceptual / protocol-level</em>
+verb — the coarse intent-layer name in <code>substrate-self-organization.md</code>
+§3 — and the <code>amkb.Store</code> adapter maps it onto <code>circuit.fire</code>. Keeping
+the substrate method named <code>fire</code> preserves the clean two-layer story
+(<em>intent verb</em> → <em>mechanism method</em>) and avoids CLI/doc churn. The
+naming of that conceptual verb itself (<code>record_use</code> vs <code>feedback</code> vs …)
+is a <code>substrate-self-organization.md</code> matter, out of Stage 2 scope —
+see Q7.</p>
+<h3 id="43-decoupling-the-substrates-own-fsrs-reads">4.3 Decoupling the substrate's own FSRS reads<a class="headerlink" href="#43-decoupling-the-substrates-own-fsrs-reads" title="Permanent link">&para;</a></h3>
+<p>Per §2.6, the substrate must stop reading the learner model. Four
+sites, four recommendations:</p>
+<p><strong><code>retrieve</code> — drop the FSRS term.</strong> Today the score is
+<code>text_sim × (1 + retrievability + centrality + pressure + boost)</code>
+(and a parallel semantic-path formula). Recommendation: <strong>drop the
+<code>retrievability</code> term.</strong> The substrate ranks by its own signals —
+<code>text_sim</code>, <code>centrality</code>, <code>pressure</code>, <code>boost</code>. This is a <strong>behaviour
+change to a public verb</strong>: <code>spkt retrieve</code> results re-rank. It is the
+headline risk of Stage 2.</p>
+<p>The capability is not lost — it relocates. <code>retrieval_boost</code> already
+exists as an externally-settable per-neuron weight with a clean API
+(<code>set_retrieval_boost</code>, <code>commit_retrieval_boosts</code>) and is already a
+term in the formula. A tutor that wants memory-aware retrieval
+computes a boost from its FSRS cards and pushes it through that seam.
+Stage 2 only <em>removes the inline coupling</em>; <em>re-adding</em> memory-aware
+retrieval as a tutor feature over <code>retrieval_boost</code> is a follow-up,
+out of Stage 2 scope (§3.1).</p>
+<p><strong><code>consolidate</code> / <code>diagnose</code> — substitute spike-table signals.</strong> Both
+triage by <code>card.stability</code> (a smooth FSRS memory-strength estimate):
+<code>consolidate</code> for <code>removable_neurons</code> / <code>forget_candidates</code>,
+<code>diagnose</code> for <code>dangling_prerequisites</code>. The <code>spike</code> table — every
+review event with timestamp and grade — <strong>stays in core.</strong>
+Recommendation: the substrate computes a native consolidation signal
+from <code>spike</code> rows (count, recency, grade distribution) and triages on
+that. This is a coarser signal than FSRS stability — flag it — but it
+is directionally correct: the substrate should self-assess from its
+own event log, not borrow the tutor's model. (If the substrate later
+grows a native <code>use_count</code> per the AMKB roadmap, these sites can
+upgrade to it; Stage 2 uses <code>spike</code>.)</p>
+<p><strong><code>progress</code> — move wholesale to the tutor.</strong> <code>Circuit.progress</code>
+builds a learner-facing retention report (stability, retrievability,
+retention curves, reviewed-ratio). It is pure tutor domain. Move the
+whole method to <code>spikuit-tutor</code>. It needs review history, so the
+substrate must expose <strong><code>get_spikes_for(neuron_id)</code></strong> as public API
+(today <code>get_spikes_for</code> lives on <code>Database</code>; <code>Circuit</code> only has the
+internal <code>insert_spike</code>). Add it to the contract (§4.6).</p>
+<p><strong><code>stats</code> — drop <code>cards_loaded</code>.</strong> It is the only FSRS-derived field
+in <code>Circuit.stats</code>. Drop it; the tutor reports its own card count.</p>
+<h3 id="44-lazy-card-creation-the-new-neuron-question">4.4 Lazy card creation &amp; the "new neuron" question<a class="headerlink" href="#44-lazy-card-creation-the-new-neuron-question" title="Permanent link">&para;</a></h3>
+<p>Today every neuron gets an eager <code>Card()</code> at creation (<code>add_neuron</code>,
+<code>upsert_meta_neuron</code>, <code>generate_community_summaries</code>). <code>due_neurons</code>
+iterates <code>_cards</code>; a fresh card is due immediately, so new neurons
+surface naturally in the review queue.</p>
+<p>After Stage 2 the substrate creates no cards. The tutor creates a
+card <strong>lazily on first review</strong>. This raises a question the eager
+model hid: <em>how does a never-reviewed neuron surface as "due"?</em></p>
+<p>Recommendation: the tutor's due query is the union of two buckets —
+<strong>(past-due cards)</strong> from its <code>fsrs_card</code> table, and <strong>(neurons with
+no card)</strong> = <code>substrate.list_neurons(...)</code> minus the card table's
+keys. The second bucket is the "new / unlearned" set. <code>list_neurons</code>
+already exists on <code>Circuit</code> and stays on the contract.</p>
+<p>This also retires <code>due_neurons</code> / <code>near_due_neurons</code> from the
+substrate entirely — they are FSRS queries — and they are
+reimplemented inside <code>spikuit-tutor</code> over the <code>fsrs_card</code> store.
+<code>builder.py</code> (tutor code) repoints to the tutor's planner.</p>
+<p><strong>Orphan cleanup.</strong> When a neuron is deleted/retired the substrate
+emits an <code>event</code> row (event log already exists). A full live reaper
+that subscribes via <code>events(follow=True)</code> and deletes the stale card
+is the right long-term shape — but it is more than Stage 2 needs.
+Stage 2 ships <strong>reconcile-on-open</strong>: when the tutor store opens, it
+prunes any <code>fsrs_card</code> row whose <code>neuron_id</code> is absent from
+<code>substrate.list_neurons()</code>. The event-driven reaper is deferred (Q6).</p>
+<h3 id="45-compute_scaffold-moves-to-the-tutor">4.5 <code>compute_scaffold</code> moves to the tutor<a class="headerlink" href="#45-compute_scaffold-moves-to-the-tutor" title="Permanent link">&para;</a></h3>
+<p>Per §2.4 <code>compute_scaffold</code> <em>must</em> move — it reads FSRS card state,
+which after Stage 2 lives in the tutor. It relocates to
+<code>spikuit-tutor</code> (e.g. <code>spikuit_tutor/scaffold.py</code>), taking the
+<code>fsrs.State</code> import with it.</p>
+<p>It still needs <strong>graph topology</strong> from the substrate: <code>neighbors</code>,
+<code>predecessors</code>, and edge type. It currently reaches edge type through
+raw networkx (<code>circuit.graph[a][b]["type"]</code>). To move it without
+dragging networkx into the contract, Stage 2 adds a small read-only
+substrate method <strong><code>edge_type(a, b) -&gt; str</code></strong> and <code>compute_scaffold</code>
+uses that. <code>neighbors</code> / <code>predecessors</code> are already public on
+<code>Circuit</code>. All three go on the contract (§4.6).</p>
+<p><code>Scaffold</code> and <code>ScaffoldLevel</code> (the result types) move to
+<code>spikuit-tutor</code> with the function.</p>
+<h3 id="46-appkit-contract-evolution">4.6 <code>appkit</code> contract evolution<a class="headerlink" href="#46-appkit-contract-evolution" title="Permanent link">&para;</a></h3>
+<p>Stage 1 designated <code>appkit</code> public and semver-stable, and §7
+predicted Stage 2 would "drop the FSRS-facing re-exports (<code>Grade</code>,
+<code>Spike</code>, <code>compute_scaffold</code>)". <strong>This Stage-2 analysis refines that
+prediction:</strong></p>
+<ul>
+<li><code>Grade</code> and <code>Spike</code> <strong>stay</strong> in core and stay in <code>appkit</code> — the
+  substrate's <code>fire</code>/propagation/STDP are grade-driven (§4.2).
+  Stage 1's prediction was wrong on these two.</li>
+<li><code>compute_scaffold</code>, <code>Scaffold</code>, <code>ScaffoldLevel</code> <strong>leave</strong> — they
+  move to <code>spikuit-tutor</code> (§4.5). <code>appkit</code> drops these three.</li>
+<li><code>SchedulerCircuit</code> Protocol changes shape and is <strong>renamed</strong>. It
+  <strong>keeps <code>fire</code></strong> (reshaped — see §4.2), drops <code>due_neurons</code> /
+  <code>near_due_neurons</code> (those are FSRS queries — §4.4), gains
+  <code>neighbors</code>, <code>predecessors</code>, <code>edge_type</code>, <code>get_spikes_for</code>, and
+  keeps <code>get_neuron</code>, <code>list_neurons</code>. It no longer <em>schedules</em> —
+  proposed rename <code>SchedulerCircuit</code> → <code>SubstrateView</code>.</li>
+</ul>
+<p><code>appkit</code> <code>__all__</code> after Stage 2:
+<code>Grade, Spike, NeuronView, SubstrateView</code>.</p>
+<p>This is a <strong>breaking change</strong> to a module Stage 1 declared
+semver-stable. Spikuit is pre-1.0 (0.7.1); under 0.x semantics a
+minor bump may break, and Stage 2 <em>is</em> the v0.9.0 minor bump.
+Recommendation: <strong>carry the <code>appkit</code> break in v0.9.0</strong>, document it in
+the changelog, and accept it — no deprecation shim. (Alternative:
+keep <code>compute_scaffold</code> etc. as deprecated re-export shims for one
+release. Q4.)</p>
+<p>Only one app consumes <code>appkit</code> today — first-party <code>spikuit-tutor</code> —
+and most of the churn is <em>within</em> <code>spikuit-tutor</code> (it gains the
+scaffold code it imports). So the blast radius is small and
+self-contained.</p>
+<h3 id="47-dbpy-and-cli-changes">4.7 db.py and CLI changes<a class="headerlink" href="#47-dbpy-and-cli-changes" title="Permanent link">&para;</a></h3>
+<p><strong><code>spikuit-core/db.py</code>:</strong> drop the <code>fsrs_state</code> <code>CREATE TABLE</code>;
+delete <code>upsert_fsrs_card</code>, <code>get_fsrs_card_json</code>, <code>get_due_neurons</code>;
+remove the <code>DELETE FROM fsrs_state</code> line from <code>delete_neuron</code>;
+<code>soft_retire_neuron</code> no longer special-cases FSRS preservation. Add
+public <code>Circuit.get_spikes_for</code> and <code>Circuit.edge_type</code>.</p>
+<p><strong><code>spikuit-cli</code>:</strong> the CLI constructs the <code>Circuit</code>
+(<code>helpers.py:34</code>); it must now also construct and inject the tutor
+store. <code>helpers.py</code> <code>_neuron_dict</code>'s <code>fsrs</code> block, the <code>main.py</code>
+quiz <code>compute_scaffold</code> import, and <code>neuron.py</code>'s <code>circuit.fire</code> call
+all rewire to the tutor. <code>spkt neuron fire</code> keeps its command name
+but becomes tutor-orchestrated (FSRS scheduling is inherently
+tutor) — Q7. <code>progress</code> surfaces as <code>spkt tutor progress</code>.</p>
+<h2 id="5-recommended-stage-2-plan">5. Recommended Stage 2 plan<a class="headerlink" href="#5-recommended-stage-2-plan" title="Permanent link">&para;</a></h2>
+<p>Ordered so the tree stays green between steps where possible.</p>
+<ol>
+<li><strong>Tutor store.</strong> Add <code>spikuit_tutor</code> FSRS store module
+   (<code>fsrs_card</code> schema §4.1), with open/close, load-all-into-memory,
+   upsert, and reconcile-on-open (§4.4). Unit-test in isolation.</li>
+<li><strong>Move FSRS into the tutor.</strong> Relocate the <code>Scheduler</code>, the
+   <code>_GRADE_TO_RATING</code> map, <code>get_card</code>/<code>due_neurons</code>/<code>near_due_neurons</code>
+   logic, <code>compute_scaffold</code> + <code>Scaffold</code>/<code>ScaffoldLevel</code>, and
+   <code>Circuit.progress</code> into <code>spikuit-tutor</code>. The tutor session becomes
+   the review orchestrator (§4.2).</li>
+<li><strong>Split <code>fire</code>.</strong> Reduce <code>Circuit.fire</code> to substrate steps
+   1,5,6,7,8 (drop the FSRS steps 2–4); its return type changes from
+   <code>Card</code>. Keep the method name. Add <code>Circuit.edge_type</code> and public
+   <code>Circuit.get_spikes_for</code>.</li>
+<li><strong>Decouple substrate ranking/curation</strong> (§4.3): drop the
+   <code>retrieve</code> retrievability term; reimplement <code>consolidate</code> /
+   <code>diagnose</code> triage on <code>spike</code>-table signals; drop
+   <code>stats.cards_loaded</code>.</li>
+<li><strong>Strip FSRS from core.</strong> Remove <code>_cards</code>/<code>_scheduler</code> from
+   <code>Circuit</code>, the eager card creation, <code>_load_cards</code>, the <code>db.py</code>
+   FSRS methods and the <code>fsrs_state</code> table. Drop <code>fsrs</code> from
+   <code>spikuit-core</code>'s dependencies.</li>
+<li><strong>Evolve <code>appkit</code></strong> (§4.6): drop the scaffold trio, rename
+   <code>SchedulerCircuit</code> → <code>SubstrateView</code>, reshape the Protocol. Update
+   the <code>appkit</code> conformance test.</li>
+<li><strong>Rewire <code>spikuit-cli</code></strong> (§4.7): inject the tutor store; repoint
+   <code>_neuron_dict</code>, the quiz command, <code>neuron fire</code>, <code>progress</code>.</li>
+<li><strong>Migration script</strong> (§6) and the changelog/version bump to
+   v0.9.0.</li>
+</ol>
+<h2 id="6-migration-script-rollback">6. Migration script &amp; rollback<a class="headerlink" href="#6-migration-script-rollback" title="Permanent link">&para;</a></h2>
+<p><code>scripts/migrate_fsrs_to_tutor.py</code>, mirroring the existing
+<code>scripts/migrate_tataque.py</code> pattern (argparse, <code>--dry-run</code>,
+<code>--brain</code> / explicit <code>--db-path</code>).</p>
+<p><strong>Forward.</strong> For a given substrate DB: open it, open (or create) the
+sibling <code>&lt;stem&gt;.tutor.db</code>, copy every <code>fsrs_state</code> row into
+<code>fsrs_card</code> (<code>card_json</code> verbatim; derive <code>reviewed_at</code>/<code>created_at</code>
+from the card, or stamp <code>created_at = now</code>). Idempotent: re-running
+upserts by <code>neuron_id</code> and is a no-op on an already-migrated DB.</p>
+<p><strong>Two-phase table drop.</strong> The migration script does <strong>not</strong> drop
+<code>fsrs_state</code> — it leaves it dormant. The <code>DROP TABLE fsrs_state</code>
+ships one release later (v0.9.1 / v0.10.0), once v0.9.0 has proven
+out in the field. This keeps a window where rollback is pure code
+revert + nothing lost (Q8).</p>
+<p><strong>Rollback.</strong> While <code>fsrs_state</code> is still present (the dormant
+window), rollback is: <code>git revert</code> the v0.9.0 code, and the substrate
+DB still has its <code>fsrs_state</code> rows. A <code>--reverse</code> flag on the script
+copies <code>fsrs_card</code> back into <code>fsrs_state</code> for the case where reviews
+happened post-migration and must not be lost.</p>
+<p><code>--dry-run</code> prints the row counts and the source/target paths without
+writing.</p>
+<h2 id="7-ci-verification">7. CI &amp; verification<a class="headerlink" href="#7-ci-verification" title="Permanent link">&para;</a></h2>
+<p>Stage 1 added <code>ci.yml</code> (4-package pytest matrix + <code>import-check</code>).
+Stage 2 extends verification:</p>
+<ul>
+<li><strong><code>import fsrs</code> ban.</strong> Extend <code>tools/check_app_imports.py</code> (or add a
+  sibling check) to assert <code>spikuit-core/src/**</code> contains no
+  <code>import fsrs</code> / <code>from fsrs import …</code>. This is the machine-checkable
+  statement of "the substrate has no learner model."</li>
+<li><strong><code>appkit</code> conformance test</strong> updated for the new <code>__all__</code> and the
+  <code>SubstrateView</code> shape; assert <code>Circuit</code> still satisfies it.</li>
+<li><strong>Migration test.</strong> A fixture substrate DB with <code>fsrs_state</code> rows →
+  run the script → assert <code>fsrs_card</code> parity, idempotency on
+  re-run, and <code>--reverse</code> round-trips.</li>
+<li><strong>Behaviour-change test.</strong> A focused test pinning the new
+  <code>retrieve</code> ordering (FSRS term gone) and the spike-signal
+  <code>consolidate</code>/<code>diagnose</code> triage, so the §4.3 change is intentional
+  and locked, not silent.</li>
+<li>All four package suites stay green (Stage-1 baseline: core 333 /
+  agents 39 / cli 34 / tutor 36 — tutor and core counts will shift as
+  code moves; the <em>sum</em> of FSRS tests should not drop).</li>
+</ul>
+<h2 id="8-open-questions-for-review">8. Open questions for review<a class="headerlink" href="#8-open-questions-for-review" title="Permanent link">&para;</a></h2>
+<p>Review round 1 (2026-05-20) resolved Q1–Q8; resolutions recorded
+inline.</p>
+<ul>
+<li><strong>Q1 — Substrate fully drops FSRS reads? → RESOLVED: yes.</strong> The
+  substrate stops reading the learner model everywhere, including the
+  <code>retrieve</code> re-ranking. The <code>spkt retrieve</code> ordering change (FSRS
+  retrievability term dropped) is accepted; memory-aware retrieval, if
+  wanted, returns later as a tutor feature over <code>retrieval_boost</code>
+  (§4.3).</li>
+<li><strong>Q2 — <code>consolidate</code>/<code>diagnose</code> substitute. → RESOLVED: spike-table
+  signals now.</strong> Both triage on substrate-native <code>spike</code>-table signals
+  (count, recency, grade distribution), not FSRS stability. If the
+  substrate later grows a native <code>use_count</code>, these sites can upgrade.</li>
+<li><strong>Q3 — <code>compute_scaffold</code> relocation. → RESOLVED: confirmed.</strong> Moves
+  to <code>spikuit-tutor</code>; <code>Circuit.edge_type</code> is added so it need not
+  touch raw networkx (§4.5).</li>
+<li><strong>Q4 — <code>appkit</code> break &amp; version. → RESOLVED: v0.9.0 minor bump.</strong>
+  The breaking <code>appkit</code> change ships in the v0.9.0 minor bump, no
+  deprecation shim. Pre-1.0 semantics allow a minor bump to break;
+  document it in the changelog.</li>
+<li><strong>Q5 — Tutor store location &amp; name. → RESOLVED: separate DB,
+  configurable path.</strong> A separate per-overlay DB, not extra core
+  tables — the decisive reason is overlay plurality (one substrate KB,
+  many overlays: tutor, agent-rag, a second tutor; §4.1). The overlay
+  path is configurable; <code>&lt;substrate-stem&gt;.tutor.db</code> is only the
+  single-tutor default. Minimal schema (no <code>due</code> index) confirmed.</li>
+<li><strong>Q6 — Orphan cleanup. → RESOLVED: reconcile-on-open.</strong> Stage 2
+  ships reconcile-on-open; the <code>events(follow=True)</code> reaper is
+  deferred (§4.4).</li>
+<li><strong>Q7 — <code>fire</code> naming &amp; <code>spkt neuron fire</code>. → RESOLVED: keep
+  <code>fire</code>.</strong> The split-out substrate method keeps the name <code>fire</code>
+  (native spike metaphor, no CLI/doc churn — §4.2); the earlier
+  <code>record_use</code> rename proposal is dropped. <code>record_use</code> stays the
+  coarse conceptual verb in <code>substrate-self-organization.md</code>, and the
+  <code>amkb.Store</code> adapter maps it onto <code>circuit.fire</code>. Naming <em>that</em>
+  conceptual verb (current lean: <strong><code>feedback</code></strong>, since it pairs with
+  the UI-layer term <code>retrieve</code> and reads as "reflecting the user's
+  feedback") is deferred to that doc's own review — out of Stage 2
+  scope. <code>spkt neuron fire</code> keeps its command name and becomes
+  tutor-orchestrated.</li>
+<li><strong>Q8 — Two-phase table drop. → RESOLVED: confirmed.</strong> The migration
+  leaves <code>fsrs_state</code> dormant for one release; <code>DROP TABLE</code> ships in a
+  later release, preserving a rollback window.</li>
+</ul>
+<h2 id="9-effort-risk">9. Effort &amp; risk<a class="headerlink" href="#9-effort-risk" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Diff size</td>
+<td><strong>Large.</strong> Multi-file substrate surgery (<code>circuit.py</code>, <code>db.py</code>, <code>scaffold.py</code>), new tutor store module + relocated FSRS code, <code>appkit</code> reshape, CLI rewiring, migration script.</td>
+</tr>
+<tr>
+<td>Runtime risk</td>
+<td><strong>Medium-high.</strong> §4.3 changes <code>retrieve</code> ordering and <code>consolidate</code>/<code>diagnose</code> triage — observable behaviour, not just re-exports. The <code>fire</code> split inverts orchestration.</td>
+</tr>
+<tr>
+<td>Data risk</td>
+<td><strong>Medium.</strong> A real schema migration. Mitigated by <code>--dry-run</code>, idempotency, <code>--reverse</code>, and the §6 dormant-table window.</td>
+</tr>
+<tr>
+<td>Test risk</td>
+<td><strong>High.</strong> Every FSRS path re-tests across the core/tutor boundary; behaviour-change tests must be written, not just inherited.</td>
+</tr>
+<tr>
+<td>Reversibility</td>
+<td>Data: reversible within the dormant window (§6). Code: a genuine refactor — reversible only by <code>git revert</code>, not a toggle.</td>
+</tr>
+<tr>
+<td>Blocking dependency</td>
+<td>Stage 1 (PR #68) merged ✓. No further blocker.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-cross-references">10. Cross-references<a class="headerlink" href="#10-cross-references" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>tutor-extraction-stage1.md</code> — Stage 1 contract; §2.3/§2.4 set up
+  this doc; §7's Stage-2 prediction is refined in §4.6 here.</li>
+<li><code>roadmap.md</code> §6 — extraction workstream; v0.9.x slot; "Not
+  additive" flag.</li>
+<li><code>substrate-self-organization.md</code> — the AMKB substrate verbs; the
+  <code>record_use</code> conceptual verb whose naming Q7 defers here; the
+  signed-weight redesign §4.2 keeps separate.</li>
+<li><code>agent-workspace/contexts/active/spikuit-amkb-v03-tutor-extraction.md</code>
+  — canonical context; decision Q-B (α: tutor-app SQLite); H3 staging.</li>
+<li><code>scripts/migrate_tataque.py</code> — the migration-script pattern §6
+  mirrors.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.code.annotate", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      
+        <script src="../../javascripts/charts.js"></script>
+      
+    
+  </body>
+</html>

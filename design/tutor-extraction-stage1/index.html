@@ -1,0 +1,1968 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A knowledge base that gets smarter the more you use it">
+      
+      
+      
+        <link rel="canonical" href="https://takyone.github.io/spikuit/design/tutor-extraction-stage1/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../ja/design/tutor-extraction-stage1/" hreflang="ja">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Tutor extraction — Stage 1 design - Spikuit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/charts.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tutor-extraction-stage-1-design" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Spikuit" class="md-header__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spikuit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tutor extraction — Stage 1 design
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ja/design/tutor-extraction-stage1/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Spikuit" class="md-nav__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spikuit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Use
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RAG
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rag/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix: Algorithms &amp; Technical Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/neuroscience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computational Neuroscience
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/psychology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cognitive & Developmental Psychology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/spaced-repetition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spaced Repetition Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Graphs & Graph-Based ML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Information Retrieval & RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engine
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engine
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/circuit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/propagation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Propagation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/embedder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/scaffold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaffold & Learn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Purpose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-current-coupling-the-facts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Current coupling — the facts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Current coupling — the facts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-what-spikuit-tutor-imports-from-spikuit-core" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 What spikuit-tutor imports from spikuit-core
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-what-spikuit-tutor-calls-on-the-injected-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 What spikuit-tutor calls on the injected Circuit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-finding-spikuit-tutor-does-not-touch-fsrs-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Finding: spikuit-tutor does not touch FSRS columns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-compute_scaffold-is-deeply-substrate-coupled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 compute_scaffold is deeply substrate-coupled
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-what-the-contract-must-achieve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. What the contract must achieve
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. What the contract must achieve">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-the-enum-constraint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 The enum constraint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-design-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Design options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Design options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-option-a-curated-spikuit_coreappkit-facade-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Option A — curated spikuit_core.appkit facade (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-option-b-standalone-spikuit-substrate-api-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Option B — standalone spikuit-substrate-api package
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-rejected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Rejected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-packaging-the-adapter-ecosystem-out-of-stage-1-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Packaging &amp; the adapter ecosystem (out of Stage 1 scope)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-recommended-stage-1-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Recommended Stage 1 plan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-ci-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. CI enforcement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-stage-2-interplay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Stage 2 interplay
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-open-questions-for-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Open questions for review
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-effort-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Effort &amp; risk
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cross-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Cross-references
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="tutor-extraction-stage-1-design">Tutor extraction — Stage 1 design<a class="headerlink" href="#tutor-extraction-stage-1-design" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Reviewed — round 1 (2026-05-20) resolved Q1–Q5 (§8).
+Design only, no implementation in this doc.
+<strong>Slot:</strong> v0.8.x window (per <code>roadmap.md</code> §6). Stage 0 ships first (PR #66).
+<strong>Supersedes:</strong> nothing. Extends <code>roadmap.md</code> §6 and the H3 staging in
+<code>agent-workspace/contexts/active/spikuit-amkb-v03-tutor-extraction.md</code>.</p>
+<h2 id="1-purpose">1. Purpose<a class="headerlink" href="#1-purpose" title="Permanent link">&para;</a></h2>
+<p>Stage 0 (PR #66) carved <code>spikuit-tutor</code> out of <code>spikuit-cli</code> as a
+package-boundary move only — <code>spikuit-tutor</code> still imports
+<code>spikuit-core</code> domain types directly. Stage 1 turns that raw coupling
+into a <strong>controlled contract</strong>: a curated, semver-stable surface that
+<code>spikuit-tutor</code> (and later <code>spikuit-agent-rag</code>) may import, behind
+which the substrate internals can churn freely.</p>
+<p>This matters because v0.8.x is the substrate self-organization
+milestone (<code>substrate-self-organization.md</code>): <code>spikuit-core</code> internals
+— <code>circuit</code>, <code>propagation</code>, <code>community</code>, <code>spectral</code>, <code>db</code> — are about
+to change a lot. Without a contract surface, every substrate change
+risks breaking the app layer silently.</p>
+<p>Stage 1 deliberately does <strong>not</strong> migrate the database. FSRS columns
+stay in <code>spikuit-core</code> until Stage 2. Stage 1 is additive and
+reversible.</p>
+<h2 id="2-current-coupling-the-facts">2. Current coupling — the facts<a class="headerlink" href="#2-current-coupling-the-facts" title="Permanent link">&para;</a></h2>
+<p>Measured against the post-Stage-0 tree (<code>spikuit-tutor/src/</code>).</p>
+<h3 id="21-what-spikuit-tutor-imports-from-spikuit-core">2.1 What <code>spikuit-tutor</code> imports from <code>spikuit-core</code><a class="headerlink" href="#21-what-spikuit-tutor-imports-from-spikuit-core" title="Permanent link">&para;</a></h3>
+<p>Seven files, twelve import sites, seven distinct symbols:</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Kind</th>
+<th>Used as</th>
+<th>Files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Grade</code></td>
+<td><code>IntEnum</code></td>
+<td>runtime — compared <code>&gt;=</code>, <code>==</code>; constructed</td>
+<td><code>tutor/session.py</code>, <code>quiz/{models,flashcard,tui}.py</code></td>
+</tr>
+<tr>
+<td><code>ScaffoldLevel</code></td>
+<td><code>str</code>-Enum</td>
+<td>runtime — compared <code>==</code>, <code>in</code></td>
+<td><code>tutor/builder.py</code>, <code>quiz/{flashcard,free_response}.py</code></td>
+</tr>
+<tr>
+<td><code>Spike</code></td>
+<td><code>msgspec.Struct</code></td>
+<td>runtime — constructed, passed to <code>circuit.fire</code></td>
+<td><code>tutor/session.py</code></td>
+</tr>
+<tr>
+<td><code>compute_scaffold</code></td>
+<td>function</td>
+<td>runtime — called</td>
+<td><code>tutor/builder.py</code></td>
+</tr>
+<tr>
+<td><code>Circuit</code></td>
+<td>class</td>
+<td>type hint only (<code>TYPE_CHECKING</code>)</td>
+<td><code>tutor/{session,builder,plan}.py</code></td>
+</tr>
+<tr>
+<td><code>Neuron</code></td>
+<td><code>msgspec.Struct</code></td>
+<td>type hint only (<code>TYPE_CHECKING</code>)</td>
+<td><code>tutor/{builder,plan}.py</code>, <code>quiz/{flashcard,free_response}.py</code></td>
+</tr>
+<tr>
+<td><code>Scaffold</code></td>
+<td><code>msgspec.Struct</code></td>
+<td>type hint only (<code>TYPE_CHECKING</code>)</td>
+<td><code>tutor/{builder,plan}.py</code>, <code>quiz/{flashcard,free_response}.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>So the <strong>runtime</strong> coupling is four symbols (<code>Grade</code>, <code>ScaffoldLevel</code>,
+<code>Spike</code>, <code>compute_scaffold</code>); <code>Circuit</code>, <code>Neuron</code>, <code>Scaffold</code> are
+type-hint-only.</p>
+<h3 id="22-what-spikuit-tutor-calls-on-the-injected-circuit">2.2 What <code>spikuit-tutor</code> calls on the injected <code>Circuit</code><a class="headerlink" href="#22-what-spikuit-tutor-calls-on-the-injected-circuit" title="Permanent link">&para;</a></h3>
+<p><code>spikuit-tutor</code> never constructs a <code>Circuit</code> — it receives one by
+dependency injection (<code>TutorSession.__init__</code>, <code>plan_exam(circuit,…)</code>).
+It calls exactly four methods:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>circuit.fire(spike)            # session.py — record a review event
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>circuit.get_neuron(id)         # builder.py
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>circuit.due_neurons(...)       # builder.py
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>circuit.near_due_neurons(...)  # builder.py
+</code></pre></div>
+<h3 id="23-finding-spikuit-tutor-does-not-touch-fsrs-columns">2.3 Finding: <code>spikuit-tutor</code> does not touch FSRS columns<a class="headerlink" href="#23-finding-spikuit-tutor-does-not-touch-fsrs-columns" title="Permanent link">&para;</a></h3>
+<p><code>roadmap.md</code> §6 describes Stage 1 as "tutor-app reads/writes core FSRS
+columns by contract." That is imprecise. The <code>fsrs_state</code> table
+(<code>neuron_id TEXT PK, card_json TEXT</code>) is read and written entirely
+<strong>inside</strong> <code>Circuit</code> (<code>Circuit.fire</code>, <code>Circuit.get_card</code>,
+<code>Circuit.due_neurons</code>). <code>spikuit-tutor</code> has no raw column access to
+gate. <strong>The contract surface is the <code>Circuit</code> method subset, not the
+table.</strong> Raw-column ownership only becomes a question at Stage 2, when
+the table itself moves.</p>
+<h3 id="24-compute_scaffold-is-deeply-substrate-coupled">2.4 <code>compute_scaffold</code> is deeply substrate-coupled<a class="headerlink" href="#24-compute_scaffold-is-deeply-substrate-coupled" title="Permanent link">&para;</a></h3>
+<p><code>compute_scaffold(circuit, neuron_id) -&gt; Scaffold</code> reads, in one call:
+FSRS card state (<code>circuit.get_card</code>, <code>card.state</code>, <code>card.stability</code>),
+graph topology (<code>circuit.neighbors</code>, <code>circuit.predecessors</code>), raw
+networkx edge data (<code>circuit.graph[a][b]["type"]</code>), and imports the
+<code>fsrs</code> package's <code>State</code> enum directly. It is a substrate-state query
+that happens to return a tutor-facing recommendation. Relocating it
+into <code>spikuit-tutor</code> would drag all of that surface — plus an <code>fsrs</code>
+dependency — into the app layer. This design keeps it in
+<code>spikuit-core</code> and exposes it through the contract.</p>
+<h2 id="3-what-the-contract-must-achieve">3. What the contract must achieve<a class="headerlink" href="#3-what-the-contract-must-achieve" title="Permanent link">&para;</a></h2>
+<ol>
+<li><code>spikuit-tutor/src/**</code> contains <strong>zero</strong> <code>from spikuit_core import …</code>
+   reaching into substrate internals — verified by CI.</li>
+<li>The symbols <code>spikuit-tutor</code> legitimately needs are still reachable,
+   through one explicitly-versioned module.</li>
+<li>Substrate internals (<code>circuit</code>, <code>propagation</code>, <code>community</code>,
+   <code>spectral</code>, <code>db</code>, <code>models</code>) may be refactored during v0.8.x without
+   touching <code>spikuit-tutor</code>.</li>
+<li>The shape chosen does not get thrown away by Stage 2.</li>
+</ol>
+<h3 id="31-the-enum-constraint">3.1 The enum constraint<a class="headerlink" href="#31-the-enum-constraint" title="Permanent link">&para;</a></h3>
+<p><code>Grade</code> and <code>ScaffoldLevel</code> are compared by identity/value
+(<code>grade &gt;= Grade.FIRE</code>, <code>level == ScaffoldLevel.FULL</code>). A structural
+<code>Protocol</code> cannot stand in for an enum — <code>spikuit-tutor</code> needs the
+<em>actual</em> enum classes. Any design that claims "tutor defines its own
+interfaces" still has to source these two enums from somewhere both
+<code>spikuit-core</code> and <code>spikuit-tutor</code> agree on.</p>
+<h2 id="4-design-options">4. Design options<a class="headerlink" href="#4-design-options" title="Permanent link">&para;</a></h2>
+<h3 id="41-option-a-curated-spikuit_coreappkit-facade-recommended">4.1 Option A — curated <code>spikuit_core.appkit</code> facade (recommended)<a class="headerlink" href="#41-option-a-curated-spikuit_coreappkit-facade-recommended" title="Permanent link">&para;</a></h3>
+<p><code>spikuit-core</code> ships one new module, <code>spikuit_core/appkit.py</code>, that
+re-exports the app-facing surface and nothing else:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># spikuit-core/src/spikuit_core/appkit.py</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="sd">&quot;&quot;&quot;Stable app-facing surface of spikuit-core.</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="sd">Application packages (spikuit-tutor, spikuit-agent-rag) import ONLY</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="sd">from spikuit_core.appkit — never from spikuit_core internals. This</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="sd">module is the versioned contract; substrate internals may churn</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="sd">freely behind it.</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="kn">from</span><span class="w"> </span><span class="nn">._appkit_protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">SchedulerCircuit</span><span class="p">,</span> <span class="n">NeuronView</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grade</span><span class="p">,</span> <span class="n">ScaffoldLevel</span><span class="p">,</span> <span class="n">Scaffold</span><span class="p">,</span> <span class="n">Spike</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="kn">from</span><span class="w"> </span><span class="nn">.scaffold</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_scaffold</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="s2">&quot;SchedulerCircuit&quot;</span><span class="p">,</span> <span class="s2">&quot;NeuronView&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="s2">&quot;Grade&quot;</span><span class="p">,</span> <span class="s2">&quot;ScaffoldLevel&quot;</span><span class="p">,</span> <span class="s2">&quot;Scaffold&quot;</span><span class="p">,</span> <span class="s2">&quot;Spike&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="s2">&quot;compute_scaffold&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="p">]</span>
+</code></pre></div>
+<p><code>SchedulerCircuit</code> is a <code>Protocol</code> capturing exactly §2.2:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># spikuit-core/src/spikuit_core/_appkit_protocols.py</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">SchedulerCircuit</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike</span><span class="p">:</span> <span class="n">Spike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_neuron</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NeuronView</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">due_neurons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">object</span><span class="p">]:</span> <span class="o">...</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">near_due_neurons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">object</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><code>spikuit-tutor</code> then imports type hints as <code>SchedulerCircuit</code> /
+<code>NeuronView</code> instead of the concrete <code>Circuit</code> / <code>Neuron</code>. The real
+<code>spikuit_core.Circuit</code> satisfies <code>SchedulerCircuit</code> structurally — no
+runtime change, no wiring change in <code>spikuit-cli</code>.</p>
+<p>Migration of the twelve sites:</p>
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>from spikuit_core import Grade, ScaffoldLevel, Spike</code></td>
+<td><code>from spikuit_core.appkit import Grade, ScaffoldLevel, Spike</code></td>
+</tr>
+<tr>
+<td><code>from spikuit_core.scaffold import compute_scaffold</code></td>
+<td><code>from spikuit_core.appkit import compute_scaffold</code></td>
+</tr>
+<tr>
+<td><code>from spikuit_core import Circuit</code> (TYPE_CHECKING)</td>
+<td><code>from spikuit_core.appkit import SchedulerCircuit</code></td>
+</tr>
+<tr>
+<td><code>from spikuit_core import Neuron, Scaffold</code> (TYPE_CHECKING)</td>
+<td><code>from spikuit_core.appkit import NeuronView, Scaffold</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>CI rule:</strong> in <code>spikuit-tutor/src/**</code>, the only permitted spelling is
+<code>from spikuit_core.appkit import …</code>. Any other <code>spikuit_core</code> import
+fails the build.</p>
+<p><code>appkit</code> is <strong>public, semver-stable API</strong> — the rest of <code>spikuit_core</code>
+is internal. That designation is what lets <code>appkit</code> double as the
+contract a <strong>custom adapter</strong> programs against: a third party can build
+their own adapter (a different scheduler, a spaced-export tool) on the
+same surface <code>spikuit-tutor</code> uses, without reading substrate internals.
+<code>spikuit-tutor</code> is then simply the first-party, pre-installed adapter —
+not a privileged one.</p>
+<ul>
+<li><strong>Pros:</strong> small, mechanical diff; no type relocation; no change to
+  <code>Circuit.fire</code>; <code>compute_scaffold</code> stays where its dependencies are;
+  fully reversible; Stage-2-ready (appkit is the single seam to edit
+  when FSRS retires).</li>
+<li><strong>Cons:</strong> <code>spikuit-tutor</code> still has a hard <code>spikuit-core</code> dependency
+  and still installs the whole engine. The contract is "curated
+  surface," not "package independence." The CI rule has one allowed
+  prefix (<code>spikuit_core.appkit</code>) rather than a flat ban.</li>
+</ul>
+<h3 id="42-option-b-standalone-spikuit-substrate-api-package">4.2 Option B — standalone <code>spikuit-substrate-api</code> package<a class="headerlink" href="#42-option-b-standalone-spikuit-substrate-api-package" title="Permanent link">&para;</a></h3>
+<p>A fifth workspace package holding the Protocols <strong>and</strong> the shared
+value types (<code>Grade</code>, <code>ScaffoldLevel</code>, <code>Spike</code>, <code>Scaffold</code>).
+<code>spikuit-core</code> imports its types <em>from</em> this package; <code>spikuit-tutor</code>
+depends <em>only</em> on it, never on <code>spikuit-core</code>.</p>
+<ul>
+<li><strong>Pros:</strong> true package independence — <code>spikuit-tutor</code> becomes
+  installable and testable without the engine; the flat ban "no
+  <code>spikuit_core</code> anywhere" is honest with no exceptions.</li>
+<li><strong>Cons:</strong> relocating the enums forces an edit to every
+  <code>spikuit-core</code> file that uses <code>Grade</code>/<code>Spike</code> (substrate-wide
+  churn during the same window substrate self-organization is
+  landing — exactly the collision <code>roadmap.md</code> §6 wants to avoid); a
+  fifth package; <code>compute_scaffold</code> still cannot move (its <code>fsrs</code> and
+  graph coupling), so it stays in core and the "independence" is
+  partial anyway.</li>
+</ul>
+<p><strong>A and B are not exclusive — B is the graduation of A.</strong> Because the
+CI import rule guarantees every app touches <em>only</em>
+<code>spikuit_core.appkit</code>, promoting <code>appkit</code> to a standalone
+<code>spikuit-substrate-api</code> package later is a mechanical packaging move:
+publish the package, make <code>spikuit_core.appkit</code> a re-export shim
+pointing at it, repoint the app <code>pyproject.toml</code> dependency. <strong>No app
+code changes</strong> — the spelling <code>from spikuit_core.appkit import …</code> stays
+valid across the move. So Stage 1 picks A; B is deferred until a real
+third-party adapter ecosystem (or standalone-install demand) makes the
+fifth package earn its cost. Choosing A now does not burn the B
+bridge — it lays the first plank of it.</p>
+<h3 id="43-rejected">4.3 Rejected<a class="headerlink" href="#43-rejected" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>amkb.Store</code> extension namespace.</strong> The <code>amkb</code> adapter lives in
+  <code>spikuit-agents</code>; routing the tutor contract through it would make
+  <code>spikuit-tutor</code> depend on <code>spikuit-agents</code>, violating the dependency
+  direction (<code>agents → tutor</code>, never the reverse).</li>
+<li><strong>Pure consumer-defined Protocols, no shared module.</strong> Breaks on the
+  enum constraint (§3.1): <code>Grade</code> and <code>ScaffoldLevel</code> cannot be
+  structural.</li>
+</ul>
+<h3 id="44-packaging-the-adapter-ecosystem-out-of-stage-1-scope">4.4 Packaging &amp; the adapter ecosystem (out of Stage 1 scope)<a class="headerlink" href="#44-packaging-the-adapter-ecosystem-out-of-stage-1-scope" title="Permanent link">&para;</a></h3>
+<p>Two future directions surfaced in review round 1. Both are <strong>additive
+and orthogonal to the A/B choice</strong>, so neither blocks Stage 1 — but
+they confirm why A (with <code>appkit</code> designated public) is the right
+shape.</p>
+<ul>
+<li><strong>pip extras.</strong> <code>pip install spikuit[tutor]</code> / <code>spikuit[rag]</code> /
+  <code>spikuit[all]</code> is implementable today: Stage 0 already gave
+  <code>spikuit-tutor</code> its own distributable boundary, and the umbrella
+  <code>spikuit</code> package can declare <code>[project.optional-dependencies]</code>
+  whenever wanted. It works identically under A or B — a contract
+  package carries no engine, so a working tutor pulls in <code>spikuit-core</code>
+  either way. Recommended default once extras land: bare
+  <code>pip install spikuit</code> keeps today's behaviour (core + cli + tutor —
+  do not break existing users), <code>spikuit[rag]</code> opt-in, <code>spikuit[all]</code>
+  everything. This is a small standalone packaging task, slotted
+  separately — not part of the Stage 1 contract work.</li>
+<li><strong>Custom adapters.</strong> A first-class adapter SPI (registration,
+  discovery, lifecycle) belongs to the longer adapter-abstraction arc,
+  not Stage 1. But its <em>foundation</em> is exactly the appkit contract: a
+  stable surface adapter authors depend on. Stage 1 delivers that
+  foundation; the SPI is built on top later. Designating <code>appkit</code>
+  public/semver-stable from day one (§4.1) is what keeps that path
+  open, and <code>spikuit-tutor</code> becomes the first-party preinstalled
+  adapter — fine to bundle, not privileged.</li>
+</ul>
+<h2 id="5-recommended-stage-1-plan">5. Recommended Stage 1 plan<a class="headerlink" href="#5-recommended-stage-1-plan" title="Permanent link">&para;</a></h2>
+<p>Adopt <strong>Option A</strong>. Concretely:</p>
+<ol>
+<li>Add <code>spikuit_core/_appkit_protocols.py</code> — <code>SchedulerCircuit</code>,
+   <code>NeuronView</code> Protocols.</li>
+<li>Add <code>spikuit_core/appkit.py</code> — the facade module above. Cover it
+   with a test asserting <code>Circuit</code> satisfies <code>SchedulerCircuit</code> and
+   <code>Neuron</code> satisfies <code>NeuronView</code> (<code>isinstance</code> with
+   <code>runtime_checkable</code>, or a <code>mypy</code>-level assertion).</li>
+<li>Repoint the twelve import sites in <code>spikuit-tutor/src/**</code> per the
+   §4.1 table.</li>
+<li>Add the CI import rule (§6).</li>
+<li>Update the <code>spikuit-tutor</code> package docstring (it currently says
+   "the <code>from spikuit_core</code> imports are replaced in Stage 1").</li>
+<li><code>docs/reference/</code> — <code>compute_scaffold</code> and <code>Scaffold</code> are now
+   documented as the appkit surface.</li>
+</ol>
+<p>No change to <code>Circuit</code>, to <code>Circuit.fire</code>'s signature, to the
+database, or to <code>spikuit-cli</code> wiring. <code>spikuit-agents</code> keeps importing
+<code>Grade</code> from wherever it does today (it is not an app package and is
+out of scope for the ban — but moving it to <code>appkit</code> too is a
+low-cost consistency win; see open question Q3).</p>
+<h2 id="6-ci-enforcement">6. CI enforcement<a class="headerlink" href="#6-ci-enforcement" title="Permanent link">&para;</a></h2>
+<p>There is <strong>no test or lint CI workflow today</strong> — <code>.github/workflows/</code>
+holds only <code>docs.yml</code> and <code>publish.yml</code>. Stage 1 must therefore add
+the CI surface that the import rule runs in.</p>
+<p>Proposal: a new <code>ci.yml</code> that runs (a) <code>pytest</code> per package and (b)
+the import check. The import check, kept dependency-free:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># tools/check_app_imports.py — fails if spikuit-tutor reaches past appkit</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">ast</span><span class="o">,</span><span class="w"> </span><span class="nn">pathlib</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">ALLOWED</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;spikuit_core.appkit&quot;</span><span class="p">}</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">bad</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;spikuit-tutor/src&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">):</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ImportFrom</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">module</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;spikuit_core&quot;</span><span class="p">):</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED</span><span class="p">:</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                <span class="n">bad</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="si">}</span><span class="s2">: from </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">module</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Import</span><span class="p">):</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>                <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;spikuit_core&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED</span><span class="p">:</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>                    <span class="n">bad</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="si">}</span><span class="s2">: import </span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="k">if</span> <span class="n">bad</span><span class="p">:</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bad</span><span class="p">));</span> <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p>If a linter is adopted later, this folds into <code>ruff</code>
+(<code>flake8-tidy-imports</code> <code>banned-api</code>) — but an AST script needs no new
+dependency and states the one allowed prefix explicitly.</p>
+<h2 id="7-stage-2-interplay">7. Stage 2 interplay<a class="headerlink" href="#7-stage-2-interplay" title="Permanent link">&para;</a></h2>
+<p>Stage 2 retires the <code>fsrs_state</code> table from <code>spikuit-core</code> and moves
+FSRS state into a <code>spikuit-tutor</code>-owned SQLite store, joined by
+<code>atom_id</code>. After Stage 2, <code>Grade</code> and the FSRS card are unambiguously
+tutor-domain.</p>
+<p>Option A is built for that: at Stage 2, <code>appkit.py</code> is the <strong>single
+file to edit</strong> — drop the FSRS-facing re-exports (<code>Grade</code>, <code>Spike</code>,
+<code>compute_scaffold</code>), and <code>spikuit-tutor</code> repoints them to its own
+modules. The <code>SchedulerCircuit</code> Protocol shrinks (no more <code>fire</code>).
+Nothing in Option A is wasted.</p>
+<p>Option B would have front-loaded the enum relocation into Stage 1 —
+i.e. done part of Stage 2's hard work early, during the substrate
+self-organization window. That is the sequencing <code>roadmap.md</code> §6
+explicitly warns against.</p>
+<h2 id="8-open-questions-for-review">8. Open questions for review<a class="headerlink" href="#8-open-questions-for-review" title="Permanent link">&para;</a></h2>
+<p>Review round 1 (2026-05-20) resolved Q1–Q5; resolutions recorded
+inline.</p>
+<ul>
+<li><strong>Q1 — Option A vs B. → RESOLVED: adopt A.</strong> A is the curated
+  facade; B is reframed (§4.2) as a later <em>graduation</em> of A, not a
+  competing option — deferred until a real third-party adapter
+  ecosystem or standalone-install demand appears. The <code>appkit</code> surface
+  is designated public/semver-stable so it can serve as the
+  custom-adapter contract directly. pip extras and the custom-adapter
+  SPI (§4.4) are additive and do not change this.</li>
+<li><strong>Q2 — <code>compute_scaffold</code> home. → RESOLVED: confirmed.</strong> Stays in
+  <code>spikuit-core</code>, exposed via <code>appkit</code> (its <code>fsrs</code> + graph coupling
+  makes relocation expensive and premature).</li>
+<li><strong>Q3 — <code>spikuit-agents</code>. → RESOLVED: confirmed yes.</strong> It also moves
+  to <code>from spikuit_core.appkit import Grade</code> for consistency, even
+  though it is out of scope for the enforced ban (not an app package).</li>
+<li><strong>Q4 — CI scope. → RESOLVED: confirmed both.</strong> The new <code>ci.yml</code>
+  runs the full <code>pytest</code> matrix <em>and</em> the import check — closing the
+  missing test CI gap in the same PR.</li>
+<li><strong>Q5 — <code>roadmap.md</code> §6 wording. → RESOLVED: confirmed.</strong> One-line
+  correction to §6 ("FSRS columns by contract" → the <code>Circuit</code> method
+  subset, per §2.3) lands together with Stage 1.</li>
+</ul>
+<h2 id="9-effort-risk">9. Effort &amp; risk<a class="headerlink" href="#9-effort-risk" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Diff size</td>
+<td>Small — 1 new module + 1 protocols file + 12 repointed imports + 1 CI workflow + 1 check script.</td>
+</tr>
+<tr>
+<td>Runtime risk</td>
+<td>Near-zero — re-exports and structural typing; no behavior change.</td>
+</tr>
+<tr>
+<td>Test risk</td>
+<td>Low — existing suites cover the call paths; add one appkit conformance test.</td>
+</tr>
+<tr>
+<td>Reversibility</td>
+<td>Full — <code>appkit.py</code> can be deleted and imports reverted.</td>
+</tr>
+<tr>
+<td>Blocking dependency</td>
+<td>Stage 0 (PR #66) must merge first.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-cross-references">10. Cross-references<a class="headerlink" href="#10-cross-references" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>roadmap.md</code> §6 — extraction workstream, Stage table, v0.8.x slot.</li>
+<li><code>substrate-self-organization.md</code> §5 — names the "Spikuit-core
+  extension interface" this doc designs.</li>
+<li><code>agent-workspace/contexts/active/spikuit-amkb-v03-tutor-extraction.md</code>
+  — H3 staging (Stage 0/1/2), canonical context.</li>
+<li>PR #66 — Stage 0 boundary move (prerequisite).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.code.annotate", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      
+        <script src="../../javascripts/charts.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1928 @@
+# Spikuit — Full Documentation
+
+> Auto-generated from docs/. For the concise version, see llms.txt.
+> Source: https://github.com/takyone/spikuit
+> Docs: https://takyone.github.io/spikuit/
+
+
+---
+
+# Getting Started
+
+## Installation
+
+```bash
+git clone https://github.com/takyone/spikuit.git
+cd spikuit
+uv sync --package spikuit-cli
+```
+
+## Initialize a Brain
+
+A **Brain** is a self-contained knowledge space — like an Obsidian vault
+or a git repository. Each Brain has its own knowledge graph, configuration,
+and review schedule. You can have multiple Brains for different domains
+or projects.
+
+Run `spkt init` to start the interactive wizard:
+
+```
+$ spkt init
+
+Brain name [my-project]: math
+Configure embeddings? [y/N]: y
+  Providers: openai-compat, ollama
+  Provider [openai-compat]:
+  Base URL [http://localhost:1234/v1]:
+  Model [text-embedding-nomic-embed-text-v1.5]:
+  Dimension [768]:
+
+--- Summary ---
+Brain:    math
+Location: /home/user/math/.spikuit/
+Embedder: openai-compat
+  URL:    http://localhost:1234/v1
+  Model:  text-embedding-nomic-embed-text-v1.5
+  Dim:    768
+
+Create brain? [Y/n]:
+
+Initialized brain 'math' at /home/user/math/.spikuit/
+```
+
+You can also use flags for non-interactive setup:
+
+```bash
+spkt init -p openai-compat \
+  --base-url http://localhost:1234/v1 \
+  --model text-embedding-nomic-embed-text-v1.5
+```
+
+This creates:
+
+```
+.spikuit/
+├── config.toml    # Brain configuration
+├── circuit.db     # SQLite database
+└── cache/         # Embedding cache
+```
+
+Like git, `spkt` auto-discovers `.spikuit/` by walking up from the current
+directory. To operate on a different Brain, use `--brain <path>`.
+
+## Add Knowledge
+
+```bash
+# Add a concept
+spkt neuron add "# Functor\n\nA mapping between categories that preserves structure." \
+  -t concept -d math
+
+# Add another
+spkt neuron add "# Monad\n\nA monoid in the category of endofunctors." \
+  -t concept -d math
+```
+
+## Connect Concepts
+
+```bash
+# Monad requires understanding Functor
+spkt synapse add <monad-id> <functor-id> --type requires
+
+# See the connection
+spkt neuron inspect <monad-id>
+```
+
+## Review
+
+```bash
+# What's due for review?
+spkt neuron due
+
+# Review a concept (grade: miss/weak/fire/strong)
+spkt neuron fire <neuron-id> --grade fire
+
+# Interactive quiz session
+spkt quiz
+```
+
+## Search
+
+```bash
+# Graph-weighted search
+spkt retrieve "category theory"
+
+# Backfill embeddings for semantic search
+spkt embed-all
+```
+
+## Ingest Sources
+
+```bash
+# Ingest a URL
+spkt source ingest "https://example.com/article" -d cs --json
+
+# Ingest a directory of files
+spkt source ingest ./papers/ -d cs --json
+```
+
+## Visualize
+
+```bash
+# Generate interactive HTML graph
+spkt visualize
+```
+
+## Export
+
+```bash
+# Full backup
+spkt export -o backup.tar.gz
+
+# Portable QABot bundle
+spkt export --format qabot -o qa-bundle.db
+```
+
+## Grade Scale
+
+| Grade | Meaning |
+|-------|---------|
+| `miss` | Didn't remember |
+| `weak` | Uncertain |
+| `fire` | Got it right |
+| `strong` | Perfect recall |
+
+## Synapse Types
+
+| Type | Direction | Use |
+|------|-----------|-----|
+| `requires` | Directed | A requires understanding B |
+| `extends` | Directed | A extends B |
+| `contrasts` | Bidirectional | A contrasts with B |
+| `relates_to` | Bidirectional | General association |
+| `summarizes` | Directed | Community summary → member |
+
+---
+
+# Concepts
+
+## Brain
+
+A **Brain** is a self-contained knowledge space — like an
+[Obsidian vault](https://obsidian.md/) or a git repository.
+Each Brain lives in a `.spikuit/` directory and contains its own
+knowledge graph, configuration, and review schedule.
+
+```
+my-project/
+└── .spikuit/
+    ├── config.toml    # Brain configuration (name, embedder)
+    ├── circuit.db     # SQLite database (neurons, synapses, FSRS)
+    └── cache/         # Embedding cache
+```
+
+### Multiple Brains
+
+You can have as many Brains as you want — one per project, domain, or topic.
+
+```bash
+~/math/.spikuit/      # Category theory, algebra
+~/french/.spikuit/    # French vocabulary and grammar
+~/work/.spikuit/      # Work-related knowledge
+```
+
+### Discovery
+
+Like git, `spkt` walks up from the current directory to find `.spikuit/`.
+To operate on a different Brain, use `--brain <path>`.
+
+## Knowledge Graph
+
+Spikuit organizes knowledge as a **graph**: concepts are nodes,
+relationships are edges.
+
+### Neurons
+
+A **Neuron** is a single unit of knowledge — stored as Markdown.
+Each neuron can have a type (concept, term, procedure, etc.) and
+a domain (math, french, cs, etc.).
+
+```bash
+spkt neuron add "# Functor\n\nA mapping between categories." -t concept -d math
+```
+
+### Synapses
+
+A **Synapse** is a typed connection between two neurons.
+
+| Type | Direction | Meaning |
+|------|-----------|---------|
+| `requires` | A → B | A requires understanding B |
+| `extends` | A → B | A builds on B |
+| `contrasts` | A ↔ B | A and B are alternatives or opposites |
+| `relates_to` | A ↔ B | General association |
+| `summarizes` | A → B | Community summary → member |
+
+Connections have weights that **strengthen or weaken over time**
+based on how you use them. Review two connected concepts close
+together, and their connection gets stronger.
+
+### Sources
+
+A **Source** tracks where knowledge came from — a URL, paper, book,
+or file. Sources enable citation in answers and version tracking.
+
+```bash
+spkt neuron add "# Key Finding" --source-url "https://paper.com" --source-title "Paper"
+spkt source ingest "https://paper.com" -d cs --json    # bulk ingestion
+spkt source ingest ./papers/ -d cs --json              # directory ingestion
+```
+
+One source can produce many neurons (1:N). Multiple neurons can share
+the same source (M:N). Sources are deduplicated by URL.
+
+#### Metadata Layers
+
+Sources carry two kinds of metadata:
+
+| Layer | Purpose | How it's used |
+|-------|---------|---------------|
+| **filterable** | Structured key-value pairs for strict filtering | SQL WHERE — missing key excludes the result |
+| **searchable** | Free-text metadata for soft relevance | Prepended to embedding input — improves semantic match |
+
+```jsonl
+{"file_name": "paper.md", "filterable": {"year": "2024", "venue": "NeurIPS"}, "searchable": {"abstract": "We propose..."}}
+```
+
+Filterable metadata is strict: `--filter year=2024` only returns sources that
+have a `year` key with value `2024`. Sources without the key are excluded entirely.
+
+Searchable metadata is soft: it's prepended to the neuron's content before
+embedding, so the embedding captures the metadata's meaning.
+
+#### Source Freshness
+
+URL sources track when they were last fetched and can detect staleness:
+
+```bash
+spkt source refresh --stale 30           # Re-fetch sources older than 30 days
+spkt source refresh <source-id>          # Re-fetch a specific source
+```
+
+Freshness tracking uses conditional GET (ETag / Last-Modified) to minimize
+bandwidth. If content has changed, affected neurons are re-embedded automatically.
+Sources returning 404 are flagged as `unreachable`.
+
+### Communities
+
+Spikuit detects **communities** — clusters of densely connected neurons —
+using the Louvain algorithm. Communities improve retrieval by boosting
+results from the same cluster as your top hits.
+
+```bash
+spkt community detect                      # Detect communities
+spkt community detect --summarize          # Also generate summary neurons
+spkt community list --json                 # View current assignment
+```
+
+Communities also drive the **visualization** — nodes are color-coded
+by community for easy visual identification of knowledge clusters.
+
+### Consolidation
+
+Over time, knowledge graphs accumulate weak connections and unused synapses.
+Spikuit provides **sleep-inspired consolidation** — modeled on how the brain
+reorganizes knowledge during sleep:
+
+- **SHY (Synaptic Homeostasis)**: Globally downscales weak connection weights
+- **SWS (Slow-Wave Sleep)**: Prunes connections that have decayed below threshold
+- **REM**: Detects consolidation opportunities (planned)
+
+```bash
+spkt consolidate              # Dry-run — see the plan
+spkt consolidate apply        # Apply the plan
+```
+
+### Why a graph?
+
+Flat flashcard decks treat each card independently. But knowledge
+isn't independent — understanding "Monad" requires understanding
+"Functor" first. A graph captures these relationships, enabling:
+
+- **Prerequisite detection**: know what to study first
+- **Activation spreading**: reviewing one concept nudges related ones
+- **Smarter search**: results ranked by graph structure, not just text similarity
+
+## Spaced Repetition
+
+Each neuron has its own review schedule, powered by
+[FSRS](https://github.com/open-spaced-repetition/fsrs4anki) —
+the same algorithm used in modern Anki.
+
+| Grade | Meaning |
+|-------|---------|
+| `miss` | Didn't remember |
+| `weak` | Uncertain |
+| `fire` | Got it right |
+| `strong` | Perfect recall |
+
+When you review a concept, two things happen:
+
+1. **Its schedule updates** — stability increases on correct recall,
+   decreases on failure
+2. **Related concepts get nudged** — reviewing "Functor" pushes "Monad"
+   slightly closer to its review time
+
+This means your review queue is influenced by the *structure* of your
+knowledge, not just individual due dates.
+
+## Search
+
+Search in Spikuit combines multiple signals:
+
+```
+relevance = text_similarity × (1 + memory_strength + centrality + pressure + feedback + community_boost)
+```
+
+- **Text similarity**: keyword + semantic (embedding-based)
+- **Memory strength**: concepts you know well rank higher
+- **Centrality**: well-connected concepts rank higher
+- **Pressure**: concepts "primed" by recent reviews rank higher
+- **Feedback**: past search feedback (accepted/rejected) adjusts ranking
+- **Community boost**: results from the same community as top hits get a boost
+
+This means the same query can return different results over time as
+your knowledge and usage patterns evolve.
+
+## Scaffolding
+
+Spikuit adapts to your level of understanding for each concept:
+
+| Level | When | What it means |
+|-------|------|--------------|
+| Full | New concept | Maximum support — full context, easy questions |
+| Guided | Still learning | Some support — hints available, moderate difficulty |
+| Minimal | Getting comfortable | Less hand-holding — harder questions |
+| None | Mastered | Recall from memory — application-level challenges |
+
+The system also detects **gaps** — prerequisites you haven't mastered yet —
+and suggests reviewing them first.
+
+## Sessions
+
+Sessions are LLM-powered interaction modes for your Brain:
+
+| Session | What it does |
+|---------|-------------|
+| **QABotSession** | RAG chat — ask questions, get answers from your knowledge. Retrieval quality improves through feedback. |
+| **IngestSession** | Add knowledge through conversation — auto-discovers relations, detects duplicates. |
+| **TutorSession** | AI tutor — diagnoses gaps, teaches concepts, quizzes, gives feedback. |
+
+Sessions can be **persistent** (feedback saved for future use) or
+**ephemeral** (discarded after the session).
+
+## Export & Deployment
+
+### QABot Bundle
+
+A **QABot bundle** is a portable, read-only SQLite file that contains
+everything needed for retrieval: neurons, synapses, embeddings, and
+source citations.
+
+```bash
+spkt export --format qabot -o qa-bundle.db
+```
+
+It excludes FSRS scheduling state, review history, and raw source files —
+just the knowledge and the vectors needed to search it.
+
+Load a bundle with `Circuit(read_only=True)`:
+
+```python
+circuit = Circuit(db_path="qa-bundle.db", read_only=True)
+results = await circuit.retrieve("query")  # works
+await circuit.add_neuron(...)              # raises ReadOnlyError
+```
+
+Use cases: deploy a QABot to a server, share a brain without review data,
+or build a static RAG endpoint.
+
+### Other Formats
+
+| Format | Command | Use case |
+|--------|---------|----------|
+| Tarball | `spkt export -o backup.tar.gz` | Full backup |
+| JSON | `spkt export --format json -o brain.json` | Sharing, inspection |
+
+## Architecture
+
+```
+spikuit-core/     # Pure engine (no LLM dependency)
+├── Circuit       #   Knowledge graph + FSRS + propagation
+├── Embedder      #   Pluggable text embedding (task-type prefixes)
+├── Sessions      #   QABot, Ingest, Tutor
+└── Quiz          #   Quiz strategies (Flashcard, AutoQuiz)
+
+spikuit-cli/      # spkt command (Typer)
+spikuit-agents/   # Agent skills and adapters
+```
+
+The core engine is **LLM-independent** — all `spkt` commands work without
+an LLM. Sessions and agent skills add LLM-powered interactions on top.
+
+For algorithm details (FSRS, graph propagation, scoring formulas, embedding
+pipeline), see [Appendix: Algorithms](appendix/index.md).
+
+---
+
+# CLI Reference
+
+All commands support `--json` for machine-readable output.
+
+## Global Options
+
+Most commands accept these flags:
+
+| Option | Description |
+|--------|-------------|
+| `--brain`, `-b` | Brain root directory (overrides auto-discovery) |
+| `--json` | Machine-readable JSON output |
+
+## Brain Management
+
+### `spkt init`
+
+Initialize a new Brain in the current directory. Without flags, starts an
+interactive wizard. With `--json` or explicit `--provider`, runs non-interactively.
+
+```
+$ spkt init
+
+Brain name [my-project]:
+Configure embeddings? [y/N]: y
+  Providers: openai-compat, ollama
+  Provider [openai-compat]:
+  Base URL [http://localhost:1234/v1]:
+  Model [text-embedding-nomic-embed-text-v1.5]:
+  Dimension [768]:
+
+--- Summary ---
+...
+Create brain? [Y/n]:
+```
+
+Non-interactive (for scripts and agents):
+
+```bash
+spkt init -p none                      # No embeddings
+spkt init --name my-brain -p openai-compat \
+  --base-url http://localhost:1234/v1 \
+  --model text-embedding-nomic-embed-text-v1.5
+spkt init -p ollama --json             # JSON output for agents
+```
+
+### `spkt config`
+
+Show the current brain configuration.
+
+```bash
+spkt config
+spkt config --json
+```
+
+### `spkt embed-all`
+
+Backfill embeddings for existing neurons that don't have one yet.
+Shows a plan (neuron count + estimated tokens) before proceeding.
+
+```bash
+spkt embed-all              # Interactive — shows plan, asks for confirmation
+spkt embed-all --yes        # Skip confirmation
+```
+
+## Neuron Commands
+
+### `spkt neuron add`
+
+Add a new Neuron to the circuit.
+
+```bash
+spkt neuron add "# Functor\n\nA mapping between categories." -t concept -d math
+spkt neuron add "Content here" --type fact --domain physics
+spkt neuron add "Content" -t concept --source-url "https://example.com/paper.pdf" --source-title "A Paper"
+```
+
+| Option | Description |
+|--------|-------------|
+| `-t`, `--type` | Neuron type (e.g. `concept`, `fact`, `procedure`) |
+| `-d`, `--domain` | Knowledge domain (e.g. `math`, `french`) |
+| `--source-url` | Source URL for citation tracking |
+| `--source-title` | Source title (used with `--source-url`) |
+
+### `spkt neuron list`
+
+List neurons with optional filters. Also supports metadata discovery.
+
+```bash
+spkt neuron list
+spkt neuron list -t concept -d math
+spkt neuron list --limit 50
+
+# Metadata discovery
+spkt neuron list --meta-keys --json          # All filterable/searchable keys across sources
+spkt neuron list --meta-values year --json   # Distinct values for a key (with counts)
+```
+
+| Option | Description |
+|--------|-------------|
+| `-t`, `--type` | Filter by neuron type |
+| `-d`, `--domain` | Filter by domain |
+| `--limit` | Max results |
+| `--meta-keys` | List all metadata keys (filterable + searchable) |
+| `--meta-values KEY` | List distinct values for a metadata key |
+
+### `spkt neuron inspect`
+
+Show detailed information about a neuron: content, FSRS state,
+pressure, sources, community, and connected synapses.
+
+```bash
+spkt neuron inspect <neuron-id>
+spkt neuron inspect <neuron-id> --json    # includes sources[] and community_id
+```
+
+### `spkt neuron remove`
+
+Remove a neuron and all its synapses.
+
+```bash
+spkt neuron remove <neuron-id>
+spkt neuron remove <neuron-id> --json
+```
+
+### `spkt neuron merge`
+
+Merge multiple neurons into one. Content is concatenated, synapses are
+redirected to the target, source attachments are transferred, and the
+target is re-embedded.
+
+```bash
+spkt neuron merge <source-id-1> <source-id-2> --into <target-id>
+spkt neuron merge <id1> <id2> <id3> --into <target-id> --json
+```
+
+### `spkt neuron due`
+
+Show neurons due for review. Excludes auto-generated neurons
+(`_meta` domain and `community_summary` type).
+
+```bash
+spkt neuron due
+spkt neuron due -n 20
+spkt neuron due --json
+```
+
+### `spkt neuron fire`
+
+Record a review event (fire a spike). Cannot be used on auto-generated neurons.
+
+```bash
+spkt neuron fire <neuron-id> --grade fire
+spkt neuron fire <neuron-id> -g strong
+```
+
+| Grade | Meaning | FSRS Rating |
+|-------|---------|-------------|
+| `miss` | Failed recall | Again |
+| `weak` | Uncertain | Hard |
+| `fire` | Correct | Good |
+| `strong` | Perfect | Easy |
+
+## Synapse Commands
+
+### `spkt synapse add`
+
+Create a synapse between two neurons.
+
+```bash
+spkt synapse add <pre-id> <post-id> --type requires
+spkt synapse add <a-id> <b-id> --type relates_to
+```
+
+| Type | Direction | Use |
+|------|-----------|-----|
+| `requires` | Directed | A requires understanding B |
+| `extends` | Directed | A extends B |
+| `contrasts` | Bidirectional | A contrasts with B |
+| `relates_to` | Bidirectional | General association |
+| `summarizes` | Directed | Community summary → member |
+
+### `spkt synapse list`
+
+List synapses with optional filters.
+
+```bash
+spkt synapse list
+spkt synapse list --neuron <neuron-id>     # Synapses connected to a neuron
+spkt synapse list --type requires          # Filter by type
+spkt synapse list --json
+```
+
+Output includes confidence tags (`[inferred]`, `[ambiguous]`) when applicable.
+
+### `spkt synapse weight`
+
+Set the weight of an existing synapse.
+
+```bash
+spkt synapse weight <pre-id> <post-id> 0.8
+spkt synapse weight <pre-id> <post-id> 0.5 --json
+```
+
+### `spkt synapse remove`
+
+Remove a synapse between two neurons.
+
+```bash
+spkt synapse remove <pre-id> <post-id>
+spkt synapse remove <pre-id> <post-id> --json
+```
+
+## Source Commands
+
+### `spkt source ingest`
+
+Ingest a URL, file, or directory. Creates Source records, extracts content,
+and outputs it for agent-driven chunking.
+
+```bash
+# Single URL
+spkt source ingest "https://example.com/article" -d cs --json
+
+# Single file
+spkt source ingest ./notes.md -d math --json
+
+# Directory (batch ingestion)
+spkt source ingest ./papers/ -d cs --json
+```
+
+| Option | Description |
+|--------|-------------|
+| `-d`, `--domain` | Domain tag for ingested content |
+| `--title` | Override source title (single file/URL only) |
+| `--force` | Truncate oversized searchable metadata instead of aborting |
+
+**Directory ingestion** reads all text files (`.md`, `.txt`, `.rst`, `.html`, etc.)
+from the directory. Place a `metadata.jsonl` sidecar file to attach metadata:
+
+```jsonl
+{"file_name": "paper1.md", "title": "Paper One", "filterable": {"year": "2024", "venue": "NeurIPS"}, "searchable": {"abstract": "We propose..."}}
+{"file_name": "paper2.md", "filterable": {"year": "2023"}}
+```
+
+If any file's searchable metadata exceeds `max_searchable_chars` (default: 500),
+the command aborts with a per-file report. Use `--force` to truncate instead.
+
+### `spkt source list`
+
+List all sources with neuron counts.
+
+```bash
+spkt source list
+spkt source list --json
+```
+
+### `spkt source inspect`
+
+Show source details and attached neurons.
+
+```bash
+spkt source inspect <source-id>
+spkt source inspect <source-id> --json
+```
+
+### `spkt source update`
+
+Update source metadata (URL, title, author).
+
+```bash
+spkt source update <source-id> --url "https://new-url.com"
+spkt source update <source-id> --title "New Title" --author "Author Name"
+```
+
+### `spkt source refresh`
+
+Re-fetch URL sources to check for content changes. Uses conditional GET
+(ETag / Last-Modified) to minimize bandwidth. Updated content triggers
+re-embedding of affected neurons.
+
+```bash
+spkt source refresh <source-id>          # Refresh a specific source
+spkt source refresh --stale 30           # Refresh sources not fetched in 30+ days
+spkt source refresh --all                # Refresh all URL sources
+```
+
+Sources returning 404 are flagged as `unreachable`.
+
+## Domain Commands
+
+### `spkt domain list`
+
+List all domains with neuron counts.
+
+```bash
+spkt domain list
+spkt domain list --json
+```
+
+### `spkt domain rename`
+
+Rename a domain across all neurons.
+
+```bash
+spkt domain rename old-name new-name
+```
+
+### `spkt domain merge`
+
+Merge multiple domains into one.
+
+```bash
+spkt domain merge domain1 domain2 --into target-domain
+```
+
+### `spkt domain audit`
+
+Analyze domain ↔ community alignment. Compares user-assigned domain labels
+against the graph's natural community structure to find mismatches:
+
+- **Split**: a domain spans multiple communities (suggest sub-domains)
+- **Merge**: multiple domains converge in one community (suggest merging)
+
+Includes TF-IDF keyword extraction per community for naming hints.
+
+```bash
+spkt domain audit
+spkt domain audit --json
+```
+
+## Community Commands
+
+### `spkt community detect`
+
+Run community detection using the Louvain algorithm.
+
+```bash
+spkt community detect
+spkt community detect -r 2.0              # Higher resolution = more communities
+spkt community detect --summarize          # Also generate summary neurons per community
+spkt community detect --json
+```
+
+### `spkt community list`
+
+Show current community assignments.
+
+```bash
+spkt community list
+spkt community list --json
+```
+
+## Search
+
+### `spkt retrieve`
+
+Graph-weighted search combining keyword matching, semantic similarity,
+FSRS retrievability, graph centrality, and review pressure.
+
+```bash
+spkt retrieve "category theory"
+spkt retrieve "functor" --limit 5
+
+# Filtered retrieval
+spkt retrieve "attention" --filter year=2017
+spkt retrieve "GNN" --filter domain=cs --filter venue=NeurIPS
+```
+
+| Option | Description |
+|--------|-------------|
+| `--limit`, `-n` | Max results (default: 10) |
+| `--filter KEY=VALUE` | Filter by neuron field (`type`, `domain`) or source filterable metadata. Repeatable. Strict: missing key = excluded. |
+
+## Review
+
+### `spkt quiz`
+
+Interactive flashcard review session. Presents due neurons with
+scaffold-adaptive content and accepts self-grading.
+
+```bash
+spkt quiz
+spkt quiz --limit 10
+```
+
+## Brain Health & Insights
+
+### `spkt stats`
+
+Show circuit statistics: neuron count, synapse count, graph density.
+
+```bash
+spkt stats
+spkt stats --json
+```
+
+### `spkt diagnose`
+
+Run brain health diagnostics. Detects orphan neurons, weak synapses,
+overdue reviews, and other potential issues.
+
+```bash
+spkt diagnose
+spkt diagnose --json
+```
+
+### `spkt progress`
+
+Generate a learning progress report. Shows review activity, retention rates,
+domain coverage, and growth trends.
+
+```bash
+spkt progress
+spkt progress --format html -o progress.html
+spkt progress --json
+```
+
+### `spkt manual`
+
+Auto-generate a user guide from the brain's contents: domains, topics,
+review cutoffs, and sources.
+
+```bash
+spkt manual
+spkt manual --format html -o manual.html
+spkt manual --write-meta                   # Also write guide as _meta neurons
+spkt manual --json
+```
+
+## Consolidation
+
+### `spkt consolidate`
+
+Sleep-inspired knowledge consolidation. Analyzes the brain and generates
+a plan to prune weak synapses, decay unused connections, and tighten the graph.
+
+```bash
+spkt consolidate                           # Dry-run — shows the plan
+spkt consolidate --domain math             # Limit to a domain
+spkt consolidate --json
+```
+
+### `spkt consolidate apply`
+
+Apply a consolidation plan. Validates the plan against the current graph
+state (hash check) to ensure nothing has changed since the plan was generated.
+
+```bash
+spkt consolidate apply                     # Apply after reviewing the dry-run
+spkt consolidate apply --json
+```
+
+## Visualization
+
+### `spkt visualize`
+
+Generate an interactive HTML graph visualization.
+
+```bash
+spkt visualize
+spkt visualize -o my-graph.html
+```
+
+## Export / Import
+
+### `spkt export`
+
+Export a Brain for backup, sharing, or deployment.
+
+```bash
+# Tarball (full backup)
+spkt export -o backup.tar.gz
+
+# JSON bundle (portable, human-readable)
+spkt export --format json -o brain.json
+spkt export --format json --include-embeddings -o brain-full.json
+
+# QABot bundle (read-only SQLite for deployment)
+spkt export --format qabot -o qa-bundle.db
+```
+
+| Format | Contents | Use case |
+|--------|----------|----------|
+| `tar` (default) | Full `.spikuit/` directory | Backup, migration |
+| `json` | Neurons, synapses, sources as JSON | Sharing, inspection |
+| `qabot` | Minimal SQLite with embeddings | Portable RAG deployment |
+
+The **QABot bundle** is a self-contained SQLite file that includes neurons,
+synapses, embeddings, and source citations — but excludes FSRS state,
+review history, and raw source files. Load it with `Circuit(read_only=True)`.
+
+### `spkt import`
+
+Import a tarball backup.
+
+```bash
+spkt import backup.tar.gz
+```
+
+## Extractors (`spkt skills extractor`)
+
+Extractors are pluggable ingestion strategies — each is a `SKILL.md` +
+`manifest.toml` bundle that an Agent CLI invokes during `spkt source ingest`.
+They live in two tiers, with brain-local shadowing system on name collision
+(shadcn-style):
+
+```
+1. <BRAIN>/.spikuit/extractors/<name>/                       (brain, wins)
+2. <spkt-install>/skills/spkt-ingest/extractors/<name>/      (system)
+```
+
+Spikuit ships with a `default` extractor (generic markdown chunker) and a
+`_template/` skeleton for new extractors.
+
+### `spkt skills extractor list`
+
+Show all resolved extractors and which tier they came from.
+
+```bash
+spkt skills extractor list
+spkt skills extractor list --json
+```
+
+### `spkt skills extractor status`
+
+Probe each extractor's `[requires]` section against the host environment
+(commands on PATH, importable Python packages). Use this to decide whether
+an extractor can run, or whether the user needs to install something first.
+
+```bash
+spkt skills extractor status              # all extractors
+spkt skills extractor status pdf-paper    # one
+spkt skills extractor status --json
+```
+
+JSON output:
+
+```json
+[
+  {"name": "default", "available": true, "missing_commands": [], "missing_python_packages": []},
+  {"name": "pdf-paper", "available": false, "missing_commands": [], "missing_python_packages": ["pymupdf"]}
+]
+```
+
+### `spkt skills extractor show <name>`
+
+Print the manifest plus the full SKILL.md for one extractor.
+
+### `spkt skills extractor fork <name> [<new-name>]`
+
+Copy a system extractor into the brain so you can edit it. Omit `<new-name>`
+to keep the same name and shadow the system version.
+
+```bash
+spkt skills extractor fork default               # shadow system default
+spkt skills extractor fork default my-default    # new brain-local name
+```
+
+### `spkt skills extractor add <path>`
+
+Install an external extractor directory (must contain `manifest.toml` +
+`SKILL.md`) into the brain.
+
+### `spkt skills extractor remove <name>`
+
+Delete a brain-local extractor. System extractors cannot be removed.
+
+### `spkt skills extractor refresh`
+
+Regenerate `<brain>/.spikuit/extractors/_registry.toml` after manual edits.
+
+## Versioning (Git-backed)
+
+`spkt init` creates a git repository inside the brain so every change is
+tracked. Agents are expected to cut a short-lived branch before any batch
+work, then fast-forward into `main` once the result is reviewed.
+
+### `spkt branch start`
+
+Cut a new ingest/consolidate branch from `main`.
+
+```bash
+spkt branch start papers-2026-04        # → ingest/papers-2026-04
+spkt branch start consolidate-2026-04   # → consolidate/2026-04
+```
+
+### `spkt branch finish`
+
+Fast-forward merge the current branch into `main` and delete it. Refuses
+to operate on `main` or any non-`ingest/`/`consolidate/` branch.
+
+### `spkt branch abandon`
+
+Discard the current branch and switch back to `main`. Same guardrail as
+`finish`.
+
+### `spkt history`
+
+List recent brain commits (a `git log` wrapper).
+
+```bash
+spkt history -n 20
+spkt history --grep ingest
+spkt history --json
+```
+
+### `spkt undo`
+
+Revert commits via `git revert` — history is preserved, never rewritten.
+
+```bash
+spkt undo                               # revert HEAD (asks first)
+spkt undo --to <sha>                    # revert everything since <sha>
+spkt undo --ingest-tag papers-2026-04   # revert all commits matching ingest(papers-2026-04)
+spkt undo -y                            # skip confirmation
+```
+
+To opt out of git-backed versioning, run `spkt init --no-git` or set
+`[git] auto_commit = false` in `.spikuit/config.toml`.
+
+## Deprecated Commands
+
+Old flat commands still work but show deprecation warnings on stderr.
+Use the resource-oriented form above.
+
+| Old command | New command |
+|-------------|------------|
+| `spkt add` | `spkt neuron add` |
+| `spkt list` | `spkt neuron list` |
+| `spkt inspect` | `spkt neuron inspect` |
+| `spkt fire` | `spkt neuron fire` |
+| `spkt due` | `spkt neuron due` |
+| `spkt link` | `spkt synapse add` |
+| `spkt learn` | `spkt source ingest` |
+| `spkt refresh` | `spkt source refresh` |
+| `spkt communities` | `spkt community list` / `spkt community detect` |
+
+---
+
+# How to Use
+
+Use-case-driven guide. For the full command list, see [CLI Reference](cli.md).
+For Python API details, see [API Reference](reference/index.md).
+
+## CLI Recipes
+
+### Add Knowledge
+
+```bash
+# Simple concept
+spkt neuron add "# Functor\n\nA mapping between categories." -t concept -d math
+
+# With frontmatter
+spkt neuron add "---
+type: concept
+domain: french
+---
+# Subjonctif
+Used for doubt, emotion, necessity."
+
+# From a file
+cat notes.md | spkt neuron add -t note -d physics
+```
+
+### Connect Concepts
+
+```bash
+# "Monad requires Functor"
+spkt synapse add <monad-id> <functor-id> -t requires
+
+# "HTTP contrasts gRPC" (creates edges in both directions)
+spkt synapse add <http-id> <grpc-id> -t contrasts
+```
+
+### Review (Flashcard)
+
+```bash
+# What's due?
+spkt neuron due
+
+# Interactive flashcard session
+spkt quiz
+
+# Manual fire (after external review)
+spkt neuron fire <neuron-id> -g fire
+```
+
+### Search & Explore
+
+```bash
+# Graph-weighted search (keyword + semantic + memory strength + centrality)
+spkt retrieve "functor"
+
+# List by type/domain
+spkt neuron list -t concept -d math
+
+# Inspect a neuron (review state, neighbors)
+spkt neuron inspect <neuron-id>
+
+# Circuit statistics
+spkt stats
+```
+
+### Ingest a Directory
+
+```bash
+# Ingest all text files with metadata
+spkt source ingest ./papers/ -d cs --json
+
+# With a metadata.jsonl sidecar
+echo '{"file_name": "paper1.md", "filterable": {"year": "2024"}, "searchable": {"abstract": "..."}}' > papers/metadata.jsonl
+spkt source ingest ./papers/ -d cs --json
+```
+
+### Filtered Retrieval
+
+```bash
+# Filter by source metadata
+spkt retrieve "attention mechanism" --filter year=2017
+
+# Combine multiple filters (AND logic)
+spkt retrieve "GNN" --filter domain=cs --filter venue=NeurIPS
+
+# Discover available filter keys
+spkt neuron list --meta-keys --json
+spkt neuron list --meta-values year --json
+spkt domain list --json
+```
+
+### Source Management
+
+```bash
+# List all sources
+spkt source list --json
+
+# Inspect a source (details + attached neurons)
+spkt source inspect <source-id> --json
+
+# Fix a wrong URL
+spkt source update <source-id> --url "https://correct-url.com"
+
+# Rename or merge domains
+spkt domain rename ml machine-learning
+spkt domain merge ai ml --into machine-learning
+```
+
+### Source Freshness
+
+```bash
+# Re-fetch stale URL sources
+spkt source refresh --stale 30
+
+# Re-fetch a specific source
+spkt source refresh <source-id>
+```
+
+### Brain Health & Maintenance
+
+```bash
+# Diagnose issues (orphans, weak synapses, overdue reviews)
+spkt diagnose
+
+# Domain ↔ community alignment analysis
+spkt domain audit
+
+# Learning progress report
+spkt progress
+spkt progress --format html -o progress.html
+
+# Auto-generated user guide from brain contents
+spkt manual
+
+# Sleep-inspired consolidation (dry-run, then apply)
+spkt consolidate
+spkt consolidate apply
+```
+
+### Export & Import
+
+```bash
+# Full backup
+spkt export -o backup.tar.gz
+spkt import backup.tar.gz
+
+# JSON for sharing or inspection
+spkt export --format json -o brain.json
+
+# Portable QABot bundle (read-only, with embeddings)
+spkt export --format qabot -o qa-bundle.db
+```
+
+### Extractors
+
+Spikuit ships pluggable ingestion extractors for common source formats.
+`spkt source ingest` routes input to the matching extractor; you can list,
+inspect, and check what's installed:
+
+```bash
+spkt skills extractor list
+spkt skills extractor status              # which extractors are runnable here?
+spkt skills extractor show python-code    # full SKILL.md for one
+```
+
+Bundled with v0.6.1:
+
+| Extractor | Picks up | Requires |
+|---|---|---|
+| `default` | anything (fallback) | — |
+| `python-code` | `*.py`, `pyproject.toml` | `python3` |
+| `pdf-paper` | `*.pdf`, `arxiv.org/...` | `pymupdf` |
+| `github-repo` | `github.com/...` | `gh` |
+
+To customize a system extractor for your brain (shadcn-style copy-to-own):
+
+```bash
+spkt skills extractor fork python-code             # shadow the system version
+spkt skills extractor fork _template my-format     # start from the skeleton
+spkt skills extractor refresh
+```
+
+Brain-local extractors live at `<brain>/.spikuit/extractors/<name>/` and
+override the system tier on name collision.
+
+### Versioning & Undo
+
+`spkt init` creates a git repository inside your brain so every change is
+tracked. Agents are expected to cut a short-lived branch before any batch
+work, then fast-forward into `main` once you've reviewed the result.
+
+```bash
+# Cut a branch before batch ingestion or curation
+spkt branch start papers-2026-04        # → ingest/papers-2026-04
+spkt source ingest ./papers/ -d math
+# ...review the diff...
+spkt branch finish                      # ff-merge into main
+spkt branch abandon                     # or throw the branch away
+```
+
+Branch prefixes by intent:
+
+- `ingest/<tag>` — adding knowledge from a source or batch
+- `consolidate/<date>` — structural cleanup (merges, prunes, consolidation)
+
+Commit messages follow conventions so history filters work:
+
+```
+ingest(<tag>): N neurons from <source>
+consolidate: <summary>
+review(<YYYY-MM-DD>): N fired (<correct>/<total>)
+manual: <user-supplied summary>
+```
+
+Inspecting and rolling back:
+
+```bash
+spkt history -n 20                      # recent brain commits
+spkt history --grep ingest              # filter by message
+spkt undo                               # revert HEAD (asks first)
+spkt undo --to <sha>                    # revert everything since <sha>
+spkt undo --ingest-tag papers-2026-04   # revert a tagged batch
+```
+
+`spkt undo` is a `git revert` wrapper — history is preserved, never rewritten,
+so a bad undo can itself be undone.
+
+If you'd rather manage git yourself, init without it:
+
+```bash
+spkt init --no-git
+```
+
+### Visualize
+
+```bash
+# Generate interactive HTML graph
+spkt visualize -o graph.html
+```
+
+## Agent Skills
+
+Skills are LLM-powered interaction modes designed to run inside
+**Agent CLIs** — tools like [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+or similar coding agents that combine LLM reasoning with shell access.
+
+The core engine is LLM-independent — `spkt` commands work standalone.
+Skills add conversational interactions on top: tutoring, curation, and Q&A.
+
+```
+┌──────────────────────────────────────────┐
+│  Agent CLI (Claude Code, Codex, etc.)    │
+│  ┌────────────────┐  ┌───────────────┐   │
+│  │  LLM reasoning │  │  Shell access │   │
+│  └───────┬────────┘  └───────┬───────┘   │
+│          │    Skills / Tools │            │
+│          └────────┬──────────┘            │
+│                   ▼                      │
+│        spikuit-core Python API           │
+│   (Circuit, Sessions, Learn)             │
+│                   │                      │
+│              spkt CLI                    │
+└──────────────────────────────────────────┘
+```
+
+### `/spkt-tutor` — AI Tutor
+
+A 1-on-1 tutor that teaches, quizzes, and coaches — not just a quiz machine.
+
+The tutor decides what to do based on your state: teach a concept you're weak on,
+quiz you to check understanding, give feedback on mistakes, or answer your questions.
+
+**Example session:**
+
+```
+> /spkt-tutor
+
+Tutor: You have 5 concepts due. Functor has low stability and is
+       a prerequisite for Monad, so let's start there.
+
+       [LECTURE] A Functor is a mapping between categories that
+       preserves structure. Think of it as a box you can map over...
+       (explains with examples, using concepts you already know)
+
+       Let me check your understanding.
+
+       [QUIZ] What must a Functor preserve when mapping?
+
+You:   The structure of the category?
+
+Tutor: [FEEDBACK] That's on the right track, but let's be more precise.
+       A Functor must preserve identity morphisms and composition.
+       So fmap id = id, and fmap (f . g) = fmap f . fmap g.
+
+       Let me try a different angle.
+
+       [QUIZ] In Haskell, why is `fmap` different from `map`?
+
+You:   map only works on lists, fmap works on any Functor?
+
+Tutor: [FEEDBACK] Exactly! `map` is specialized to lists, while `fmap`
+       is the generalized version for any Functor instance. ✅ fire
+       Stability: 3.2 → 8.1 days
+
+       Now let's move to Monad, which builds on what you just learned...
+```
+
+**What the tutor can do:**
+
+| Action | When | Example |
+|--------|------|---------|
+| Diagnose | Session start | "Functor is weak and blocks Monad — start there" |
+| Lecture | New or weak concept | Structured explanation using known concepts as anchors |
+| Quiz | After teaching | Varied questions (not just "what is X?") |
+| Feedback | After your answer | Explains why right/wrong, what was missing |
+| Q&A | You ask a question | Pedagogical answer using your brain's knowledge |
+| Drill | Persistent weakness | Focused repetition with varied question angles |
+
+### `/spkt-ingest` — Knowledge Curation
+
+Add knowledge through conversation. The agent structures your input,
+discovers related concepts, and creates connections.
+
+**Example session:**
+
+```
+> /spkt-ingest
+
+What would you like to add?
+
+> Monads in Haskell use bind (>>=) to chain computations.
+  IO and Maybe are common examples.
+
+I'll create a neuron:
+
+── Monad ──
+# モナド (Monad)
+bind (>>=) で計算を連鎖させる。
+Examples: IO (side effects), Maybe (failure handling)
+
+Found 2 related concepts:
+  1. Functor (0.82) → requires
+  2. Applicative (0.78) → requires
+
+Create with these connections? [Y/n]
+
+✅ Added n-abc123, linked to Functor and Applicative
+```
+
+**What the agent does:**
+
+- Structures raw input into well-formed Markdown neurons
+- Splits multi-concept input into atomic neurons
+- Checks for duplicates before adding
+- Discovers related existing knowledge and suggests connections
+- Proposes types and domains based on existing patterns
+
+### `/spkt-qabot` — Knowledge Q&A
+
+Ask questions and get answers from your brain. Retrieval quality
+improves through the conversation.
+
+**Example session:**
+
+```
+> /spkt-qabot
+
+Ask me anything about your brain.
+
+> What's the difference between Functor and Applicative?
+
+A Functor lets you map a function over a wrapped value (fmap).
+An Applicative extends this — it lets you apply a wrapped function
+to a wrapped value (<*>). Every Applicative is a Functor, but
+Applicative adds the ability to combine independent effects...
+
+Sources: n-abc123 (Functor), n-def456 (Applicative), n-ghi789 (Monad)
+
+> Can you go deeper on how Applicative relates to Monad?
+
+[Previous results automatically penalized — retrieves new material]
+
+Over-smoothing occurs when node representations converge as
+GCN layers increase. After ~5 layers, all nodes have nearly
+identical features...
+
+Sources: n-jkl012 (Deep GNN analysis), n-mno345 (Spectral theory)
+
+> Great, thanks
+
+✅ Accepted: sources boosted for future retrieval
+```
+
+**How feedback works:**
+
+- **Similar follow-up** → prior results weren't enough → they get penalized
+- **"Thanks" / acceptance** → results were helpful → they get boosted
+- **Topic change** → session resets, starts fresh
+- **Persistent mode** → feedback survives across sessions
+
+### `/spkt-curator` — Brain Curator
+
+Conversational brain maintenance. Analyzes domain-community alignment,
+resolves orphans, cleans up weak synapses, and runs consolidation — all
+through dialogue.
+
+```
+> /spkt-curator
+
+Curator: Your "math" domain spans 2 communities:
+  c0: algebra, rings, fields (12 neurons)
+  c3: calculus, limits, derivatives (8 neurons)
+
+Split into "math-algebra" and "math-analysis"? [Y/n]
+
+> y
+
+✅ Renamed 8 neurons to "math-analysis".
+
+3 orphan neurons found. Connect "Set Theory basics" to "math-algebra"? [Y/n]
+```
+
+## Python API
+
+For building custom integrations, agents, or LLM adapters.
+
+### AutoQuiz with Custom LLM
+
+```python
+from spikuit_core import AutoQuiz, Circuit, QuizItem, QuizRequest, Grade
+
+async def my_generate(req: QuizRequest) -> QuizItem:
+    prompt = f"Generate a question about neuron {req.primary}"
+    # ... call your LLM ...
+    return QuizItem(question=q, answer=a, hints=[h1, h2])
+
+async def my_grade(item: QuizItem, response: str) -> Grade:
+    prompt = f"Grade this answer: {response}\nExpected: {item.answer}"
+    # ... call your LLM ...
+    return Grade.FIRE
+
+quiz = AutoQuiz(circuit, generate_fn=my_generate, grade_fn=my_grade)
+```
+
+### TutorSession
+
+```python
+from spikuit_core import TutorSession, AutoQuiz, Flashcard
+
+# With Flashcard (no LLM needed)
+tutor = TutorSession(circuit, quiz=Flashcard(circuit))
+
+# With AutoQuiz (LLM-powered)
+tutor = TutorSession(
+    circuit,
+    learn=AutoQuiz(circuit, generate_fn=my_generate, grade_fn=my_grade),
+)
+
+queue = await tutor.start(limit=5)
+state = await tutor.teach()
+state = await tutor.respond("my answer")
+```
+
+### QABotSession
+
+```python
+from spikuit_core import QABotSession
+
+session = QABotSession(circuit, persist=True)
+
+# Ask — returns scored, deduplicated results
+results = await session.ask("What is a functor?")
+
+# Positive feedback — boost helpful neurons
+await session.accept([results[0].neuron_id])
+
+# Follow-up — auto-penalizes prior results if similar
+results = await session.ask("functor examples in Haskell?")
+
+await session.close()  # commits boosts to DB
+```
+
+### IngestSession
+
+```python
+from spikuit_core import IngestSession, SynapseType
+
+session = IngestSession(circuit)
+
+# Add knowledge — auto-discovers related concepts
+neuron, related = await session.ingest(
+    "# Functor\n\nA mapping between categories.",
+    type="concept", domain="math",
+)
+
+# Create connections
+if related:
+    await session.relate(neuron.id, related[0].id, SynapseType.REQUIRES)
+
+# Merge duplicates
+await session.merge(["n-old1", "n-old2"], into_id="n-keep")
+
+await session.close()
+```
+
+---
+
+# Computational Neuroscience
+
+Spikuit models knowledge dynamics using simplified neural mechanisms.
+
+### Neurons and Spikes
+
+```mermaid
+graph LR
+    A[input] --> B[accumulate] --> C{threshold?} --> D[fire!] --> E[propagate]
+    D -.->|leak / decay| B
+```
+
+- Biological neurons communicate through discrete electrical pulses (action potentials)
+- A neuron accumulates input, fires when it crosses a threshold, then resets
+- In Spikuit: a `Spike` = a review event; firing propagates signal to connected knowledge
+
+### Synaptic Plasticity (STDP)
+
+> "Neurons that fire together wire together" — Hebb, 1949
+
+Spike-Timing-Dependent Plasticity refines Hebb's rule with temporal direction:
+
+<div class="chart-container">
+  <canvas data-chart="stdp"></canvas>
+</div>
+
+- Pre fires before post (causal) → connection strengthens (LTP)
+- Post fires before pre (reverse) → connection weakens (LTD)
+- Magnitude decays exponentially with `|dt|`
+- In Spikuit: edge weights update based on co-fire timing within `tau_stdp` days (default: 7)
+
+### Leaky Integrate-and-Fire (LIF)
+
+<div class="chart-container">
+  <canvas data-chart="lif"></canvas>
+</div>
+
+- Neurons accumulate input (integration) and gradually lose charge (leak)
+- High pressure = the system is telling you this concept needs review
+- In Spikuit: neighbor reviews push pressure up, time decays it exponentially
+
+### Spreading Activation
+
+```mermaid
+graph LR
+    subgraph activated [" "]
+        dog(("dog")):::fired -->|primed| cat(("cat")):::primed
+        dog -->|primed| bone(("bone")):::primed
+        dog -->|primed| walk(("walk")):::primed
+    end
+    subgraph not_activated [" "]
+        algebra(("algebra")):::inactive
+    end
+
+    classDef fired fill:#E53935,color:#fff,stroke:#B71C1C
+    classDef primed fill:#FFF9C4,stroke:#F9A825,color:#333
+    classDef inactive fill:#EEEEEE,stroke:#BDBDBD,color:#666
+    style activated fill:none,stroke:#E0E0E0,stroke-dasharray:4
+    style not_activated fill:none,stroke:#E0E0E0,stroke-dasharray:4
+```
+
+- Activating a concept in memory primes related concepts (Collins & Loftus, 1975)
+- In Spikuit: reviewing one node sends activation to graph neighbors via APPNP (Personalized PageRank)
+
+### Sleep-Inspired Consolidation
+
+Memory consolidation during sleep involves multiple phases:
+
+- **Slow-Wave Sleep (SWS)**: Replays and strengthens important memories
+- **Synaptic Homeostasis (SHY)**: Globally downscales synaptic weights to prevent saturation (Tononi & Cirelli, 2003)
+- **REM**: Reorganizes and abstracts — detects patterns across memories
+
+In Spikuit: `consolidate` runs a 4-phase plan: Triage (classify synapses) → SHY (decay weak connections) → SWS (prune dead weight) → REM (detect consolidation opportunities).
+
+### References
+
+- Hodgkin, A. L. & Huxley, A. F. (1952). A quantitative description of membrane current and its application to conduction and excitation in nerve. *Journal of Physiology*, 117(4), 500–544.
+- Hebb, D. O. (1949). *The Organization of Behavior*. Wiley.
+- Bi, G. & Poo, M. (1998). Synaptic modifications in cultured hippocampal neurons: dependence on spike timing, synaptic strength, and postsynaptic cell type. *Journal of Neuroscience*, 18(24), 10464–10472.
+- Collins, A. M. & Loftus, E. F. (1975). A spreading-activation theory of semantic processing. *Psychological Review*, 82(6), 407–428.
+- Tononi, G. & Cirelli, C. (2003). Sleep and synaptic homeostasis: a hypothesis. *Brain Research Bulletin*, 62(2), 143–150.
+- Tononi, G. & Cirelli, C. (2014). Sleep and the price of plasticity: from synaptic and cellular homeostasis to memory consolidation and integration. *Neuron*, 81(1), 12–34.
+
+---
+
+# Cognitive & Developmental Psychology
+
+### Forgetting Curve and Spaced Repetition
+
+<div class="chart-container">
+  <canvas data-chart="forgetting-curve"></canvas>
+</div>
+
+- Memory decays exponentially over time (Ebbinghaus, 1885)
+- Each successful retrieval strengthens the trace and slows future decay
+- Optimal timing: review just before you'd forget
+- In Spikuit: FSRS v6 models per-neuron stability and difficulty
+
+### Testing Effect
+
+- Actively retrieving > passively re-reading (Roediger & Karpicke, 2006)
+- Even failed retrieval attempts improve later recall
+- In Spikuit: the Learn protocol is "present → evaluate", not just "show content"
+
+### ZPD and Scaffolding
+
+<div class="zpd-diagram">
+  <div class="zpd-outer">
+    <span class="zpd-label">Can't do (yet)</span>
+    <div class="zpd-mid">
+      <span class="zpd-label">ZPD: can do with support</span>
+      <div class="zpd-inner">
+        <span class="zpd-label">Can do alone</span>
+        <span class="zpd-sublabel">(mastered)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+- ZPD (Vygotsky, 1978): the gap between what you can do alone vs. with guidance
+- Scaffolding (Wood, Bruner & Ross, 1976): temporary support, gradually removed as competence grows
+- In Spikuit: Scaffold level computed from FSRS state + graph neighbors
+
+### Schema Theory
+
+- Schemas = mental frameworks that organize knowledge (Bartlett, 1932; Piaget)
+- New info is easier to learn when it connects to existing schemas
+- In Spikuit: the knowledge graph *is* the schema; `IngestSession.ingest()` auto-discovers related concepts
+
+### References
+
+- Ebbinghaus, H. (1885). *Über das Gedächtnis*. Duncker & Humblot. (English translation: *Memory: A Contribution to Experimental Psychology*, 1913.)
+- Bartlett, F. C. (1932). *Remembering: A Study in Experimental and Social Psychology*. Cambridge University Press.
+- Vygotsky, L. S. (1978). *Mind in Society: The Development of Higher Psychological Processes*. Harvard University Press.
+- Wood, D., Bruner, J. S. & Ross, G. (1976). The role of tutoring in problem solving. *Journal of Child Psychology and Psychiatry*, 17(2), 89–100.
+- Roediger, H. L. & Karpicke, J. D. (2006). Test-enhanced learning: taking memory tests improves long-term retention. *Psychological Science*, 17(3), 249–255.
+- Piaget, J. (1952). *The Origins of Intelligence in Children*. International Universities Press.
+
+---
+
+# Spaced Repetition Systems
+
+### FSRS (Free Spaced Repetition Scheduler)
+
+Per-neuron spaced repetition (stability, difficulty, next review date).
+FSRS v6 is a neural-network-based scheduler that outperforms SM-2 (Anki's default)
+on recall prediction accuracy.
+
+- Propagation never touches FSRS state — only affects pressure
+- Each neuron maintains independent stability and difficulty parameters
+- Grade mapping: `miss` → Again, `weak` → Hard, `fire` → Good, `strong` → Easy
+
+### References
+
+- Ye, J. (2024). FSRS: A modern spaced repetition algorithm. [github.com/open-spaced-repetition/fsrs4anki](https://github.com/open-spaced-repetition/fsrs4anki)
+- Wozniak, P. A. & Gorzelanczyk, E. J. (1994). Optimization of repetition spacing in the practice of learning. *Acta Neurobiologiae Experimentalis*, 54, 59–62.
+- Leitner, S. (1972). *So lernt man lernen*. Herder.
+
+---
+
+# Knowledge Graphs & Graph-Based ML
+
+### PageRank and APPNP
+
+- PageRank (Page et al., 1999): score nodes by link structure
+- APPNP (Gasteiger et al., 2019): Personalized PageRank with teleport probability for locality control
+- In Spikuit: used for spreading activation and retrieve scoring
+
+### Community Detection
+
+- Louvain algorithm (Blondel et al., 2008): detects communities by modularity optimization
+- In Spikuit: clusters densely connected neurons, enables community-boosted retrieval and summary generation
+
+### References
+
+- Page, L., Brin, S., Motwani, R. & Winograd, T. (1999). The PageRank Citation Ranking: Bringing Order to the Web. *Stanford InfoLab Technical Report*.
+- Gasteiger, J., Bojchevski, A. & Günnemann, S. (2019). Predict then Propagate: Graph Neural Networks meet Personalized PageRank. *ICLR 2019*.
+- Blondel, V. D., Guillaume, J.-L., Lambiotte, R. & Lefebvre, E. (2008). Fast unfolding of communities in large networks. *Journal of Statistical Mechanics*, P10008.
+
+---
+
+# Information Retrieval & RAG
+
+### Hybrid Retrieval
+
+Spikuit combines multiple retrieval signals into a single score:
+
+```
+score = max(keyword_sim, semantic_sim) × (1 + retrievability + centrality + pressure + boost)
+```
+
+- **Keyword similarity**: BM25-style text matching
+- **Semantic similarity**: sqlite-vec KNN search when an embedder is configured
+- **Retrievability**: FSRS-based memory strength (concepts you know well rank higher)
+- **Centrality**: graph-structural importance
+- **Pressure**: LIF-based urgency from neighbor reviews
+- **Feedback boost**: accumulated through QABotSession accept/reject signals
+
+### Retrieval-Augmented Generation (RAG)
+
+Traditional RAG pipelines require significant preprocessing: document chunking,
+metadata extraction, embedding pipeline setup. Spikuit replaces this with
+conversational curation — the agent handles chunking, tagging, and connecting
+through dialogue via `/spkt-ingest`.
+
+### References
+
+- Robertson, S. & Zaragoza, H. (2009). The Probabilistic Relevance Framework: BM25 and Beyond. *Foundations and Trends in Information Retrieval*, 3(4), 333–389.
+- Lewis, P. et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. *NeurIPS 2020*.
+
+---
+
+# Implementation Details
+
+## APPNP Propagation
+
+Personalized PageRank spreading:
+
+```
+Z = (1 - alpha) * A_hat @ Z + alpha * H
+```
+
+- `alpha` = teleport probability (higher = more local, default: 0.15)
+- `A_hat` = normalized adjacency with self-loops
+- `H` = initial activation (grade-dependent)
+
+## STDP Edge Weight Updates
+
+Edge weights update from co-fire timing within `tau_stdp` days:
+
+- Pre before post (LTP): `dw = +a_plus * exp(-|dt| / tau)`
+- Post before pre (LTD): `dw = -a_minus * exp(-|dt| / tau)`
+
+## LIF Pressure Model
+
+Pressure accumulates from neighbor fires, decays exponentially:
+
+```
+pressure(t) = pressure * exp(-dt / tau_m)
+```
+
+## How `fire()` works
+
+```
+circuit.fire(spike)
+  1. Record spike to DB
+  2. FSRS: update stability, difficulty, schedule next review
+  3. APPNP: propagate activation to neighbors (pressure deltas)
+  4. Reset source neuron pressure
+  5. STDP: update edge weights based on co-fire timing
+  6. Record last-fire timestamp for future STDP
+```
+
+## Plasticity Parameters
+
+| Parameter | Default | What it controls |
+|-----------|---------|-----------------|
+| `alpha` | 0.15 | APPNP teleport probability (locality) |
+| `propagation_steps` | 5 | APPNP iteration count |
+| `tau_stdp` | 7.0 | STDP time window (days) |
+| `a_plus` | 0.03 | STDP LTP amplitude |
+| `a_minus` | 0.036 | STDP LTD amplitude |
+| `tau_m` | 14.0 | LIF membrane time constant (days) |
+| `pressure_threshold` | 0.8 | LIF pressure threshold |
+| `weight_floor` | 0.05 | Minimum edge weight |
+| `weight_ceiling` | 1.0 | Maximum edge weight |
+
+## Embedding Pipeline
+
+### Input Preparation
+
+Before embedding, neuron content goes through a preparation pipeline:
+
+```
+Raw neuron content
+  → strip YAML frontmatter
+  → prepend [Section: ...] from frontmatter (if present)
+  → prepend [key: value] from source searchable metadata (truncated to max_searchable_chars)
+  → final embedding input
+```
+
+This ensures embeddings capture semantic context beyond the raw text,
+while excluding structural noise (frontmatter keys, formatting).
+
+### Task-Type Prefixes
+
+Many embedding models perform better when the input is tagged with its
+purpose (document vs. query). Spikuit supports this via `prefix_style`
+in `config.toml`:
+
+```toml
+[embedder]
+prefix_style = "nomic"    # "nomic", "google", "cohere", "none"
+```
+
+| Style | Document prefix | Query prefix |
+|-------|----------------|--------------|
+| `nomic` | `search_document: ` | `search_query: ` |
+| `google` | `RETRIEVAL_DOCUMENT: ` | `RETRIEVAL_QUERY: ` |
+| `cohere` | `search_document: ` | `search_query: ` |
+| `none` (default) | — | — |
+
+The prefix is applied automatically:
+- `EmbeddingType.DOCUMENT` when adding/updating neurons and running `embed-all`
+- `EmbeddingType.QUERY` when calling `retrieve()`
+
+### Searchable Metadata Formula
+
+When a neuron has source searchable metadata, the embedding input becomes:
+
+```
+[key1: value1] [key2: value2] [Section: section_name] body_text
+```
+
+Total searchable content is truncated to `max_searchable_chars` (default: 500)
+to prevent metadata from dominating the embedding.
+
+## Embedder Providers
+
+| Provider | API | Use case |
+|----------|-----|----------|
+| `openai-compat` | `/v1/embeddings` | LM Studio, Ollama /v1, vLLM, OpenAI |
+| `ollama` | `/api/embed` | Ollama native API |
+| `none` | — | No embeddings (keyword-only search) |
+
+## Neuron Model Mapping
+
+| Brain | Spikuit | Role |
+|-------|---------|------|
+| Neuron | `Neuron` | A unit of knowledge (Markdown) |
+| Synapse | `Synapse` | Typed, weighted connection |
+| Spike | `Spike` | A review event (action potential) |
+| Circuit | `Circuit` | The full knowledge graph |
+| Plasticity | `Plasticity` | Tunable learning parameters |
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Models | msgspec.Struct |
+| Storage | SQLite (aiosqlite) + NetworkX + sqlite-vec |
+| Scheduling | FSRS v6 |
+| Embeddings | httpx (OpenAI-compat / Ollama) |
+| CLI | Typer |
+| Visualization | pyvis (vis.js) |
+| Language | Python 3.11+ |

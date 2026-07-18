@@ -1,0 +1,1784 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A knowledge base that gets smarter the more you use it">
+      
+      
+      
+        <link rel="canonical" href="https://takyone.github.io/spikuit/design/graph-viz/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../ja/design/graph-viz/" hreflang="ja">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Graph Visualization — design & implementation spec - Spikuit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/charts.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#graph-visualization-design-implementation-spec" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Spikuit" class="md-header__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spikuit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Graph Visualization — design &amp; implementation spec
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ja/design/graph-viz/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Spikuit" class="md-nav__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spikuit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/takyone/spikuit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Use
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RAG
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rag/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix: Algorithms &amp; Technical Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/neuroscience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computational Neuroscience
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/psychology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cognitive & Developmental Psychology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/spaced-repetition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spaced Repetition Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Graphs & Graph-Based ML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Information Retrieval & RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engine
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engine
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/circuit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/propagation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Propagation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/embedder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/scaffold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaffold & Learn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-why-rebuild" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Why rebuild
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-data-contract-payloadpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Data contract (payload.py)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-design-tokens-themecss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Design tokens (theme.css)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-mode-system-the-core" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Mode system — the core
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Mode system — the core">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-viewspec-the-declarative-contract-modesjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 ViewSpec — the declarative contract (modes.js)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-the-five-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 The five modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-color-budget-rule-binding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Color budget rule (binding)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-layout-physics-physicsjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Layout &amp; physics (physics.js)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ui-spec-uijs-themecss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. UI spec (ui.js + theme.css)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-state-statejs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. State (state.js)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-performance-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Performance targets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-deferred-recorded-not-designed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Deferred (recorded, not designed)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-review-round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Review round
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="graph-visualization-design-implementation-spec">Graph Visualization — design &amp; implementation spec<a class="headerlink" href="#graph-visualization-design-implementation-spec" title="Permanent link">&para;</a></h1>
+<p><strong>Status.</strong> Design draft for review. Supersedes the pyvis-based <code>spkt visualize</code>
+implementation entirely. Written to be implemented phase-by-phase by an agent;
+every module contract, encoding, and acceptance criterion is stated so no design
+decisions remain at implementation time. Companion process doc (phases, branch
+policy, verification commands): the WP-E plan in the workspace artifacts.</p>
+<p><strong>Goal.</strong> An Obsidian-graph-view-class visualization (WebGL, live force layout,
+fluid interaction) with <strong>switchable view modes</strong> that expose what makes Spikuit
+graphs unlike a note graph: weighted synapses (STDP), spike activity, memory
+state, and structural health. Single self-contained HTML artifact, zero-build.</p>
+<p><strong>Non-goals.</strong> Editing the graph from the view; a served/daemon mode; timeline
+replay (deferred, §11); mobile-first layout (container-aware is enough).</p>
+<hr />
+<h2 id="1-why-rebuild">1. Why rebuild<a class="headerlink" href="#1-why-rebuild" title="Permanent link">&para;</a></h2>
+<p>The current <code>visualize</code> command (<code>spikuit-cli/src/spikuit_cli/main.py:1210-1394</code>)
+templates HTML through pyvis and then string-<code>replace()</code>s a legend into the
+output. Neuron titles are injected into markup unescaped; the palette is 15
+unvalidated hex values that cycle; edge hues collide with node-community hues;
+node size mixes three unrelated signals; layout is nondeterministic; there are
+no tests. None of that is fixable incrementally — the generation pipeline is
+replaced wholesale.</p>
+<h2 id="2-architecture">2. Architecture<a class="headerlink" href="#2-architecture" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>spikuit-cli/src/spikuit_cli/viz/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── payload.py     # data contract: substrate → JSON-able dict (pure, tested)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── app/           # the viz app — vanilla ES modules, no framework, no bundler
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── index.html #   shell: mount points, JSON data island, module inlining order
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   ├── state.js   #   single state store + pub/sub (no external lib)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   ├── modes.js   #   ViewSpec registry — THE mode system (§5)
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   ├── render.js  #   renderer seam: the only file that imports sigma/graphology
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   ├── physics.js #   ForceAtlas2 config + lifecycle (§6)
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   ├── ui.js      #   mode bar, filter row, detail panel, legend, search (§7)
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│   └── theme.css  #   design tokens (§4), container queries
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>├── build.py       # inliner: app/* + vendored libs + payload → ONE .html
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>└── vendor/        # sigma.min.js, graphology.min.js, graphology-layout-forceatlas2
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                   # (UMD builds, pinned versions, replaces lib/vis-9.1.2 + tom-select)
+</code></pre></div>
+<p>Load order in the generated file: theme.css → vendor UMD bundles → data island →
+app modules (concatenated in dependency order by <code>build.py</code>) → bootstrap call.
+Workers are spawned from inlined source via <code>Blob</code> URLs (no external files).</p>
+<p><strong>Invariants</strong>
+- <code>payload.py</code> knows nothing about rendering; the app knows nothing about the
+  substrate. The JSON contract (§3) is the only interface.
+- <code>render.js</code> is the only module that touches the renderer library. A renderer
+  swap (pixi+d3-force fallback, future WebGPU) rewrites this file only.
+- All user content (titles, excerpts) crosses into the DOM via <code>textContent</code> /
+  attribute assignment — never <code>innerHTML</code> composition.
+- Output is one file, works from <code>file://</code>, no network access.</p>
+<p><strong>Renderer</strong>: sigma.js v3 + graphology (WebGL, MIT), ForceAtlas2 in a worker.
+Gated by a feasibility spike (plan E1.0): verify UMD-inline + Blob-worker +
+hover-fade performance on <code>file://</code> before building on it. Fallback if the
+spike fails: pixi.js + d3-force with the same module contracts.</p>
+<h2 id="3-data-contract-payloadpy">3. Data contract (payload.py)<a class="headerlink" href="#3-data-contract-payloadpy" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">build_viz_payload</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">circuit</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">overlay</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>        <span class="c1"># None | &quot;tutor&quot;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">size_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;centrality&quot;</span><span class="p">,</span>       <span class="c1"># centrality | pressure | stability</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">spikes_window_days</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">90</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>meta:   { generated_at, neuron_count, synapse_count, size_by, coloring,
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>          overlay, component_count, weight_domain: [min, max] }
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>groups: [ { key, kind: &quot;community&quot;|&quot;domain&quot;, label, count, slot: 1..8|&quot;other&quot; } ]
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>nodes:  [ { id, label, group, size_raw, domain, type, pressure,
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>            community_id, component_id, excerpt,
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>            spike_recency,                    # seconds since last spike; null = never
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>            tutor: null | { stability, difficulty, state, due_in_days } } ]
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>edges:  [ { source, target, type, weight, co_fires } ]
+</code></pre></div>
+<ul>
+<li>Strings are data, never markup. <code>label</code> = extracted title verbatim; <code>excerpt</code>
+  = first paragraph ≤200 chars. Adversarial-content tests are mandatory
+  (<code>&lt;script&gt;</code>, quotes, newlines survive as data).</li>
+<li><code>component_id</code>: connected component of the undirected graph (networkx),
+  numbered by size desc — powers the Health mode without app-side graph math.</li>
+<li><code>weight_domain</code>: actual min/max synapse weight — the app scales ramps and the
+  threshold slider from this, never from assumed [0,1].</li>
+<li>Substrate-only by default: with <code>overlay=None</code> the tutor DB is never opened
+  and <code>tutor</code> is <code>null</code> on every node. <code>size_by="stability"</code> requires the
+  overlay (validation error otherwise).</li>
+<li>Groups: communities if any exist else domains; top-8 by count desc (tie: key
+  asc) take slots 1-8; the rest fold into a single <code>"other"</code> group.</li>
+<li>CLI: <code>spkt visualize --json</code> prints the payload; <code>-o/--open/--brain</code> keep
+  their behavior; new <code>--overlay tutor</code>, <code>--size-by</code>, <code>--layout</code> (§6).</li>
+</ul>
+<h2 id="4-design-tokens-themecss">4. Design tokens (theme.css)<a class="headerlink" href="#4-design-tokens-themecss" title="Permanent link">&para;</a></h2>
+<p>From the validated reference palette (dataviz method). Roles only in app code.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">.</span><span class="nc">viz-root</span><span class="p">{</span><span class="w"> </span><span class="c">/* dark = default */</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nv">--surface</span><span class="p">:</span><span class="mh">#1a1a19</span><span class="p">;</span><span class="w"> </span><span class="nv">--panel</span><span class="p">:</span><span class="mh">#242423</span><span class="p">;</span><span class="w"> </span><span class="nv">--text-1</span><span class="p">:</span><span class="mh">#ffffff</span><span class="p">;</span><span class="w"> </span><span class="nv">--text-2</span><span class="p">:</span><span class="mh">#c3c2b7</span><span class="p">;</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nv">--muted</span><span class="p">:</span><span class="mh">#898781</span><span class="p">;</span><span class="w"> </span><span class="nv">--hairline</span><span class="p">:</span><span class="mh">#2c2c2a</span><span class="p">;</span><span class="w"> </span><span class="nv">--ring</span><span class="p">:</span><span class="nb">rgba</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mf">.10</span><span class="p">);</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nv">--s1</span><span class="p">:</span><span class="mh">#3987e5</span><span class="p">;</span><span class="w"> </span><span class="nv">--s2</span><span class="p">:</span><span class="mh">#199e70</span><span class="p">;</span><span class="w"> </span><span class="nv">--s3</span><span class="p">:</span><span class="mh">#c98500</span><span class="p">;</span><span class="w"> </span><span class="nv">--s4</span><span class="p">:</span><span class="mh">#008300</span><span class="p">;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nv">--s5</span><span class="p">:</span><span class="mh">#9085e9</span><span class="p">;</span><span class="w"> </span><span class="nv">--s6</span><span class="p">:</span><span class="mh">#e66767</span><span class="p">;</span><span class="w"> </span><span class="nv">--s7</span><span class="p">:</span><span class="mh">#d55181</span><span class="p">;</span><span class="w"> </span><span class="nv">--s8</span><span class="p">:</span><span class="mh">#d95926</span><span class="p">;</span><span class="w"> </span><span class="nv">--s-other</span><span class="p">:</span><span class="mh">#898781</span><span class="p">;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="c">/* sequential (blue) — prominence-ordered FOR THIS SURFACE, weak→strong */</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nv">--ramp-1</span><span class="p">:</span><span class="mh">#184f95</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-2</span><span class="p">:</span><span class="mh">#1c5cab</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-3</span><span class="p">:</span><span class="mh">#2a78d6</span><span class="p">;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nv">--ramp-4</span><span class="p">:</span><span class="mh">#3987e5</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-5</span><span class="p">:</span><span class="mh">#6da7ec</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-6</span><span class="p">:</span><span class="mh">#9ec5f4</span><span class="p">;</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">}</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">@</span><span class="k">media</span><span class="w"> </span><span class="o">(</span><span class="nt">prefers-color-scheme</span><span class="o">:</span><span class="w"> </span><span class="nt">light</span><span class="o">)</span><span class="p">{</span><span class="w"> </span><span class="p">.</span><span class="nc">viz-root</span><span class="p">{</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="nv">--surface</span><span class="p">:</span><span class="mh">#fcfcfb</span><span class="p">;</span><span class="w"> </span><span class="nv">--panel</span><span class="p">:</span><span class="mh">#ffffff</span><span class="p">;</span><span class="w"> </span><span class="nv">--text-1</span><span class="p">:</span><span class="mh">#0b0b0b</span><span class="p">;</span><span class="w"> </span><span class="nv">--text-2</span><span class="p">:</span><span class="mh">#52514e</span><span class="p">;</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="nv">--muted</span><span class="p">:</span><span class="mh">#898781</span><span class="p">;</span><span class="w"> </span><span class="nv">--hairline</span><span class="p">:</span><span class="mh">#e1e0d9</span><span class="p">;</span><span class="w"> </span><span class="nv">--ring</span><span class="p">:</span><span class="nb">rgba</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mf">.10</span><span class="p">);</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">  </span><span class="nv">--s1</span><span class="p">:</span><span class="mh">#2a78d6</span><span class="p">;</span><span class="w"> </span><span class="nv">--s2</span><span class="p">:</span><span class="mh">#1baf7a</span><span class="p">;</span><span class="w"> </span><span class="nv">--s3</span><span class="p">:</span><span class="mh">#eda100</span><span class="p">;</span><span class="w"> </span><span class="nv">--s4</span><span class="p">:</span><span class="mh">#008300</span><span class="p">;</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">  </span><span class="nv">--s5</span><span class="p">:</span><span class="mh">#4a3aa7</span><span class="p">;</span><span class="w"> </span><span class="nv">--s6</span><span class="p">:</span><span class="mh">#e34948</span><span class="p">;</span><span class="w"> </span><span class="nv">--s7</span><span class="p">:</span><span class="mh">#e87ba4</span><span class="p">;</span><span class="w"> </span><span class="nv">--s8</span><span class="p">:</span><span class="mh">#eb6834</span><span class="p">;</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">  </span><span class="c">/* light surface: prominence = darker → ramp runs light→dark */</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">  </span><span class="nv">--ramp-1</span><span class="p">:</span><span class="mh">#9ec5f4</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-2</span><span class="p">:</span><span class="mh">#6da7ec</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-3</span><span class="p">:</span><span class="mh">#3987e5</span><span class="p">;</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">  </span><span class="nv">--ramp-4</span><span class="p">:</span><span class="mh">#2a78d6</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-5</span><span class="p">:</span><span class="mh">#1c5cab</span><span class="p">;</span><span class="w"> </span><span class="nv">--ramp-6</span><span class="p">:</span><span class="mh">#104281</span><span class="p">;</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="p">}}</span>
+</code></pre></div>
+<p>Rules (binding): slot order fixed, never cycled — 9th+ group is <code>--s-other</code>;
+text always wears text tokens, never series colors; the ramp encodes
+<strong>prominence</strong> (weak = recedes toward surface, strong = highest contrast), which
+is why its step order differs per surface — dark mode is selected, not
+inverted. Any palette change re-runs the dataviz validator; report goes in the
+PR. Node labels stay visible at default zoom (CVD relief).</p>
+<h2 id="5-mode-system-the-core">5. Mode system — the core<a class="headerlink" href="#5-mode-system-the-core" title="Permanent link">&para;</a></h2>
+<p>A <strong>mode</strong> answers one question about the same graph. Modes change <strong>paint
+only</strong> — never positions, physics, filters, or selection. Switching is an
+instant repaint (&lt; 1 frame of work beyond sigma's refresh), so the user's
+mental map survives. Buttons in the top bar; hotkeys <code>1..5</code>; <code>m</code> cycles.</p>
+<h3 id="51-viewspec-the-declarative-contract-modesjs">5.1 ViewSpec — the declarative contract (modes.js)<a class="headerlink" href="#51-viewspec-the-declarative-contract-modesjs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// modes.js exports MODES: ViewSpec[] and applyMode(state, graph): PaintPlan</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nx">ViewSpec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">label</span><span class="p">,</span><span class="w"> </span><span class="nx">hotkey</span><span class="p">,</span><span class="w">            </span><span class="c1">// &quot;strength&quot;, &quot;Strength&quot;, &quot;2&quot;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nx">requires</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;tutor&quot;</span><span class="p">,</span><span class="w">     </span><span class="c1">// unmet → button disabled + tooltip</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nx">emphasis</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;nodes&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;edges&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// which layer leads; the other recedes</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nx">node</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">color</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span><span class="nx">ctx</span><span class="p">),</span><span class="w"> </span><span class="nx">size</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span><span class="nx">ctx</span><span class="p">),</span><span class="w"> </span><span class="nx">ring</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span><span class="nx">ctx</span><span class="p">)</span><span class="w"> </span><span class="cm">/* null|token */</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nx">edge</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">color</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span><span class="nx">ctx</span><span class="p">),</span><span class="w"> </span><span class="nx">width</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span><span class="nx">ctx</span><span class="p">),</span><span class="w"> </span><span class="nx">opacity</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span><span class="nx">ctx</span><span class="p">),</span><span class="w"> </span><span class="nx">arrow</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nx">panelExtras</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="nx">Section</span><span class="p">[],</span><span class="w">   </span><span class="c1">// e.g. Health category list</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="nx">legend</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="nx">LegendItem</span><span class="p">[],</span><span class="w">       </span><span class="c1">// swatches / ramp / width-key / sentence</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1">// ctx = { tokens, weightDomain, quantiles, sizeScale, theme }</span>
+</code></pre></div>
+<p><code>applyMode</code> produces per-element attribute maps that <code>render.js</code> writes into
+graphology attributes and refreshes sigma once. No mode may reach into sigma
+directly. Every encoding below is a pure function of payload fields + ctx.</p>
+<h3 id="52-the-five-modes">5.2 The five modes<a class="headerlink" href="#52-the-five-modes" title="Permanent link">&para;</a></h3>
+<p><strong>1 · Links</strong> (default) — <em>what connects to what; where the clusters are.</em>
+- node.color = group slot token; node.size = <code>sizeScale(size_raw)</code> =
+  sqrt-scaled to [4, 22]px over the payload's size domain.
+- edge: neutral (<code>--muted</code>); width by type class — requires 2.5 / extends 2.0 /
+  contrasts 2.0 / relates_to 1.2 px — each × <code>(0.75 + 0.5·w̄)</code> where w̄ =
+  weight normalized to <code>weight_domain</code>; opacity .9/.8/.7/.45 respectively;
+  arrows on requires+extends only.
+- legend: group swatches + counts; edge-type width/opacity key.</p>
+<p><strong>2 · Strength</strong> — <em>where the synapses are strong; what STDP has reinforced.</em>
+The user-named headline mode. Edges are the protagonist; nodes recede.
+- node.color = <code>--muted</code> at 60% opacity; node.size = clamp to [3, 10]px;
+  labels hidden except hover/selection.
+- edge.color = <code>--ramp-N</code> by weight <strong>quintile</strong> (5 bins over <code>weight_domain</code>,
+  bins from payload quantiles so a skewed distribution still uses the full
+  ramp); edge.width = <code>1 + 4·w̄</code>; opacity = <code>.35 + .6·w̄</code>; arrows off (hover
+  shows direction + type + weight + co_fires).
+- The weight-threshold slider (§7) auto-expands in this mode.
+- panelExtras: "Strongest synapses" — top-10 list (a — b, w=0.87, requires),
+  click → select both endpoints and fit camera.
+- legend: 5-step ramp key with the actual bin boundaries + width key sentence.</p>
+<p><strong>3 · Activity</strong> — <em>what fired recently; where the brain is warm.</em>
+- node.color = ramp by <code>spike_recency</code> bucket: ≤24h → ramp-6, ≤3d → ramp-5,
+  ≤7d → ramp-4, ≤30d → ramp-3, ≤90d → ramp-2, never/older → <code>--muted</code> at 45%
+  + hairline ring.
+- node.size = Links sizing unchanged; edges = Links style at 55% opacity.
+- legend: bucket ramp with labels (today / 3d / 7d / 30d / 90d / dormant).</p>
+<p><strong>4 · Memory</strong> (<code>requires: "tutor"</code>) — <em>what's solid, what's decaying.</em>
+- node.color = ramp by FSRS stability band: &lt;1 → ramp-1, &lt;7 → ramp-2, &lt;21 →
+  ramp-3, &lt;90 → ramp-4, ≥90 → ramp-5 (days); uncarded → <code>--muted</code> 45%.
+- ring = <code>--text-1</code> when <code>due_in_days ≤ 1</code> (due-now); legend explains the ring
+  (never color-alone).
+- edges = Links style at 55%; panelExtras: "Due next" top-10 list.</p>
+<p><strong>5 · Health</strong> — <em>what needs curation.</em> Category sub-tabs inside the mode
+(one category highlighted at a time; the rest of the graph fades to 15%):
+- <strong>Islands</strong>: <code>degree == 0</code> (degree computed once at load from edges).
+- <strong>Cold components</strong>: <code>component_id</code> whose members all have
+  <code>spike_recency &gt; 30d</code> or null, and component size &lt; 5.
+- <strong>High pressure</strong>: top decile by <code>pressure</code> (skip if all zero).
+Highlighted nodes: <code>--s3</code> fill + <code>--ring</code>; category counts shown on the
+sub-tabs; panelExtras lists members (click → select+zoom). Legend = active
+category sentence. No status-palette use; one accent + fade carries it.</p>
+<h3 id="53-color-budget-rule-binding">5.3 Color budget rule (binding)<a class="headerlink" href="#53-color-budget-rule-binding" title="Permanent link">&para;</a></h3>
+<p>Per mode, color has exactly one job: identity in Links; edge magnitude in
+Strength; node magnitude in Activity/Memory; single-accent categorical focus
+in Health. Never two color jobs at once — that is what modes are <em>for</em>.</p>
+<h2 id="6-layout-physics-physicsjs">6. Layout &amp; physics (physics.js)<a class="headerlink" href="#6-layout-physics-physicsjs" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ForceAtlas2 (graphology worker build), <code>edgeWeightInfluence: 1</code> — synapse
+  weight increases attraction, so <strong>screen distance ≈ semantic distance</strong> in
+  every mode. Barnes-Hut on above 500 nodes.</li>
+<li>Lifecycle: run-to-settle on load (progress indicator; iteration budget
+  scaled by node count, hard cap), then stop. Node drag re-heats for ~1s
+  locally. "Re-layout" button restarts. <code>prefers-reduced-motion</code> → compute
+  settled positions before first paint (no visible simulation).</li>
+<li><strong>Positions are mode-independent</strong> (§5) and filter-independent: hiding
+  elements never re-runs physics (mental-map preservation; matches Obsidian).</li>
+<li>Weight-threshold slider: edges below threshold are hidden (visual) but only
+  excluded from physics when the user re-runs layout — the slider itself never
+  moves nodes.</li>
+<li><code>--layout static</code> (CLI): positions precomputed in Python
+  (<code>networkx.spring_layout(seed=42, weight="weight")</code>), embedded in the
+  payload, physics disabled → byte-identical output across runs (modulo
+  <code>generated_at</code>); for sharing and paper figures.</li>
+</ul>
+<h2 id="7-ui-spec-uijs-themecss">7. UI spec (ui.js + theme.css)<a class="headerlink" href="#7-ui-spec-uijs-themecss" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>┌─────────────────────────────────────────────────────────────┐
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>│ [Links][Strength][Activity][Memory][Health]   [search  /]   │ ← mode bar
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>│ groups: ●a ●b ●c +2   edges: [req][ext][con][rel]  w≥[──●─] │ ← filter row
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>│                                              ┌─────────────┐│
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>│                                              │ detail panel ││
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>│                 canvas (sigma)               │  or          ││
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>│                                              │ panelExtras  ││
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>│                                              └─────────────┘│
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>│ legend (bottom-left, per-mode)                    [fit][re-layout]
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>└─────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<ul>
+<li><strong>Mode bar</strong>: segmented control; active mode <code>--text-1</code> on <code>--panel</code>;
+  disabled (requires unmet) at 40% + tooltip "generate with --overlay tutor".</li>
+<li><strong>Filter row</strong>: group chips (toggle; filtering hides, never recolors
+  survivors), edge-type chips, node-type dropdown, weight slider (domain from
+  <code>meta.weight_domain</code>, default = min). Filters are orthogonal to modes.</li>
+<li><strong>Ego / local-graph mode</strong>: double-click a node (or panel button) → show only
+  the N-hop neighborhood, depth stepper 1-3, positions unchanged, camera fits;
+  "back to full graph" chip appears in the filter row. Orthogonal to modes.</li>
+<li><strong>Selection</strong>: click = select + neighbors full / rest fade 15%; <code>Esc</code> clears.
+  Hover = temporary same effect (cheap: sigma reducers).</li>
+<li><strong>Detail panel</strong>: title (<code>textContent</code>), group/domain/type chips, pressure,
+  synapse list sorted by weight (type + weight, click → jump), excerpt, tutor
+  block when present, copy-id. Collapses to a bottom sheet when the <strong>container</strong>
+  is narrower than ~640px (<code>@container</code> query; device media queries are
+  prohibited except <code>prefers-color-scheme</code> / <code>prefers-reduced-motion</code>).</li>
+<li><strong>Tooltips</strong>: HTML overlays positioned from sigma events (never <code>title=</code>),
+  <code>--panel</code> surface + <code>--ring</code> border.</li>
+<li>Keyboard: <code>1..5</code> modes, <code>m</code> cycle, <code>/</code> search, <code>f</code> fit, <code>d</code> toggle panel,
+  <code>Esc</code> clear. All controls reachable by tab; buttons are real <code>&lt;button&gt;</code>s.</li>
+</ul>
+<h2 id="8-state-statejs">8. State (state.js)<a class="headerlink" href="#8-state-statejs" title="Permanent link">&para;</a></h2>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nx">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;links&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nx">selection</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">                   </span><span class="c1">// nodeId</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nx">ego</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">                         </span><span class="c1">// { center, depth }</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nx">filters</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">groups</span><span class="o">:</span><span class="nb">Set</span><span class="p">,</span><span class="w"> </span><span class="nx">edgeTypes</span><span class="o">:</span><span class="nb">Set</span><span class="p">,</span><span class="w"> </span><span class="nx">nodeTypes</span><span class="o">:</span><span class="nb">Set</span><span class="p">,</span><span class="w"> </span><span class="nx">weightMin</span><span class="o">:</span><span class="nx">number</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nx">theme</span><span class="o">:</span><span class="w"> </span><span class="nx">matchMedia</span><span class="o">-</span><span class="nx">derived</span><span class="p">,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">}</span>
+</code></pre></div>
+Plain object + <code>subscribe(fn)</code> / <code>update(patch)</code>; every UI element renders from
+state; <code>render.js</code> consumes state diffs (mode → repaint, filters/ego →
+visibility pass, selection → reducer pass). No framework, no external state lib.</p>
+<h2 id="9-testing">9. Testing<a class="headerlink" href="#9-testing" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>payload</strong>: unit tests as in §3 (counts, slotting, Other-fold, tutor-less,
+  adversarial titles, <code>--json</code> round-trip, component numbering, weight_domain).</li>
+<li><strong>build.py</strong>: data island extract → <code>json.loads</code> OK; <code>&lt;/script&gt;</code> escaping;
+  all vendor bundles + modules present exactly once; both theme token sets.</li>
+<li><strong>modes.js is pure</strong> → unit-testable without a browser: feed a fixture
+  payload through each ViewSpec, assert encodings (e.g. weight 0.9 lands in
+  ramp-5 quintile; never-spiked node gets muted+ring; Memory disabled without
+  tutor). Run under <code>node</code> in CI (modules are browser-free by design).</li>
+<li><strong>Smoke</strong>: generate against a fixture brain; assert no adversarial string
+  outside the JSON island.</li>
+<li><strong>Manual render-and-look</strong> (mandatory, per phase): real daily brain + 1k
+  synthetic; walk all 5 modes, resize pane, both themes; screenshots in PR.</li>
+</ul>
+<h2 id="10-performance-targets">10. Performance targets<a class="headerlink" href="#10-performance-targets" title="Permanent link">&para;</a></h2>
+<p>50-node daily brain: instant. 1k synthetic: first paint &lt; 1.5s, settle &lt; 5s,
+pan/zoom 60fps. 5k synthetic: first paint &lt; 4s, interaction ≥ 30fps, labels
+LOD-culled (top-K by size + zoom threshold when &gt; 300 nodes; hover tooltips
+throttled &gt; 2000). Benchmark numbers recorded in the E3 PR.</p>
+<h2 id="11-deferred-recorded-not-designed">11. Deferred (recorded, not designed)<a class="headerlink" href="#11-deferred-recorded-not-designed" title="Permanent link">&para;</a></h2>
+<p>Spike-history time scrub / replay animation (needs per-node spike series in the
+payload; design after modes prove daily-useful). Edge bundling. WebGPU. Served
+mode with lazy content loading. Paper-figure export presets beyond
+<code>--layout static</code>.</p>
+<h2 id="12-review-round">12. Review round<a class="headerlink" href="#12-review-round" title="Permanent link">&para;</a></h2>
+<p>No open blocking questions — encodings, module contracts, and UI are fully
+specified above; recommendations are baked in (UI labels in English; five modes;
+threshold slider defaults to min = everything visible). Veto or amend any
+numbered decision; silence = proceed as written.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.code.annotate", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      
+        <script src="../../javascripts/charts.js"></script>
+      
+    
+  </body>
+</html>

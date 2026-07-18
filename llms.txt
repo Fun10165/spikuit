@@ -1,0 +1,89 @@
+# Spikuit
+
+> A knowledge graph engine with spaced repetition, designed for AI agent workflows.
+
+Spikuit combines FSRS v6 scheduling, graph propagation (APPNP / STDP / LIF),
+and hybrid retrieval (BM25 + semantic + graph signals) into a single CLI (`spkt`).
+AI agents interact with it through SKILL.md files installed via `spkt skills install`.
+
+## Install
+
+```
+pip install spikuit
+```
+
+## Quick Start
+
+```
+spkt init                                    # Create a Brain (.spikuit/)
+spkt neuron add "# Topic\n\nContent" -t concept -d domain
+spkt synapse add <id1> <id2> -t relates_to   # Connect neurons
+spkt retrieve "query"                        # Hybrid search
+spkt neuron due                              # Neurons due for review
+spkt neuron fire <id> -g fire                # Record a review
+spkt skills install                          # Install SKILL.md for Agent CLIs
+```
+
+## Architecture
+
+- **Brain**: a `.spikuit/` directory (like `.git/`), one per project or topic
+- **Neuron**: a unit of knowledge (Markdown), with FSRS scheduling state
+- **Synapse**: typed, weighted edge (requires / extends / contrasts / relates_to / summarizes)
+- **Spike**: a review event that triggers FSRS update + graph propagation
+- **Circuit**: the full knowledge graph (SQLite + NetworkX + sqlite-vec)
+
+Core engine is LLM-independent. Sessions (Tutor / QABot / Learn) add an LLM layer.
+
+## Agent Skills
+
+After `spkt skills install`, agents get four skills:
+
+- `/spkt-tutor` — 1-on-1 scaffolded teaching, quizzes, gap detection
+- `/spkt-qabot` — RAG chat grounded in the knowledge graph
+- `/spkt-ingest` — add knowledge through conversational curation
+- `/spkt-curator` — brain maintenance: audit, consolidation, cleanup
+
+## Key Docs
+
+- [Getting Started](https://takyone.github.io/spikuit/getting-started/): install, init, first commands
+- [How to Use](https://takyone.github.io/spikuit/how-to-use/): use cases, agent skills, Python API
+- [Concepts](https://takyone.github.io/spikuit/concepts/): brain model, graph propagation, retrieval
+- [CLI Reference](https://takyone.github.io/spikuit/cli/): all `spkt` commands with examples
+- [API Reference](https://takyone.github.io/spikuit/reference/): Python API documentation
+- [Appendix](https://takyone.github.io/spikuit/appendix/): algorithms, parameters, tech stack
+
+## CLI Commands
+
+### Root
+init, config, embed-all, retrieve, stats, diagnose, progress, manual,
+consolidate, consolidate apply, quiz, visualize, export, import
+
+### Resource Subcommands
+neuron {add, list, inspect, remove, merge, due, fire}
+synapse {add, remove, weight, list}
+source {learn, list, inspect, update, refresh}
+domain {list, rename, merge, audit}
+community {detect, list}
+skills {install, list}
+
+All commands support `--json` for machine-readable output and `--brain` to target a specific Brain.
+
+## Grade Scale
+
+| Grade    | Meaning       | FSRS Rating |
+|----------|---------------|-------------|
+| `miss`   | Failed recall | Again       |
+| `weak`   | Uncertain     | Hard        |
+| `fire`   | Correct       | Good        |
+| `strong` | Perfect       | Easy        |
+
+## Tech Stack
+
+Python 3.11+, SQLite (aiosqlite), NetworkX, sqlite-vec, FSRS v6, Typer, msgspec, httpx, pyvis
+
+## Links
+
+- Source: https://github.com/takyone/spikuit
+- Docs: https://takyone.github.io/spikuit/
+- PyPI: https://pypi.org/project/spikuit/
+- License: Apache-2.0

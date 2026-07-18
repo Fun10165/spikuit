@@ -1,0 +1,2322 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A knowledge base that gets smarter the more you use it">
+      
+      
+      
+        <link rel="canonical" href="https://takyone.github.io/spikuit/ja/design/neuron-importance/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="../../../design/neuron-importance/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="ja">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Neuron Importance — importance = f(state, importance_prior) - Spikuit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/charts.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#neuron-importance-importance-fstate-importance_prior" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../../" title="Spikuit" class="md-header__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spikuit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Neuron Importance — importance = f(state, importance_prior)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../design/neuron-importance/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/takyone/spikuit" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Spikuit" class="md-nav__button md-logo" aria-label="Spikuit" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spikuit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/takyone/spikuit" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    takyone/spikuit
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ホーム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使い方
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RAG
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rag/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クイックスタート
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    コンセプト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix: アルゴリズムと技術的詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/neuroscience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    計算神経科学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/psychology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    認知・発達心理学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/spaced-repetition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    間隔反復システム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ナレッジグラフとグラフベースML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    情報検索とRAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    実装詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    APIリファレンス
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIリファレンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    データ
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    データ
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    エンジン
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    エンジン
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/circuit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/propagation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    伝播
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/embedder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学習
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学習
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/scaffold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaffold & Learn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    セッション
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The question
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-commitment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The commitment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21-signature-vs-semantics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Signature vs. semantics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-two-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The two inputs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The two inputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-staten-graph-derived" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 state(n) — graph-derived
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-importance_priorn-bayesian-prior-at-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 importance_prior(n) — Bayesian prior at creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-emerging-dormant-and-the-gap-between-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Emerging, dormant, and the gap between inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-sketch-of-the-derivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sketch of the derivation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Sketch of the derivation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-grounding-why-this-f-is-importance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Grounding — why this f is importance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-fsrs-plugin-glue-out-of-scope-for-this-doc-recorded-for-record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. FSRS plugin glue (out of scope for this doc, recorded for record)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-observation-phase-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Observation phase (now)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-future-surface-not-yet-committed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Future surface (not yet committed)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Future surface (not yet committed)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-schema-option-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Schema option matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-open-questions-parked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Open questions (parked)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-cousin-metrics-other-inhabitants-of-the-signature-parked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Cousin metrics — other inhabitants of the signature (parked)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Cousin metrics — other inhabitants of the signature (parked)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#implementation-note-for-future-prs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation note (for future PRs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#which-metric-feeds-which-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which metric feeds which consumer?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="neuron-importance-importance-fstate-importance_prior">Neuron Importance — <code>importance = f(state, importance_prior)</code><a class="headerlink" href="#neuron-importance-importance-fstate-importance_prior" title="Permanent link">&para;</a></h1>
+<p><strong>Status.</strong> <strong>Design proposal (draft).</strong> No schema change yet — this doc
+captures the architectural commitment so future PRs have a reference
+point. Written 2026-05-23.</p>
+<p><strong>Provenance.</strong> Emerged from a daily-use review session between the
+maintainer and an AI agent (Claude) while curating French vocabulary
+neurons. The triggering observation was that reviewing ~200 newly
+imported items with <strong>flat priority is painful</strong> — high-value idioms
+and low-value cognates compete for the same review budget. The
+discussion progressed: simple <code>importance</code> column → 2-layer
+(<code>base + derived</code>) → fully-derived → vague "hybrid" → <strong>a pure
+function of two explicit inputs</strong>, <code>state</code> and a Bayesian-flavored
+<strong>prior</strong> (specifically <code>importance_prior</code> for the importance
+function). The earlier "hybrid" framing was rejected because
+<em>hybrid</em> left the boundary between the components unspecified; this
+doc records the sharper commitment. The name <code>prior</code> was chosen
+over <code>initial</code> after recognizing that the input is metric-scoped
+(each metric has its own prior, possibly with different shape) and
+that "initial" alone fails to say <em>initial of what</em>.</p>
+<p><strong>Scope.</strong></p>
+<p><em>In scope:</em>
+- The neuron scalar-metric <strong>framework</strong>: signature
+  <code>state × prior → [0, 1]</code> (where <code>prior</code> is metric-scoped),
+  purity, versionability, codomain contract (§2).
+- Definition of <strong><code>importance</code></strong> as the framework's first
+  inhabitant — the metric used for <strong>review triage and gradation</strong>
+  at bulk-import time and for FSRS <code>desired_retention</code> mapping.
+- The grounding (neuroscience / cognitive science) that justifies
+  <em>this</em> <code>f</code> deserving the name "importance" (§4.1).
+- Observation-phase plan for validating the design without schema
+  change (§6).</p>
+<p><em>Out of scope, deferred to follow-up docs:</em>
+- <strong>Visualization emphasis</strong> (star magnitude in <code>spkt visualize</code>).
+  The metric driving visual prominence may not be the same as the
+  metric driving review scheduling — visualize likely wants
+  graph-topological emphasis (centrality / community), not
+  subjective user value. Conflating them would distort the
+  starfield.
+- <strong>Cousin metrics</strong> that share the framework's signature —
+  <code>salience</code>, <code>centrality</code>, <code>novelty</code>, <code>recency</code>. Sketched in §9 so
+  future PRs can plug into the same contract, but their definitions
+  are not committed here.</p>
+<h2 id="1-the-question">1. The question<a class="headerlink" href="#1-the-question" title="Permanent link">&para;</a></h2>
+<p>When a neuron is imported or curated, what is its "importance" to the
+user, and where does that value live?</p>
+<p>Two extremes:</p>
+<ul>
+<li><strong>A. First-class stored attribute</strong> — <code>neuron.importance</code> REAL
+  column, user-set via <code>--imp</code> flag, persisted, read directly.</li>
+<li><strong>B. Fully derived</strong> — <code>importance(n)</code> is a function of the
+  surrounding graph state (synapse degree, co-fire counts, retrieve
+  hit log), computed on read, never stored as a field on <code>neuron</code>.</li>
+</ul>
+<p>Both have failure modes:</p>
+<ul>
+<li><strong>A</strong> is an architectural smell against Spikuit's premise. Spikuit
+  is a <em>graph + spiking</em> substrate; node value is supposed to
+  <strong>emerge</strong> from connectivity, weights, and activity — not be set
+  out-of-band. Storing <code>importance</code> as a static column makes it
+  parallel to fields like <code>domain</code> (a categorical tag), which is the
+  wrong category. It also drifts: a neuron the user marked
+  "high importance" three months ago may now be peripheral after the
+  graph has reshaped around it, but the column still says 0.9.</li>
+<li><strong>B</strong> breaks on cold start. A freshly-added neuron has zero
+  synapses, zero co-fires, zero retrieve hits — its derived
+  importance is identical to every other newcomer's. The user (or an
+  AI agent acting on their behalf) cannot communicate prior
+  knowledge such as <em>"this idiom is core to business French, surface
+  it more aggressively even before connections form."</em></li>
+</ul>
+<h2 id="2-the-commitment">2. The commitment<a class="headerlink" href="#2-the-commitment" title="Permanent link">&para;</a></h2>
+<p><strong><code>importance(n) = f(state(n), importance_prior(n))</code></strong> — a pure
+function of two explicit inputs.</p>
+<ul>
+<li><strong><code>state(n)</code></strong> is everything Spikuit observes about the neuron's
+  position in the graph <em>as it currently exists</em>: weighted degree,
+  co-fire counts, retrieve hits, community membership. State is
+  dynamic and grows as the graph evolves.</li>
+<li><strong><code>importance_prior(n)</code></strong> is the user/agent's Bayesian-style
+  prior probability assignment for the neuron's importance at
+  neuron creation (or at an explicit recalibration event). It is a
+  stored input, optional, nullable. It is <strong>not</strong> a knob to be
+  tweaked routinely; mutation is meaningful and logged as a
+  recalibration. Each cousin metric (§9) has its own
+  <code>&lt;metric&gt;_prior</code> slot with possibly different shape; for
+  importance, the prior is a single REAL <code>∈ [0, 1]</code>.</li>
+<li><code>f</code> is <strong>pure</strong>: same <code>(state, importance_prior)</code> always yields
+  the same <code>importance</code>. There is no hidden mutable scalar called
+  "importance" — there is only the function and its two inputs.</li>
+</ul>
+<p>This commitment buys five properties:</p>
+<ol>
+<li><strong>Predictability.</strong> Two neurons with the same <code>state</code> and the
+   same <code>importance_prior</code> value have the same <code>importance</code>.
+   Caching, offline recomputation, and "why is this 0.7?"
+   explanations all become tractable.</li>
+<li><strong>Independent axes.</strong> <code>importance_prior</code> and <code>state</code> are
+   orthogonal inputs. Their <em>difference</em> carries meaning (see §3.3):
+   a neuron whose <code>importance_prior</code> was low but whose state-derived
+   score is high is <strong>emerging</strong> — the graph has discovered
+   importance the user didn't initially see. The reverse is a
+   <strong>dormant</strong> neuron — the user invested expectation that the
+   graph hasn't validated.</li>
+<li><strong>No drift, no double-source-of-truth.</strong> There is no static
+   <code>importance</code> column to grow stale. There is no derived score
+   that disagrees with a stored one. There is the function, and the
+   function returns one number.</li>
+<li><strong><code>f</code> is policy, and policy is versionable.</strong> Because the
+   importance definition lives in code (the function body), not in
+   data, swapping <code>f</code> for <code>f'</code> instantly redefines importance for
+   every neuron in the brain. The previous definition is recoverable
+   by reverting the code — <em>the inputs <code>state</code> and <code>importance_prior</code>
+   are persistent and untouched by the swap</em>. This is the same
+   property git gives source code, applied to a knowledge-graph
+   metric: you can experiment with formulas, A/B them, regret them,
+   and roll back without losing data. A stored <code>importance</code> column
+   would destroy this property — re-evaluating the formula would
+   mean rewriting persisted values, with no clean rollback.</li>
+<li><strong>Bounded codomain.</strong> <code>f: state × importance_prior → [0, 1]</code>.
+   The output is always in the closed unit interval, by
+   construction (clamp at the boundary of <code>f</code> if needed).
+   Downstream consumers (<code>desired_retention</code> linear map in the
+   tutor overlay, <code>--min-importance</code> thresholds, opacity in
+   rendering) can rely on this without re-normalizing. Combined
+   with <code>importance_prior ∈ [0, 1]</code> and <code>state_score ∈ [0, 1]</code>,
+   every value in the system speaks the same scale.</li>
+</ol>
+<p>Additional non-strict guarantees (worth stating but not load-bearing
+to the architectural commitment):</p>
+<ul>
+<li><strong>Monotonicity.</strong> <code>∂f/∂state_score ≥ 0</code> and
+  <code>∂f/∂importance_prior ≥ 0</code> — raising either input cannot lower
+  importance. Holds for the linear blend in §4 and any reasonable
+  replacement.</li>
+<li><strong>Empty-graph degeneracy.</strong> When <code>state(n)</code> has no signals
+  (isolated new neuron, brand-new brain), <code>state_score = 0</code> by
+  definition; <code>f</code> falls back to <code>importance_prior</code> (or 0 if
+  <code>importance_prior</code> is absent — see §3.2 for absent-vs-zero
+  semantics).</li>
+</ul>
+<p>The earlier "hybrid" framing was rejected because it implied two
+co-equal sources (a stored <code>base</code> and a derived score) blended by an
+arbitrary formula. The pure-function framing dissolves that
+ambiguity: there is one output, computed deterministically from two
+labeled inputs.</p>
+<h2 id="21-signature-vs-semantics">2.1 Signature vs. semantics<a class="headerlink" href="#21-signature-vs-semantics" title="Permanent link">&para;</a></h2>
+<p><code>f: state × prior → [0, 1]</code> is a <strong>family signature</strong>, not a
+definition — and the <code>prior</code> slot is <strong>metric-scoped</strong>: each
+specific metric <code>f_X</code> has its own <code>prior_X</code> of possibly different
+shape (or no prior at all). Many functions satisfy this signature
+family, and several of them can coexist on the same brain — each
+consumed by a different downstream:</p>
+<table>
+<thead>
+<tr>
+<th>metric</th>
+<th>what it captures</th>
+<th><code>prior</code> shape</th>
+<th>likely consumer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>importance</code></strong> <em>(this doc)</em></td>
+<td>durable cognitive value to the user</td>
+<td><code>importance_prior</code> — REAL ∈ [0, 1] (nullable)</td>
+<td><code>tutor due</code> sort, FSRS <code>desired_retention</code>, <code>--min-importance</code> threshold</td>
+</tr>
+<tr>
+<td><code>salience</code></td>
+<td>currently-active, recency-weighted</td>
+<td><code>salience_prior</code> — REAL ∈ [0, 1] (nullable, often unused)</td>
+<td>retrieve rerank, chat context selection</td>
+</tr>
+<tr>
+<td><code>centrality</code></td>
+<td>graph-topological hub-ness</td>
+<td><em>none</em> — pure state, prior not used</td>
+<td>visualize emphasis, structural skeleton view</td>
+</tr>
+<tr>
+<td><code>novelty</code></td>
+<td>information-theoretic distance from neighbors</td>
+<td>possibly <code>novelty_prior</code> (REAL or unused)</td>
+<td>curator surfacing of misfits / new frames</td>
+</tr>
+<tr>
+<td><code>recency</code></td>
+<td>time-since-last-event with decay</td>
+<td><em>none</em> — pure state</td>
+<td>"what have I been working on" reports</td>
+</tr>
+</tbody>
+</table>
+<p><code>prior</code> is intentionally typed per metric. The framework does not
+mandate a universal prior shape — only that whichever shape a
+metric chooses, the function consuming it remains pure and
+returns <code>[0, 1]</code>.</p>
+<p>What makes a particular <code>f</code> deserving of the name <strong>"importance"</strong>
+is not its signature but its <strong>grounding</strong> — the principled reasons
+each input signal contributes to a notion of <em>durable cognitive
+value</em>, drawn from neuroscience, cognitive science, and graph
+theory. §4 gives the formula sketch; §4.1 records its grounding.</p>
+<p>The same signature pattern is intentionally future-compatible (§9):
+adding <code>salience(n)</code> later means implementing a <em>different</em> <code>f</code>
+with the same contract, not changing the architecture.</p>
+<h2 id="3-the-two-inputs">3. The two inputs<a class="headerlink" href="#3-the-two-inputs" title="Permanent link">&para;</a></h2>
+<h3 id="31-staten-graph-derived">3.1 <code>state(n)</code> — graph-derived<a class="headerlink" href="#31-staten-graph-derived" title="Permanent link">&para;</a></h3>
+<p>Drawn only from what Spikuit already records:</p>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Source</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Weighted degree</strong></td>
+<td><code>synapse.weight</code> summed over edges touching the neuron</td>
+<td>Hub neurons in the graph are structurally important.</td>
+</tr>
+<tr>
+<td><strong>Co-fire activity</strong></td>
+<td><code>synapse.co_fires</code> summed over connected edges</td>
+<td>Frequent co-activation = neuron participates in active reasoning.</td>
+</tr>
+<tr>
+<td><strong>Retrieve hit count</strong></td>
+<td><code>retrieve_log</code> entries containing the neuron's id</td>
+<td>External demand for this neuron — proxy for "practical importance".</td>
+</tr>
+<tr>
+<td><strong>Community size</strong></td>
+<td><code>neuron.community_id</code> size after <code>community detect</code></td>
+<td>Neurons inside a large coherent cluster are more important than isolates. <em>(optional, Phase 2)</em></td>
+</tr>
+</tbody>
+</table>
+<p>Each signal is normalized within the current brain (percentile rank
+within domain — see §8) and combined into a single
+<code>state_score(n) ∈ [0, 1]</code>.</p>
+<p>Notably absent from <code>state</code>: <strong>fire history (<code>spike</code> grades, FSRS
+stability / difficulty / retrievability)</strong>. Those belong to the
+tutor overlay (spikuit-tutor / FSRS plugin) and represent <em>how well
+the user remembers</em> the neuron — not its <em>value</em>. Feeding them into
+<code>state</code> would double-count what FSRS already handles and create a
+ratchet where forgotten neurons become invisible. See §5.</p>
+<h3 id="32-importance_priorn-bayesian-prior-at-creation">3.2 <code>importance_prior(n)</code> — Bayesian prior at creation<a class="headerlink" href="#32-importance_priorn-bayesian-prior-at-creation" title="Permanent link">&para;</a></h3>
+<p>The user/agent's prior probability assignment for importance,
+captured at neuron creation time and persisted as an explicit input
+to <code>f</code>. Type: REAL ∈ [0, 1], nullable. Set via an explicit
+<code>--importance-prior</code> flag at <code>spkt neuron add</code> time (or inferred by
+the importing agent).</p>
+<p><strong>Name and framing.</strong> The word <strong><code>prior</code></strong> is chosen in the Bayesian
+sense — <em>the probability the actor assigns before observing graph
+evidence</em>. The graph itself plays the role of evidence: as <code>state</code>
+accumulates over time, <code>f</code> integrates the prior against that
+evidence to produce the current <code>importance</code>. The earlier draft
+called this <code>initial</code>, but "initial" alone is ambiguous (initial of
+what?). <code>importance_prior</code> is self-documenting and scales to cousin
+metrics (<code>salience_prior</code>, etc.) without name collision.</p>
+<p><strong>Semantics of absence vs. zero vs. neutral:</strong></p>
+<table>
+<thead>
+<tr>
+<th>state of <code>importance_prior</code></th>
+<th>meaning</th>
+<th>how <code>f</code> reads it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>absent</strong> (no value set / NULL)</td>
+<td>the actor expressed no opinion at creation — uninformed</td>
+<td><code>f</code> falls back to <code>state_score</code> alone (no prior contribution)</td>
+</tr>
+<tr>
+<td><code>0.0</code></td>
+<td>the actor explicitly believes this neuron is unimportant</td>
+<td><code>f</code> blends as <code>0.6 * state_score + 0.4 * 0</code> — pulls importance toward zero</td>
+</tr>
+<tr>
+<td><code>0.5</code></td>
+<td>the actor explicitly believes importance is neutral</td>
+<td><code>f</code> blends as <code>0.6 * state_score + 0.4 * 0.5</code> — pulls toward 0.5</td>
+</tr>
+<tr>
+<td><code>1.0</code></td>
+<td>the actor strongly anchors importance at the top</td>
+<td><code>f</code> blends as <code>0.6 * state_score + 0.4 * 1</code> — pulls importance up</td>
+</tr>
+</tbody>
+</table>
+<p><em>absent ≠ 0.5</em> — these are semantically distinct and <code>f</code> treats
+them differently. This is a key reason to prefer schema option E2
+(sidecar table, row absence = no opinion) over E1 (column NULL,
+which can be confused with 0.0 in some query contexts). See §7.</p>
+<p><strong>Mutability:</strong></p>
+<ul>
+<li><strong>Stable by default</strong> — not a knob for routine tweaking. Once
+  set, <code>importance_prior</code> represents <em>what the actor believed at
+  that moment</em>; subsequent graph evolution is captured by <code>state</code>,
+  not by retroactively rewriting the prior.</li>
+<li><strong>Explicit recalibration allowed</strong> — <code>spkt neuron update
+  --importance-prior 0.4</code> is permitted but the event is logged.
+  Implementation under schema E2: the sidecar table either
+  overwrites with a new <code>set_at</code> (overwrite mode) or appends to a
+  separate <code>neuron_metric_prior_log</code> table (history mode). Decision
+  parked, see §7.</li>
+<li><strong>Actor provenance recorded</strong> — every prior carries
+  <code>(set_by_actor_id, set_by_actor_kind)</code> so "AI agent set 0.8, user
+  overrode to 0.5" workflows are auditable. Under E1 this would
+  require an additional column; E2 makes it natural. See §7.</li>
+</ul>
+<p><strong>Future extensions (parked):</strong></p>
+<ul>
+<li>Confidence on the prior (mean + interval) — currently single
+  scalar.</li>
+<li>Mode-specific priors (review vs. teaching vs. chat) — current
+  resolution: these should be separate cousin metrics, not separate
+  shapes of the same prior. <code>importance_prior</code> is for <code>importance</code>
+  specifically.</li>
+</ul>
+<h3 id="33-emerging-dormant-and-the-gap-between-inputs">3.3 Emerging, dormant, and the gap between inputs<a class="headerlink" href="#33-emerging-dormant-and-the-gap-between-inputs" title="Permanent link">&para;</a></h3>
+<p>Because <code>importance_prior</code> and <code>state</code> are orthogonal axes, the
+<em>difference</em> between them carries diagnostic information:</p>
+<table>
+<thead>
+<tr>
+<th><code>importance_prior</code></th>
+<th><code>state_score</code></th>
+<th>Pattern</th>
+<th>Surfacing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>low</td>
+<td>low</td>
+<td>peripheral / unused</td>
+<td>bottom of <code>tutor due</code> queue</td>
+</tr>
+<tr>
+<td>low</td>
+<td>high</td>
+<td><strong>emerging</strong> — graph found value the user missed</td>
+<td>candidate for <code>spkt neuron explain</code> ("you flagged this as low but it's now connected to N strong neurons")</td>
+</tr>
+<tr>
+<td>high</td>
+<td>low</td>
+<td><strong>dormant</strong> — user expectation unrealized</td>
+<td>candidate for review: seed more connections? merge? retire?</td>
+</tr>
+<tr>
+<td>high</td>
+<td>high</td>
+<td>confirmed core</td>
+<td>top of <code>tutor due</code> queue</td>
+</tr>
+<tr>
+<td>absent</td>
+<td>any</td>
+<td>no opinion at creation</td>
+<td>not labeled — <code>f</code> is state-only, the diagnostic axis doesn't apply</td>
+</tr>
+</tbody>
+</table>
+<p>These labels are not stored — they are computed at query time from
+the gap <code>state_score - importance_prior</code> (skipped when prior is
+absent). A future <code>spkt neuron diverge</code> (or similar) can surface
+neurons whose gap exceeds a threshold, giving the user a
+maintenance loop: "what has emerged this week?" and "what has gone
+dormant?"</p>
+<h2 id="4-sketch-of-the-derivation">4. Sketch of the derivation<a class="headerlink" href="#4-sketch-of-the-derivation" title="Permanent link">&para;</a></h2>
+<p>Pseudocode for <code>f(state, importance_prior) → importance</code>, intended
+as a starting point — exact normalization and weights are to be
+tuned during the observation phase (§6):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">importance</span><span class="p">(</span><span class="n">neuron_id</span><span class="p">,</span> <span class="n">brain</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># --- state(n): graph-derived ---</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">structural</span> <span class="o">=</span> <span class="n">brain</span><span class="o">.</span><span class="n">weighted_degree</span><span class="p">(</span><span class="n">neuron_id</span><span class="p">)</span>       <span class="c1"># ∈ [0, ∞)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">activity</span>   <span class="o">=</span> <span class="n">brain</span><span class="o">.</span><span class="n">co_fire_total</span><span class="p">(</span><span class="n">neuron_id</span><span class="p">)</span>         <span class="c1"># ∈ [0, ∞)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">demand</span>     <span class="o">=</span> <span class="n">brain</span><span class="o">.</span><span class="n">retrieve_hit_count</span><span class="p">(</span><span class="n">neuron_id</span><span class="p">)</span>    <span class="c1"># ∈ [0, ∞)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">s</span> <span class="o">=</span> <span class="n">percentile_rank</span><span class="p">(</span><span class="n">structural</span><span class="p">,</span> <span class="n">brain</span><span class="o">.</span><span class="n">all_weighted_degrees</span><span class="p">())</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">a</span> <span class="o">=</span> <span class="n">percentile_rank</span><span class="p">(</span><span class="n">activity</span><span class="p">,</span>   <span class="n">brain</span><span class="o">.</span><span class="n">all_co_fire_totals</span><span class="p">())</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">d</span> <span class="o">=</span> <span class="n">percentile_rank</span><span class="p">(</span><span class="n">demand</span><span class="p">,</span>     <span class="n">brain</span><span class="o">.</span><span class="n">all_retrieve_hits</span><span class="p">())</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">state_score</span> <span class="o">=</span> <span class="mf">0.45</span> <span class="o">*</span> <span class="n">s</span> <span class="o">+</span> <span class="mf">0.30</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">d</span>  <span class="c1"># ∈ [0, 1]</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="c1"># --- importance_prior(n): Bayesian prior from actor, nullable ---</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">prior</span> <span class="o">=</span> <span class="n">brain</span><span class="o">.</span><span class="n">importance_prior</span><span class="p">(</span><span class="n">neuron_id</span><span class="p">)</span>  <span class="c1"># float ∈ [0, 1] or None</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="c1"># --- combine ---</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="c1"># Output is bounded to [0, 1] by construction (linear blend of</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="c1"># values already in [0, 1]); the clamp is defensive.</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="k">if</span> <span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="k">return</span> <span class="n">clamp</span><span class="p">(</span><span class="n">state_score</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="k">return</span> <span class="n">clamp</span><span class="p">(</span><span class="mf">0.6</span> <span class="o">*</span> <span class="n">state_score</span> <span class="o">+</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">prior</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+</code></pre></div>
+<p>Properties:</p>
+<ul>
+<li><strong>Pure.</strong> No randomness, no hidden context. Reproducible across
+  reads.</li>
+<li><strong>Absence-respecting.</strong> A neuron with no <code>importance_prior</code> set
+  is scored on state alone — not "treated as 0.5 with low
+  confidence." Distinct semantics from <code>importance_prior = 0.5</code>
+  (see §3.2 table).</li>
+<li><strong>Cold-start tolerant.</strong> A new neuron with zero edges gets a
+  state_score near zero, but a high <code>importance_prior</code> lifts it.
+  Without a prior, it stays low until the graph speaks.</li>
+<li><strong>Graph-dominant at maturity.</strong> <code>importance_prior</code>'s contribution
+  is capped at 40% so a clear graph signal can override it. Future
+  refinement: decay the prior weight as the count of graph signals
+  grows (<code>weight_prior(n) = 0.4 / (1 + degree(n)/k)</code>).</li>
+</ul>
+<h3 id="41-grounding-why-this-f-is-importance">4.1 Grounding — why this <code>f</code> is <em>importance</em><a class="headerlink" href="#41-grounding-why-this-f-is-importance" title="Permanent link">&para;</a></h3>
+<p>Each input signal maps to an established principle in cognitive
+science or graph theory. Together they justify naming this
+particular <code>f</code> "importance" rather than salience, centrality, or
+recency:</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Principle</th>
+<th>Why it indicates <em>durable value</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Weighted degree</strong> (<code>s</code>)</td>
+<td><strong>Degree centrality</strong> (graph theory)</td>
+<td>A concept connected to many others is a structural pivot — losing or weakening it costs the cognitive economy.</td>
+</tr>
+<tr>
+<td><strong>Co-fire activity</strong> (<code>a</code>)</td>
+<td><strong>Hebbian plasticity</strong> — <em>"cells that fire together wire together"</em> (Hebb 1949)</td>
+<td>Repeated co-activation marks the neuron as a member of stable engrams. Engram membership is a durable property, not a transient state.</td>
+</tr>
+<tr>
+<td><strong>Retrieve hits</strong> (<code>d</code>)</td>
+<td><strong>Behavioral salience</strong> / use-frequency</td>
+<td>A memory the agent (or external query) reaches for often has demonstrated practical value over time — the integration is over the lifetime of the brain, not the last 24h.</td>
+</tr>
+<tr>
+<td><strong><code>importance_prior</code></strong></td>
+<td><strong>Encoding-specificity effect</strong> (Tulving &amp; Thomson 1973)</td>
+<td>Attention strength at encoding predicts long-term importance. The user/agent communicates this prior at neuron creation; over time, the graph either validates it or doesn't.</td>
+</tr>
+</tbody>
+</table>
+<p>Notable omissions and why they are <em>not</em> in <code>importance</code>:</p>
+<ul>
+<li><strong>FSRS retention metrics</strong> (stability, difficulty, retrievability)
+  — these measure <em>how well the user remembers</em> the neuron, which
+  is orthogonal to <em>how valuable it is</em>. A forgotten high-value
+  neuron is still high-value (and FSRS should bring it back
+  aggressively). See §3.1 / §5.</li>
+<li><strong>Pure recency</strong> — a recently-viewed concept is <em>salient</em>, not
+  necessarily <em>important</em>. Recency-weighted information belongs to
+  <code>salience</code> (a separate cousin metric in §9), not importance.</li>
+<li><strong>Pure topology</strong> (e.g. PageRank without weights) — captures
+  <em>centrality</em>, which is structurally interesting for visualization
+  but not the same as cognitive value to <em>this</em> user. The
+  weighted-degree signal already incorporates synapse weights,
+  which encode learned co-association strength.</li>
+</ul>
+<p>The §4 formula is one defensible blend; future revisions can tune
+weights, swap percentile rank for a different normalization, or add
+the community-size signal (§3.1) — as long as the grounding above
+still holds, the function still earns the name <em>importance</em>. If a
+revision starts emphasizing recency or pure topology, it should be
+renamed to a different cousin metric (§9) rather than redefining
+what "importance" means.</p>
+<h2 id="5-fsrs-plugin-glue-out-of-scope-for-this-doc-recorded-for-record">5. FSRS plugin glue (out of scope for this doc, recorded for record)<a class="headerlink" href="#5-fsrs-plugin-glue-out-of-scope-for-this-doc-recorded-for-record" title="Permanent link">&para;</a></h2>
+<p>Spikuit-core does not know about FSRS. The tutor overlay
+(<code>spikuit-tutor</code>) is the only place where importance touches review
+scheduling.</p>
+<p>The intended glue:</p>
+<ul>
+<li><code>TutorScheduler</code> reads <code>importance(n)</code> at fire time.</li>
+<li>Maps to FSRS <code>desired_retention</code> (e.g. linear from <code>0.80</code> at
+  importance <code>0.1</code> to <code>0.95</code> at importance <code>0.9</code>).</li>
+<li>Constructs a per-review <code>Scheduler(desired_retention=mapped)</code> and
+  calls <code>review_card</code>.</li>
+</ul>
+<p><strong>Direction is strictly core → plugin.</strong> FSRS state
+(stability/difficulty) never feeds back into <code>importance</code>. This is
+load-bearing for the architectural commitment and matches the
+existing <code>spikuit-core</code> / <code>spikuit-tutor</code> separation introduced by
+commit <code>e96e6b5</code> (<em>retire FSRS from spikuit-core into a tutor
+overlay</em>).</p>
+<h2 id="6-observation-phase-now">6. Observation phase (now)<a class="headerlink" href="#6-observation-phase-now" title="Permanent link">&para;</a></h2>
+<p>Before adding any column or shipping write surface, validate the
+derivation by observation:</p>
+<ol>
+<li>Implement <code>importance(neuron, brain)</code> as a pure function over
+   current <code>Brain</code> state, treating <code>importance_prior</code> as <code>None</code>
+   everywhere (since the storage doesn't exist yet). No schema
+   change, no persisted field.</li>
+<li>Optional: expose <code>spkt neuron rank</code> (read-only) that prints
+   neurons sorted by <code>importance</code>. Compare against intuition.</li>
+<li>Run on the maintainer's existing brain (currently ~22 curated
+   French grammar neurons) and a future bulk import (~210 Netflix
+   vocab items). Check: does the state-only ranking match
+   intuition? Where does it fall short — and would a hypothetical
+   <code>importance_prior</code> value have fixed those cases?</li>
+<li>If state-only ranking is mostly right → proceed to Phase 1
+   (commit to schema option from §7, expose <code>--importance-prior</code>
+   on <code>neuron add</code>, integrate into <code>tutor due</code> sort).</li>
+<li>If state-only ranking is wrong → tune weights, add signals
+   (e.g. community size), or reconsider whether <code>importance_prior</code>
+   needs higher weight from the start.</li>
+</ol>
+<p>This keeps the daily-use loop unblocked while the design is
+validated empirically.</p>
+<h2 id="7-future-surface-not-yet-committed">7. Future surface (not yet committed)<a class="headerlink" href="#7-future-surface-not-yet-committed" title="Permanent link">&para;</a></h2>
+<p>When observation confirms the approach:</p>
+<ul>
+<li><strong>Schema</strong> — see §7.1 for the option matrix. Recommended:
+  schema option <strong>E2</strong> (sidecar table <code>neuron_metric_prior</code>)
+  because it (a) supports cousin metrics with zero migration
+  churn, (b) carries actor provenance natively, (c) makes
+  <em>absent ≠ 0</em> explicit via row absence. No <code>importance</code> column
+  ever — <code>importance</code> is the function's return value, not a field.</li>
+<li><strong>CLI write.</strong> <code>spkt neuron add --importance-prior 0.7</code>
+  (also accepting <code>high</code>/<code>mid</code>/<code>low</code> as symbolic aliases mapped
+  to 0.8/0.5/0.2). Under E2 a generic form
+  <code>spkt neuron add --prior importance=0.7</code> could be supported in
+  addition. <code>spkt neuron update &lt;id&gt; --importance-prior ...</code> for
+  explicit recalibration. <strong>The flag names the input (a <code>prior</code>),
+  not the output (<code>importance</code>)</strong> — reinforces the mental model
+  that the actor sets one input to a function, not the function's
+  value.</li>
+<li><strong>CLI read.</strong> <code>spkt neuron list --sort importance</code>,
+  <code>spkt neuron rank</code>, <code>spkt tutor due --min-importance 0.5</code>.
+  Read API returns the computed value; callers never see the
+  <code>prior</code> vs <code>state</code> split unless they ask for it.</li>
+<li><strong>Diagnostic surface.</strong> <code>spkt neuron diverge</code> (or similar) lists
+  neurons whose <code>state_score - importance_prior</code> exceeds a
+  threshold — surfacing <strong>emerging</strong> and <strong>dormant</strong> neurons
+  (§3.3) for the maintainer's attention. Neurons with absent
+  prior are skipped from this view (no diagnostic axis).</li>
+<li><strong>Caching.</strong> If query cost matters at scale, add a
+  <code>neuron_importance_cache</code> sidecar table refreshed by <code>spkt neuron
+  recompute-importance</code> (cron-like, not on every read). The cache
+  is <strong>purely a performance device</strong> — the function remains the
+  source of truth and the cache can be dropped at any time.</li>
+</ul>
+<p><strong>Visualization is intentionally absent from this list</strong> — see the
+<em>Scope</em> note in §1 and §9. The metric driving <code>spkt visualize</code>
+emphasis (likely <code>centrality</code>, possibly compound) is a separate
+design question whose answer is not necessarily <em>importance</em>.</p>
+<h3 id="71-schema-option-matrix">7.1 Schema option matrix<a class="headerlink" href="#71-schema-option-matrix" title="Permanent link">&para;</a></h3>
+<p>When the time comes to persist <code>importance_prior</code> (and eventually
+cousin metric priors), three options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Shape</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>E1 — per-metric column</strong></td>
+<td><code>ALTER TABLE neuron ADD COLUMN importance_prior REAL</code> (nullable); add <code>salience_prior REAL</code> etc. when each metric ships</td>
+<td>Simple, type-safe, easy <code>ORDER BY</code>; minimal query overhead</td>
+<td>New metric = new migration; provenance needs extra columns; <em>absent vs 0</em> relies on <code>NULL</code> discipline (easy to get wrong in SQL)</td>
+</tr>
+<tr>
+<td><strong>E2 — sidecar table (recommended)</strong></td>
+<td><code>CREATE TABLE neuron_metric_prior (neuron_id TEXT, metric_name TEXT, value REAL, set_at TEXT, set_by_actor_id TEXT, set_by_actor_kind TEXT, PRIMARY KEY (neuron_id, metric_name))</code></td>
+<td>Zero schema churn per new metric; provenance is built in; <em>absent = no row</em> is unambiguous; recalibration history easy via separate <code>_log</code> table or <code>UPDATE</code> with <code>set_at</code> rewrite</td>
+<td>Sort by importance requires JOIN; slightly more code per metric</td>
+</tr>
+<tr>
+<td>E3 — JSON column on <code>neuron</code></td>
+<td><code>ALTER TABLE neuron ADD COLUMN priors TEXT</code> storing <code>{"importance": 0.7, ...}</code></td>
+<td>Schema-stable</td>
+<td>Slow <code>ORDER BY</code>, no type guarantee, no provenance without nested structure, awkward indexing</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation: E2.</strong> Rationale:</p>
+<ol>
+<li>The cousin-metric architecture (§9) makes "more metric priors
+   over time" the expected pattern, not the exception. E1's
+   migration cost compounds.</li>
+<li><em>Absent vs explicit zero</em> is semantically load-bearing for <code>f</code>
+   (§3.2 / §4). Row-absence in E2 is unambiguous; <code>NULL</code> in E1 is
+   often coerced or misread by downstream tooling.</li>
+<li>Actor provenance (§3.2) is parked as a §8 open question under
+   E1; E2 dissolves it by adding two columns to the sidecar.</li>
+<li>Recalibration logging fits naturally as a separate
+   <code>neuron_metric_prior_log</code> append-only table sharing the same
+   schema shape — no schema duplication.</li>
+</ol>
+<p>E2 cost (JOIN on sort) is recoverable via the <code>neuron_importance_cache</code>
+table mentioned above. The cache is allowed to materialize <code>f</code>'s
+output; what we must <em>not</em> materialize is the user-set prior
+itself, which lives only in the sidecar.</p>
+<p><strong>Decision deferred</strong> until observation phase (§6) yields signal on
+whether the rank is meaningful — but the doc records the preferred
+direction so future PRs don't litigate this from scratch.</p>
+<h2 id="8-open-questions-parked">8. Open questions (parked)<a class="headerlink" href="#8-open-questions-parked" title="Permanent link">&para;</a></h2>
+<p>Resolved or substantially mitigated by the §3.2 / §7.1 design
+(removed from this list): prior decay (handled by the
+graph-dominant-at-maturity property in §4 + the optional
+decay-by-degree refinement); prior provenance (built into schema
+E2); absent-vs-zero semantics (defined in §3.2 table).</p>
+<p>Remaining:</p>
+<ul>
+<li><strong>Community membership signal.</strong> Worth including in <code>state</code>, but
+  <code>community detect</code> is currently manual. If communities go stale,
+  <code>state_score</code> goes stale. Either auto-rerun on schedule, or only
+  include this signal when a community marker is fresh.</li>
+<li><strong>Multi-domain percentile.</strong> Should <code>state_score</code>'s percentile
+  rank be within the neuron's domain rather than brain-wide? A
+  French vocab neuron shouldn't be ranked against a math concept
+  neuron for cross-domain percentile fairness. Default proposal:
+  domain-local percentile when <code>neuron.domain</code> is set, brain-wide
+  fallback when not.</li>
+<li><strong>Recalibration mode under E2.</strong> When a user runs <code>spkt neuron
+  update --importance-prior 0.4</code>, should the sidecar (a) overwrite
+  the row and update <code>set_at</code>, or (b) append to a separate
+  <code>neuron_metric_prior_log</code> while keeping the canonical row
+  current? (b) preserves history but doubles storage; (a) loses
+  audit trail. Tentative: (a) for the canonical row, optional (b)
+  if the user opts into history.</li>
+<li><strong>What does absent prior mean for sort?</strong> When sorting <code>tutor
+  due</code> by importance, where do neurons with absent prior go?
+  Treating them by state alone (§4) is mathematically clean, but
+  a brand-new neuron with <code>state_score = 0</code> will sit at the bottom
+  forever unless something pulls it up. Possibly the tutor should
+  have its own "newcomer boost" orthogonal to importance.</li>
+<li><strong>Symbolic alias mapping.</strong> <code>--importance-prior high|mid|low</code> is
+  a UX convenience; the mapping (proposed 0.8 / 0.5 / 0.2) is
+  arbitrary. Should this be configurable per brain, or hardcoded?
+  Hardcoded keeps explanations simple ("high = 0.8") and avoids a
+  setting that needs to be remembered.</li>
+</ul>
+<p>These are deferred until observation in §6 surfaces which of them
+actually matter.</p>
+<h2 id="9-cousin-metrics-other-inhabitants-of-the-signature-parked">9. Cousin metrics — other inhabitants of the signature (parked)<a class="headerlink" href="#9-cousin-metrics-other-inhabitants-of-the-signature-parked" title="Permanent link">&para;</a></h2>
+<p>The architectural pattern <code>state × prior → [0, 1]</code> (with <code>prior</code>
+metric-scoped) can host other scalar metrics. This doc commits only
+to <code>importance</code>. The same contract admits the following cousins,
+sketched here so future PRs can plug into the framework rather than
+reinventing it:</p>
+<table>
+<thead>
+<tr>
+<th>metric</th>
+<th>grounding</th>
+<th>sketch</th>
+<th><code>prior</code> shape</th>
+<th>downstream</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>salience(n)</code></strong></td>
+<td>recency-weighted activity; what is <em>currently on the brain's mind</em></td>
+<td>exponentially-decayed retrieve / co-fire history</td>
+<td><code>salience_prior</code> (REAL ∈ [0, 1], often unused — recency speaks for itself)</td>
+<td>retrieve rerank, chat context selection, "what was I just working on"</td>
+</tr>
+<tr>
+<td><strong><code>centrality(n)</code></strong></td>
+<td>graph topology in isolation</td>
+<td>PageRank or eigenvector centrality over the synapse graph</td>
+<td><strong>none</strong> — pure state</td>
+<td><code>visualize</code> star magnitude, structural skeleton view, <code>--min-centrality</code> filter for graph exports</td>
+</tr>
+<tr>
+<td><strong><code>novelty(n)</code></strong></td>
+<td>information-theoretic distance from neighbors</td>
+<td>low embedding cosine similarity to nearest community; surprise signal</td>
+<td>possibly <code>novelty_prior</code> (REAL or unused)</td>
+<td>curator surfacing of orphans / misfits, "what doesn't yet fit"</td>
+</tr>
+<tr>
+<td><strong><code>recency(n)</code></strong></td>
+<td>time-since-last-event</td>
+<td>linear or exponential decay of last fire / co-fire / retrieve</td>
+<td><strong>none</strong> — pure state</td>
+<td>"what have I been working on" reports, freshness filters</td>
+</tr>
+</tbody>
+</table>
+<p>Schema option E2 (§7.1) — the sidecar <code>neuron_metric_prior</code>
+keyed by <code>(neuron_id, metric_name)</code> — naturally accommodates any
+of the above adding their own prior with zero migration. Metrics
+that need no prior simply never get rows.</p>
+<h3 id="implementation-note-for-future-prs">Implementation note (for future PRs)<a class="headerlink" href="#implementation-note-for-future-prs" title="Permanent link">&para;</a></h3>
+<p>A uniform <code>NeuronMetric</code> Protocol — <code>__call__(brain, neuron_id) →
+float</code> — would let these be plugged into tutor sort, retrieve
+rerank, visualize, and any other consumer through a single
+interface. Each metric is a stand-alone module with:</p>
+<ul>
+<li>A name (so <code>--sort</code> flags and CLI surfaces can address it by
+  string).</li>
+<li>A pure implementation respecting the codomain contract.</li>
+<li>Optional cache support via the same sidecar pattern (§7).</li>
+</ul>
+<p>This doc does <strong>not</strong> mandate creating that Protocol now — that is a
+follow-up architectural decision. It is mentioned only so the
+present <code>importance</code> implementation does not foreclose the option.</p>
+<h3 id="which-metric-feeds-which-consumer">Which metric feeds which consumer?<a class="headerlink" href="#which-metric-feeds-which-consumer" title="Permanent link">&para;</a></h3>
+<p>A consequence of the signature being a family: each downstream
+consumer should explicitly pick which metric it wants, rather than
+silently assuming one global notion of "neuron score." Current
+intent:</p>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>metric (today)</th>
+<th>metric (anticipated)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tutor due</code> sort</td>
+<td><code>importance</code></td>
+<td><code>importance</code> (review-triage value)</td>
+</tr>
+<tr>
+<td>FSRS <code>desired_retention</code></td>
+<td><code>importance</code></td>
+<td><code>importance</code></td>
+</tr>
+<tr>
+<td><code>--min-importance</code> filter</td>
+<td><code>importance</code></td>
+<td><code>importance</code></td>
+</tr>
+<tr>
+<td><code>spkt neuron diverge</code></td>
+<td><code>importance</code> (gap analysis)</td>
+<td><code>importance</code></td>
+</tr>
+<tr>
+<td><code>spkt visualize</code> emphasis</td>
+<td><em>(deferred)</em></td>
+<td>likely <code>centrality</code> or a compound — <strong>not</strong> <code>importance</code></td>
+</tr>
+<tr>
+<td>retrieve rerank</td>
+<td>none currently</td>
+<td>possibly <code>salience</code></td>
+</tr>
+<tr>
+<td>"what doesn't fit" curator view</td>
+<td>none currently</td>
+<td>possibly <code>novelty</code></td>
+</tr>
+</tbody>
+</table>
+<p>Locking this matrix in writing prevents future drift where a
+visualize PR silently starts depending on <code>importance</code> and a
+follow-up importance tweak surprises the visualization.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.code.annotate", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      
+        <script src="../../../javascripts/charts.js"></script>
+      
+    
+  </body>
+</html>
