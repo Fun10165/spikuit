@@ -192,6 +192,42 @@ async def test_semantic_retrieve_without_keyword_match(circuit_with_embedder):
     assert "nn1" in result_ids
 
 
+
+@pytest.mark.asyncio
+async def test_semantic_only_retrieve_applies_retrieval_boost(tmp_path):
+    """Boosts affect embedding matches even without a lexical hit."""
+
+    class SynonymEmbedder(Embedder):
+        @property
+        def dimension(self) -> int:
+            return 2
+
+        async def embed(self, text: str) -> list[float]:
+            lowered = text.lower()
+            if "car" in lowered or "automobile" in lowered:
+                return [1.0, 0.0]
+            return [0.0, 1.0]
+
+    circuit = Circuit(
+        db_path=tmp_path / "semantic-boost.db", embedder=SynonymEmbedder()
+    )
+    await circuit.connect()
+    try:
+        neuron = Neuron.create(
+            "# Automobile\n\nA road vehicle with four wheels.", id="vehicle"
+        )
+        await circuit.add_neuron(neuron)
+
+        baseline = await circuit.retrieve_scored("car")
+        assert baseline and baseline[0][0].id == neuron.id
+
+        circuit.set_retrieval_boost(neuron.id, 0.75)
+        boosted = await circuit.retrieve_scored("car")
+
+        assert boosted[0][1] > baseline[0][1]
+    finally:
+        await circuit.close()
+
 @pytest.mark.asyncio
 async def test_retrieve_still_works_without_embedder(circuit_no_embedder):
     """Keyword-only retrieve still works when no embedder is set."""

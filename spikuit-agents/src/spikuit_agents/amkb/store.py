@@ -221,12 +221,12 @@ class SpikuitStore:
             )
 
         async def _do() -> list[RetrievalHit]:
-            neurons = await self._circuit.retrieve(intent, limit=k * 2)
+            scored = await self._circuit.retrieve_scored(intent, limit=k * 2)
             hits: list[RetrievalHit] = []
-            for n in neurons:
-                if n.type == "source":
+            for neuron, score in scored:
+                if neuron.type == "source":
                     continue  # AMKB invariant: source kind excluded
-                hits.append(RetrievalHit(ref=NodeRef(n.id), score=None))
+                hits.append(RetrievalHit(ref=NodeRef(neuron.id), score=score))
                 if len(hits) >= k:
                     break
             return hits
