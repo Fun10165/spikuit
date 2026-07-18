@@ -13,6 +13,8 @@ from typing import Any, Sequence
 from benchmarks.io import (
     SCHEMA_VERSION,
     BenchmarkDataError,
+    Judgment,
+    RetrievalRun,
     load_judgments,
     load_runs,
     match_runs,
@@ -93,10 +95,30 @@ def load_config(path: Path) -> RetrievalBenchmarkConfig:
 
 def evaluate(config: RetrievalBenchmarkConfig) -> dict[str, Any]:
     """Evaluate all configured queries and return a stable report object."""
-    judgments = load_judgments(config.judgments_path)
-    runs = load_runs(config.run_path)
-    runs_by_query = match_runs(judgments, runs)
+    evaluation = evaluate_records(
+        load_judgments(config.judgments_path),
+        load_runs(config.run_path),
+        config.cutoffs,
+    )
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "inputs": {
+            "config_sha256": sha256_file(config.config_path),
+            "judgments_sha256": sha256_file(config.judgments_path),
+            "run_sha256": sha256_file(config.run_path),
+        },
+        "cutoffs": list(config.cutoffs),
+        **evaluation,
+    }
 
+
+def evaluate_records(
+    judgments: Sequence[Judgment],
+    runs: Sequence[RetrievalRun],
+    cutoffs: Sequence[int],
+) -> dict[str, Any]:
+    """Evaluate loaded records without repeating input parsing."""
+    runs_by_query = match_runs(judgments, runs)
     query_reports: list[dict[str, Any]] = []
     query_metrics: list[dict[str, float]] = []
     for judgment in judgments:
@@ -104,7 +126,7 @@ def evaluate(config: RetrievalBenchmarkConfig) -> dict[str, Any]:
         metrics = evaluate_query(
             tuple(hit.node_id for hit in run.hits),
             dict(judgment.relevance),
-            config.cutoffs,
+            cutoffs,
         )
         query_metrics.append(metrics)
         query_reports.append(
@@ -116,13 +138,6 @@ def evaluate(config: RetrievalBenchmarkConfig) -> dict[str, Any]:
         )
 
     return {
-        "schema_version": SCHEMA_VERSION,
-        "inputs": {
-            "config_sha256": sha256_file(config.config_path),
-            "judgments_sha256": sha256_file(config.judgments_path),
-            "run_sha256": sha256_file(config.run_path),
-        },
-        "cutoffs": list(config.cutoffs),
         "query_count": len(judgments),
         "aggregate": aggregate_metrics(query_metrics),
         "queries": query_reports,
