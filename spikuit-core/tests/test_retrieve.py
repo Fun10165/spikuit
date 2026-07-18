@@ -5,11 +5,12 @@ Stage 2 (``docs/design/tutor-extraction-stage2.md`` §4.3) dropped the
 FSRS retrievability term — the substrate no longer holds card state.
 """
 
+from dataclasses import replace
+
 import pytest
 import pytest_asyncio
 
-from spikuit_core import Circuit, Neuron, Plasticity, Source, SynapseType
-from spikuit_core.db import Database
+from spikuit_core import Circuit, Neuron, RetrievalSignals, Source, SynapseType
 
 
 @pytest_asyncio.fixture
@@ -330,6 +331,93 @@ async def test_retrieve_and_retrieve_scored_agree(circuit: Circuit):
 async def test_retrieve_scored_empty_query(circuit: Circuit):
     assert await circuit.retrieve_scored("") == []
     assert await circuit.retrieve_scored("   ") == []
+
+
+@pytest.mark.parametrize(
+    "name",
+    ("keyword", "semantic", "centrality", "pressure", "feedback", "community"),
+)
+def test_retrieval_signals_require_strict_booleans(name: str):
+    with pytest.raises(TypeError, match=rf"{name} must be a bool"):
+        RetrievalSignals(**{name: 1})
+
+
+@pytest.mark.asyncio
+async def test_candidate_and_local_rerank_signals_can_be_ablated(circuit: Circuit):
+    boosted = Neuron.create("# Topic\n\nShared retrieval text.")
+    plain = Neuron.create("# Topic\n\nShared retrieval text.")
+    await circuit.add_neuron(boosted)
+    await circuit.add_neuron(plain)
+    circuit._set_pressure(boosted.id, 0.7)
+    circuit.set_retrieval_boost(boosted.id, 0.5)
+
+    text_only = RetrievalSignals(
+        semantic=False, centrality=False, pressure=False,
+        feedback=False, community=False,
+    )
+    no_candidates = replace(text_only, keyword=False)
+
+    def scores(result):
+        return {neuron.id: score for neuron, score in result}
+
+    base = scores(await circuit.retrieve_scored("topic", signals=text_only))
+    pressure = scores(
+        await circuit.retrieve_scored(
+            "topic", signals=replace(text_only, pressure=True),
+        )
+    )
+    feedback = scores(
+        await circuit.retrieve_scored(
+            "topic", signals=replace(text_only, feedback=True),
+        )
+    )
+
+    assert base[boosted.id] == base[plain.id] == 1.0
+    assert pressure[boosted.id] == pytest.approx(1.7)
+    assert pressure[plain.id] == 1.0
+    assert feedback[boosted.id] == pytest.approx(1.5)
+    assert feedback[plain.id] == 1.0
+    assert await circuit.retrieve_scored("topic") == await circuit.retrieve_scored(
+        "topic", signals=RetrievalSignals(),
+    )
+    assert await circuit.retrieve("topic", signals=no_candidates) == []
+
+
+@pytest.mark.asyncio
+async def test_graph_rerank_signals_can_be_ablated(circuit: Circuit):
+    hub = Neuron.create("# Algebra\n\nShared retrieval text.")
+    spoke_a = Neuron.create("# Algebra\n\nShared retrieval text.")
+    spoke_b = Neuron.create("# Algebra\n\nShared retrieval text.")
+    isolated = Neuron.create("# Algebra\n\nShared retrieval text.")
+    for neuron in (hub, spoke_a, spoke_b, isolated):
+        await circuit.add_neuron(neuron)
+    await circuit.add_synapse(hub.id, spoke_a.id, SynapseType.RELATES_TO)
+    await circuit.add_synapse(hub.id, spoke_b.id, SynapseType.RELATES_TO)
+    await circuit.detect_communities()
+
+    text_only = RetrievalSignals(
+        semantic=False, centrality=False, pressure=False,
+        feedback=False, community=False,
+    )
+
+    def scores(result):
+        return {neuron.id: score for neuron, score in result}
+
+    base = scores(await circuit.retrieve_scored("algebra", signals=text_only))
+    centrality = scores(
+        await circuit.retrieve_scored(
+            "algebra", signals=replace(text_only, centrality=True),
+        )
+    )
+    community = scores(
+        await circuit.retrieve_scored(
+            "algebra", signals=replace(text_only, community=True),
+        )
+    )
+
+    assert base[hub.id] == base[isolated.id] == 1.0
+    assert centrality[hub.id] > centrality[isolated.id]
+    assert community[hub.id] > community[isolated.id]
 
 
 @pytest.mark.asyncio

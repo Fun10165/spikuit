@@ -47,6 +47,7 @@ _ENGINE_SYMBOLS: dict[str, tuple[str, str]] = {
     # circuit
     "Circuit": ("circuit", "Circuit"),
     "ReadOnlyError": ("circuit", "ReadOnlyError"),
+    "RetrievalSignals": ("circuit", "RetrievalSignals"),
     # config helpers that touch the engine
     "init_brain": ("config", "init_brain"),
     "load_config": ("config", "load_config"),
@@ -112,7 +113,7 @@ def __dir__() -> list[str]:
 
 # Static type checkers and IDEs see these names; runtime gets them via __getattr__.
 if TYPE_CHECKING:
-    from .circuit import Circuit, ReadOnlyError
+    from .circuit import Circuit, ReadOnlyError, RetrievalSignals
     from .config import init_brain, load_config
     from .models import (
         Grade,
