@@ -43,6 +43,17 @@ def normalize_journal_mode(mode: str) -> str:
         )
     return normalized
 
+
+def _parse_iso_timestamp(value: str) -> datetime:
+    """Parse an ISO-8601 timestamp as a timezone-aware UTC instant."""
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(f"invalid ISO-8601 timestamp: {value!r}") from exc
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
 # ---------------------------------------------------------------------------
 # Schema
 # ---------------------------------------------------------------------------
@@ -352,6 +363,71 @@ class Database:
         )
         row = await cur.fetchone()
         return dict(row) if row else None
+
+    async def list_changesets(
+        self,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+        actor_id: str | None = None,
+        tag: str | None = None,
+        status: str | None = "committed",
+        limit: int = 1000,
+    ) -> list[dict]:
+        """List changesets filtered by time, actor, tag, and status.
+
+        Timestamp filters are inclusive ISO-8601 bounds on commit time.
+        Committed history is the default; pass ``status=None`` to include
+        open and aborted rows. Results are ordered by their commit time, or
+        by start time for rows that have not committed.
+        """
+        if limit < 0:
+            raise ValueError("limit must be non-negative")
+        if limit == 0:
+            return []
+
+        since_at = _parse_iso_timestamp(since) if since is not None else None
+        until_at = _parse_iso_timestamp(until) if until is not None else None
+        clauses: list[str] = []
+        params: list[object] = []
+        if status is not None:
+            clauses.append("status = ?")
+            params.append(status)
+        if actor_id is not None:
+            clauses.append("actor_id = ?")
+            params.append(actor_id)
+        if tag is not None:
+            clauses.append("tag = ?")
+            params.append(tag)
+
+        where = (" WHERE " + " AND ".join(clauses)) if clauses else ""
+        cur = await self.conn.execute(
+            "SELECT id, tag, actor_id, actor_kind, started_at, "
+            "committed_at, status FROM changeset" + where,
+            tuple(params),
+        )
+
+        timestamped: list[tuple[datetime, dict]] = []
+        async for raw_row in cur:
+            row = dict(raw_row)
+            committed_at = (
+                _parse_iso_timestamp(row["committed_at"])
+                if row["committed_at"] is not None
+                else None
+            )
+            if since_at is not None and (
+                committed_at is None or committed_at < since_at
+            ):
+                continue
+            if until_at is not None and (
+                committed_at is None or committed_at > until_at
+            ):
+                continue
+            order_at = committed_at or _parse_iso_timestamp(row["started_at"])
+            timestamped.append((order_at, row))
+
+        timestamped.sort(key=lambda item: (item[0], item[1]["id"]))
+        return [row for _order_at, row in timestamped[:limit]]
 
     async def list_events(
         self,

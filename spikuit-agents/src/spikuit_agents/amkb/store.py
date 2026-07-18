@@ -7,7 +7,7 @@ the lifetime of the store.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Iterator, Literal
 
 from amkb.errors import (
@@ -49,6 +49,14 @@ def _iso_to_ts(iso: str | None) -> Timestamp:
         return Timestamp(0)
     dt = datetime.fromisoformat(iso)
     return dt_to_ts(dt)
+
+
+def _ts_to_iso(timestamp: Timestamp | None) -> str | None:
+    if timestamp is None:
+        return None
+    return datetime.fromtimestamp(
+        int(timestamp) / 1_000_000, tz=timezone.utc
+    ).isoformat()
 
 
 class SpikuitStore:
@@ -245,20 +253,13 @@ class SpikuitStore:
         limit: int = 100,
     ) -> list[ChangeSetRef]:
         async def _do() -> list[ChangeSetRef]:
-            sql = (
-                "SELECT id FROM changeset WHERE status='committed'"
+            rows = await self._circuit._db.list_changesets(  # noqa: SLF001
+                since=_ts_to_iso(since),
+                until=_ts_to_iso(until),
+                actor_id=str(actor) if actor is not None else None,
+                tag=tag,
+                limit=limit,
             )
-            params: list[object] = []
-            if tag is not None:
-                sql += " AND tag = ?"
-                params.append(tag)
-            if actor is not None:
-                sql += " AND actor_id = ?"
-                params.append(str(actor))
-            sql += " ORDER BY committed_at, id LIMIT ?"
-            params.append(limit)
-            cur = await self._circuit._db.conn.execute(sql, tuple(params))  # noqa: SLF001
-            rows = await cur.fetchall()
             return [ChangeSetRef(row["id"]) for row in rows]
 
         return self._loop.run(_do())

@@ -77,3 +77,75 @@ async def test_changeset_insert_roundtrip(tmp_path):
         assert rows == [("cs1", "open")]
     finally:
         await db.close()
+
+
+@pytest.mark.asyncio
+async def test_list_changesets_filters_and_orders_history(tmp_path):
+    db = Database(tmp_path / "test.db")
+    await db.connect()
+    try:
+        records = [
+            ("cs-offset", "review", "bob", "2026-04-13T01:00:00.500000+01:00"),
+            ("cs-a", "ingest", "alice", "2026-04-13T00:00:01+00:00"),
+            ("cs-b", "review", "bob", "2026-04-13T00:00:02+00:00"),
+            ("cs-c", "ingest", "alice", "2026-04-13T00:00:03+00:00"),
+        ]
+        for changeset_id, tag, actor_id, committed_at in records:
+            await db.insert_changeset_open(
+                changeset_id=changeset_id,
+                tag=tag,
+                actor_id=actor_id,
+                actor_kind="human",
+                started_at=committed_at,
+            )
+            await db.commit_changeset(
+                changeset_id,
+                events=[],
+                committed_at=committed_at,
+            )
+
+        await db.insert_changeset_open(
+            changeset_id="cs-aborted",
+            tag="ingest",
+            actor_id="alice",
+            actor_kind="human",
+            started_at="2026-04-13T00:00:04+00:00",
+        )
+        await db.abort_changeset("cs-aborted")
+
+        assert [row["id"] for row in await db.list_changesets()] == [
+            "cs-offset",
+            "cs-a",
+            "cs-b",
+            "cs-c",
+        ]
+        assert [
+            row["id"]
+            for row in await db.list_changesets(
+                since="2026-04-13T00:00:02+00:00",
+                until="2026-04-13T00:00:03+00:00",
+            )
+        ] == ["cs-b", "cs-c"]
+        assert [
+            row["id"]
+            for row in await db.list_changesets(
+                since="2026-04-13T00:00:00.750000Z",
+                until="2026-04-13T01:00:01+01:00",
+            )
+        ] == ["cs-a"]
+        assert [
+            row["id"]
+            for row in await db.list_changesets(actor_id="alice", tag="ingest")
+        ] == ["cs-a", "cs-c"]
+        assert [
+            row["id"] for row in await db.list_changesets(status=None)
+        ] == ["cs-offset", "cs-a", "cs-b", "cs-c", "cs-aborted"]
+        assert [
+            row["id"]
+            for row in await db.list_changesets(status=None, limit=4)
+        ] == ["cs-offset", "cs-a", "cs-b", "cs-c"]
+        assert len(await db.list_changesets(limit=1)) == 1
+        with pytest.raises(ValueError, match="limit must be non-negative"):
+            await db.list_changesets(limit=-1)
+    finally:
+        await db.close()
