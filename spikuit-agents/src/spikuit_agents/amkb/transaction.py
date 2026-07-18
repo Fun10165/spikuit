@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import json
 from contextlib import AbstractAsyncContextManager
-from datetime import datetime, timezone
+from datetime import datetime
 from types import TracebackType
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
@@ -221,10 +221,16 @@ class SpikuitStoreTransaction:
         events_snapshot = list(self._spikuit_tx.events)
         spikuit_tx = self._spikuit_tx
 
-        async def _exit_ok() -> None:
+        async def _exit_ok() -> str:
             await self._cm.__aexit__(None, None, None)  # type: ignore[union-attr]
+            row = await self._circuit._db.get_changeset(spikuit_tx.id)  # noqa: SLF001
+            if row is None or row["committed_at"] is None:
+                raise RuntimeError(
+                    f"committed changeset {spikuit_tx.id} was not persisted"
+                )
+            return row["committed_at"]
 
-        self._loop.run(_exit_ok())
+        committed_at_iso = self._loop.run(_exit_ok())
         self._state = "committed"
 
         amkb_events: list[Event] = []
@@ -233,7 +239,7 @@ class SpikuitStoreTransaction:
             if ev is not None:
                 amkb_events.append(ev)
 
-        committed_at = Timestamp(int(datetime.now(timezone.utc).timestamp() * 1_000_000))
+        committed_at = dt_to_ts(datetime.fromisoformat(committed_at_iso))
         return ChangeSet(
             ref=ChangeSetRef(spikuit_tx.id),
             tx_ref=TransactionRef(spikuit_tx.id),

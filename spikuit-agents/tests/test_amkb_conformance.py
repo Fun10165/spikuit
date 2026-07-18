@@ -47,6 +47,29 @@ def test_retrieve_exposes_monotone_scores(store, actor) -> None:
     assert scores == sorted(scores, reverse=True)
 
 
+def test_history_applies_time_actor_tag_and_limit_filters(store, actor) -> None:
+    committed = []
+    for index, tag in enumerate(("first", "middle", "last")):
+        with store.begin(tag=tag, actor=actor) as tx:
+            tx.create(
+                kind=KIND_CONCEPT,
+                layer=LAYER_CONCEPT,
+                content=f"# History {index}\n\nChangeset {index}.",
+            )
+            result = tx.commit()
+        committed.append(result)
+
+    refs = [changeset.ref for changeset in committed]
+    middle = committed[1]
+
+    assert store.history() == refs
+    assert store.history(since=middle.committed_at) == refs[1:]
+    assert store.history(until=middle.committed_at) == refs[:2]
+    assert store.history(actor=middle.actor) == refs
+    assert store.history(tag="middle") == [middle.ref]
+    assert store.history(limit=2) == refs[:2]
+
+
 # -- v0.7.1 known-skips -------------------------------------------------------
 
 # L2 ---------------------------------------------------------------------
