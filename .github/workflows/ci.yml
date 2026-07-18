@@ -15,7 +15,12 @@ jobs:
         # spikuit-cli/tests and spikuit-tutor/tests both ship an
         # __init__.py, so a single pytest run collides on the package
         # name `tests`. One job per package keeps the suites apart.
-        package: [spikuit-core, spikuit-agents, spikuit-cli, spikuit-tutor]
+        package:
+          - spikuit-core
+          - spikuit-agents
+          - spikuit-cli
+          - spikuit-tutor
+          - benchmarks
     steps:
       - uses: actions/checkout@v4
 
