@@ -8,6 +8,7 @@ the in-memory NetworkX graph, and exposes all operations external layers
 from __future__ import annotations
 
 import hashlib
+import math
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -235,9 +236,8 @@ class Circuit:
     async def _load_retrieval_boosts(self) -> None:
         """Load retrieval boosts from DB into graph node attributes."""
         boosts = await self._db.get_all_retrieval_boosts()
-        for nid, boost in boosts.items():
-            if nid in self._graph:
-                self._graph.nodes[nid]["retrieval_boost"] = boost
+        for neuron_id, boost in boosts.items():
+            self.set_retrieval_boost(neuron_id, boost)
 
     # -- Embedding helpers --------------------------------------------------
 
@@ -1024,6 +1024,8 @@ class Circuit:
 
     def set_retrieval_boost(self, neuron_id: str, value: float) -> None:
         if neuron_id in self._graph:
+            if not math.isfinite(value):
+                raise ValueError("retrieval boost must be finite")
             self._graph.nodes[neuron_id]["retrieval_boost"] = value
 
     async def commit_retrieval_boosts(self) -> None:
@@ -1047,6 +1049,27 @@ class Circuit:
     ) -> list[Neuron]:
         """Retrieve neurons matching a query with graph-weighted scoring.
 
+        This is the compatibility surface for callers that only need ranked
+        neurons. Consumers that also need the opaque ranking score should use
+        :meth:`retrieve_scored`.
+
+        See :meth:`retrieve_scored` for the scoring formula and argument
+        semantics.
+        """
+        scored = await self.retrieve_scored(
+            query, limit=limit, filters=filters,
+        )
+        return [neuron for neuron, _score in scored]
+
+    async def retrieve_scored(
+        self,
+        query: str,
+        *,
+        limit: int = 10,
+        filters: dict[str, str] | None = None,
+    ) -> list[tuple[Neuron, float]]:
+        """Retrieve neurons with their raw graph-weighted scores.
+
         Scoring formula::
 
             score = max(keyword_sim, semantic_sim)
@@ -1056,10 +1079,13 @@ class Circuit:
         otherwise only keyword matching is used. ``boost`` is accumulated
         through [`QABotSession`][spikuit_core.QABotSession] feedback.
 
-        As of Stage 2 (``tutor-extraction-stage2.md`` §4.3) the score
-        carries no FSRS retrievability term — the substrate ranks by its
-        own signals only. A tutor wanting memory-aware retrieval pushes a
-        per-neuron weight through ``set_retrieval_boost`` instead.
+        As of Stage 2 (``tutor-extraction-stage2.md`` §4.3), the score
+        carries no FSRS retrievability term: learner state belongs to the
+        tutor overlay, while the substrate ranks using its own signals.
+
+        Scores are opaque relevance indicators. They are monotone with the
+        returned order, but are not probabilities or values that can be
+        compared across calls because graph and pressure state can change.
 
         Args:
             query: Search query text.
@@ -1069,7 +1095,7 @@ class Circuit:
                 Strict semantics: neurons without the key are excluded.
 
         Returns:
-            List of matching neurons, sorted by score descending.
+            ``(neuron, score)`` pairs sorted by score descending.
         """
         if not query.strip():
             return []
@@ -1079,94 +1105,100 @@ class Circuit:
         if not keywords:
             return []
 
-        # Pre-filter neuron IDs if filters provided
         allowed_ids: set[str] | None = None
         if filters:
             allowed_ids = await self._db.get_filtered_neuron_ids(filters)
 
-        # Compute degree centrality (no scipy needed, unlike PageRank)
         centrality_map: dict[str, float] = {}
         if self._graph.number_of_nodes() > 1:
             centrality_map = nx.degree_centrality(self._graph)
 
-        # Semantic similarity via embeddings (if available)
         semantic_scores: dict[str, float] = {}
         if self._embedder is not None and self._db.has_embeddings:
             query_text = self._embedder.apply_prefix(query, EmbeddingType.QUERY)
             query_vec = await self._embedder.embed(query_text)
             query_blob = vec_to_blob(query_vec)
-            # Fetch more candidates than limit to allow re-ranking
             knn_results = await self._db.knn_search(query_blob, limit=limit * 3)
             if knn_results:
-                # Convert L2 distance to similarity score (0-1)
-                max_dist = max(d for _, d in knn_results) or 1.0
-                for nid, dist in knn_results:
-                    semantic_scores[nid] = max(0.0, 1.0 - dist / (max_dist + 1e-6))
+                max_dist = max(distance for _, distance in knn_results) or 1.0
+                for neuron_id, distance in knn_results:
+                    semantic_scores[neuron_id] = max(
+                        0.0, 1.0 - distance / (max_dist + 1e-6)
+                    )
 
-        # Collect candidate neuron IDs (keyword matches + semantic matches)
         all_neurons = await self._db.list_neurons(limit=1000)
-        neuron_map = {n.id: n for n in all_neurons}
+        neuron_map = {neuron.id: neuron for neuron in all_neurons}
 
         scored: list[tuple[float, Neuron]] = []
         seen: set[str] = set()
 
-        for n in all_neurons:
-            if allowed_ids is not None and n.id not in allowed_ids:
+        for neuron in all_neurons:
+            if allowed_ids is not None and neuron.id not in allowed_ids:
                 continue
-            content_lower = n.content.lower()
-            hits = sum(1 for kw in keywords if kw in content_lower)
+            content_lower = neuron.content.lower()
+            hits = sum(1 for keyword in keywords if keyword in content_lower)
             keyword_sim = hits / len(keywords) if hits > 0 else 0.0
-            sem_sim = semantic_scores.get(n.id, 0.0)
-            text_sim = max(keyword_sim, sem_sim)
+            semantic_sim = semantic_scores.get(neuron.id, 0.0)
+            text_sim = max(keyword_sim, semantic_sim)
 
             if text_sim == 0.0:
                 continue
 
-            centrality_norm = centrality_map.get(n.id, 0.0)
-            pressure = self.get_pressure(n.id)
+            centrality = centrality_map.get(neuron.id, 0.0)
+            pressure = self.get_pressure(neuron.id)
+            boost = self.get_retrieval_boost(neuron.id)
+            score = text_sim * (1.0 + centrality + pressure + boost)
+            scored.append((score, neuron))
+            seen.add(neuron.id)
 
-            boost = self.get_retrieval_boost(n.id)
-            score = text_sim * (1.0 + centrality_norm + pressure + boost)
-            scored.append((score, n))
-            seen.add(n.id)
+        for neuron_id, semantic_sim in semantic_scores.items():
+            if neuron_id in seen or semantic_sim == 0.0:
+                continue
+            if allowed_ids is not None and neuron_id not in allowed_ids:
+                continue
+            neuron = neuron_map.get(neuron_id)
+            if neuron is None:
+                continue
+            centrality = centrality_map.get(neuron.id, 0.0)
+            pressure = self.get_pressure(neuron.id)
+            boost = self.get_retrieval_boost(neuron.id)
+            score = semantic_sim * (1.0 + centrality + pressure + boost)
+            scored.append((score, neuron))
 
-        # Include semantic-only hits not caught by keyword scan
-        for nid, sem_sim in semantic_scores.items():
-            if nid in seen or sem_sim == 0.0:
-                continue
-            if allowed_ids is not None and nid not in allowed_ids:
-                continue
-            n = neuron_map.get(nid)
-            if n is None:
-                continue
-            centrality_norm = centrality_map.get(n.id, 0.0)
-            pressure = self.get_pressure(n.id)
-            score = sem_sim * (1.0 + centrality_norm + pressure)
-            scored.append((score, n))
-
-        # Community boost: identify dominant community from top-K, boost same-community
         if self.plasticity.community_weight > 0 and scored:
-            scored.sort(key=lambda x: x[0], reverse=True)
-            top_k = scored[:5]
+            scored.sort(key=lambda item: item[0], reverse=True)
             community_counts: dict[int, int] = {}
-            for _, n in top_k:
-                cid = self._graph.nodes.get(n.id, {}).get("community_id")
-                if cid is not None:
-                    community_counts[cid] = community_counts.get(cid, 0) + 1
+            for _score, neuron in scored[:5]:
+                community_id = self._graph.nodes.get(neuron.id, {}).get(
+                    "community_id"
+                )
+                if community_id is not None:
+                    community_counts[community_id] = (
+                        community_counts.get(community_id, 0) + 1
+                    )
             if community_counts:
-                dominant_cid = max(community_counts, key=community_counts.get)  # type: ignore[arg-type]
-                for i, (s, n) in enumerate(scored):
-                    ncid = self._graph.nodes.get(n.id, {}).get("community_id")
-                    if ncid == dominant_cid:
-                        scored[i] = (s * (1.0 + self.plasticity.community_weight), n)
+                dominant_community = max(
+                    community_counts, key=community_counts.get  # type: ignore[arg-type]
+                )
+                for index, (score, neuron) in enumerate(scored):
+                    community_id = self._graph.nodes.get(neuron.id, {}).get(
+                        "community_id"
+                    )
+                    if community_id == dominant_community:
+                        scored[index] = (
+                            score * (1.0 + self.plasticity.community_weight),
+                            neuron,
+                        )
 
-        scored.sort(key=lambda x: x[0], reverse=True)
-        results = [n for _, n in scored[:limit]]
+        scored.sort(key=lambda item: item[0], reverse=True)
+        top_results = scored[:limit]
 
-        if results:
-            await self._db.log_retrieve(query, [n.id for n in results])
+        if top_results:
+            await self._db.log_retrieve(
+                query, [neuron.id for _score, neuron in top_results]
+            )
 
-        return results
+        return [(neuron, float(score)) for score, neuron in top_results]
 
     # -- Ensemble -----------------------------------------------------------
 

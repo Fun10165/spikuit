@@ -16,12 +16,35 @@ flags.
 """
 
 import pytest
+from amkb.types import KIND_CONCEPT, LAYER_CONCEPT
 
 from amkb.conformance.test_l1_core import *  # noqa: F401,F403
 from amkb.conformance.test_l2_lineage import *  # noqa: F401,F403
 from amkb.conformance.test_l3_transactional import *  # noqa: F401,F403
 from amkb.conformance.test_l4a_structural import *  # noqa: F401,F403
 from amkb.conformance.test_l4b_intent import *  # noqa: F401,F403
+
+
+def test_retrieve_exposes_monotone_scores(store, actor) -> None:
+    with store.begin(tag="scored-retrieval", actor=actor) as tx:
+        tx.create(
+            kind=KIND_CONCEPT,
+            layer=LAYER_CONCEPT,
+            content="# Functor\n\nA mapping between categories.",
+        )
+        tx.create(
+            kind=KIND_CONCEPT,
+            layer=LAYER_CONCEPT,
+            content="# Monad\n\nA functor with extra structure.",
+        )
+        tx.commit()
+
+    hits = store.retrieve("functor", k=10)
+
+    assert len(hits) == 2
+    scores = [hit.score for hit in hits]
+    assert all(score is not None and score > 0.0 for score in scores)
+    assert scores == sorted(scores, reverse=True)
 
 
 # -- v0.7.1 known-skips -------------------------------------------------------

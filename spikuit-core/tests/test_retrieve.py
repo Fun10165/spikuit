@@ -282,3 +282,73 @@ async def test_no_filters_returns_all(circuit: Circuit):
 
     results = await circuit.retrieve("topic")
     assert len(results) == 2
+
+
+# -------------------------------------------------------------------
+# Scored retrieval for adapter consumers
+# -------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_retrieve_scored_returns_monotone_scores(circuit: Circuit):
+    """Scored results expose the exact ordering used by retrieve()."""
+    matching = [
+        Neuron.create("# Functor\n\nA mapping between categories."),
+        Neuron.create("# Monad\n\nA functor with extra structure."),
+    ]
+    unrelated = Neuron.create("# Banana\n\nA yellow fruit.")
+    for neuron in [*matching, unrelated]:
+        await circuit.add_neuron(neuron)
+
+    scored = await circuit.retrieve_scored("functor")
+
+    assert len(scored) == 2
+    assert all(isinstance(neuron, Neuron) for neuron, _score in scored)
+    assert all(isinstance(score, float) and score > 0.0 for _neuron, score in scored)
+    scores = [score for _neuron, score in scored]
+    assert scores == sorted(scores, reverse=True)
+    assert unrelated.id not in {neuron.id for neuron, _score in scored}
+
+
+@pytest.mark.asyncio
+async def test_retrieve_and_retrieve_scored_agree(circuit: Circuit):
+    """The compatibility API must preserve the scored API's rank order."""
+    for index in range(5):
+        await circuit.add_neuron(
+            Neuron.create(f"# Topic {index}\n\nDescription about topic {index}.")
+        )
+
+    plain = await circuit.retrieve("topic")
+    scored = await circuit.retrieve_scored("topic")
+
+    assert [neuron.id for neuron in plain] == [
+        neuron.id for neuron, _score in scored
+    ]
+
+
+@pytest.mark.asyncio
+async def test_retrieve_scored_empty_query(circuit: Circuit):
+    assert await circuit.retrieve_scored("") == []
+    assert await circuit.retrieve_scored("   ") == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("invalid", [float("nan"), float("inf"), float("-inf")])
+async def test_retrieval_boost_rejects_non_finite_values(
+    circuit: Circuit, invalid: float
+):
+    neuron = Neuron.create("# Finite scoring\n\nScores must remain interoperable.")
+    await circuit.add_neuron(neuron)
+
+    with pytest.raises(ValueError, match="retrieval boost must be finite"):
+        circuit.set_retrieval_boost(neuron.id, invalid)
+
+
+@pytest.mark.asyncio
+async def test_loading_non_finite_retrieval_boost_fails_explicitly(circuit: Circuit):
+    neuron = Neuron.create("# Persisted scoring\n\nStored boosts need validation.")
+    await circuit.add_neuron(neuron)
+    await circuit._db.set_retrieval_boost(neuron.id, float("inf"))
+
+    with pytest.raises(ValueError, match="retrieval boost must be finite"):
+        await circuit._load_retrieval_boosts()
