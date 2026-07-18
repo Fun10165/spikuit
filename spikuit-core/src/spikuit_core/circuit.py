@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import math
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import AsyncIterator
@@ -55,6 +56,34 @@ def _synapse_target_id(pre: str, post: str, stype: SynapseType | str) -> str:
 
 class ReadOnlyError(Exception):
     """Raised when a mutating operation is attempted on a read-only Circuit."""
+
+
+@dataclass(frozen=True, slots=True)
+class RetrievalSignals:
+    """Select substrate signals for controlled retrieval evaluation.
+
+    Keyword and semantic signals produce candidates; centrality, pressure,
+    feedback, and community signals rerank them. All signals default on.
+    FSRS retrievability is absent because learner state belongs to the tutor.
+    """
+
+    keyword: bool = True
+    semantic: bool = True
+    centrality: bool = True
+    pressure: bool = True
+    feedback: bool = True
+    community: bool = True
+
+    def __post_init__(self) -> None:
+        for name in (
+            "keyword", "semantic", "centrality",
+            "pressure", "feedback", "community",
+        ):
+            if not isinstance(getattr(self, name), bool):
+                raise TypeError(f"{name} must be a bool")
+
+
+_DEFAULT_RETRIEVAL_SIGNALS = RetrievalSignals()
 
 
 class Circuit:
@@ -1046,6 +1075,7 @@ class Circuit:
         *,
         limit: int = 10,
         filters: dict[str, str] | None = None,
+        signals: RetrievalSignals = _DEFAULT_RETRIEVAL_SIGNALS,
     ) -> list[Neuron]:
         """Retrieve neurons matching a query with graph-weighted scoring.
 
@@ -1057,7 +1087,7 @@ class Circuit:
         semantics.
         """
         scored = await self.retrieve_scored(
-            query, limit=limit, filters=filters,
+            query, limit=limit, filters=filters, signals=signals,
         )
         return [neuron for neuron, _score in scored]
 
@@ -1067,6 +1097,7 @@ class Circuit:
         *,
         limit: int = 10,
         filters: dict[str, str] | None = None,
+        signals: RetrievalSignals = _DEFAULT_RETRIEVAL_SIGNALS,
     ) -> list[tuple[Neuron, float]]:
         """Retrieve neurons with their raw graph-weighted scores.
 
@@ -1093,12 +1124,16 @@ class Circuit:
             filters: Key-value filters. ``type`` and ``domain`` filter on the
                 neuron table; other keys filter on source filterable metadata.
                 Strict semantics: neurons without the key are excluded.
+            signals: Signal selection for controlled retrieval ablations.
+                Defaults to the full production ranking model.
 
         Returns:
             ``(neuron, score)`` pairs sorted by score descending.
         """
         if not query.strip():
             return []
+
+        active = signals
 
         query_lower = query.lower()
         keywords = query_lower.split()
@@ -1110,11 +1145,15 @@ class Circuit:
             allowed_ids = await self._db.get_filtered_neuron_ids(filters)
 
         centrality_map: dict[str, float] = {}
-        if self._graph.number_of_nodes() > 1:
+        if active.centrality and self._graph.number_of_nodes() > 1:
             centrality_map = nx.degree_centrality(self._graph)
 
         semantic_scores: dict[str, float] = {}
-        if self._embedder is not None and self._db.has_embeddings:
+        if (
+            active.semantic
+            and self._embedder is not None
+            and self._db.has_embeddings
+        ):
             query_text = self._embedder.apply_prefix(query, EmbeddingType.QUERY)
             query_vec = await self._embedder.embed(query_text)
             query_blob = vec_to_blob(query_vec)
@@ -1135,9 +1174,11 @@ class Circuit:
         for neuron in all_neurons:
             if allowed_ids is not None and neuron.id not in allowed_ids:
                 continue
-            content_lower = neuron.content.lower()
-            hits = sum(1 for keyword in keywords if keyword in content_lower)
-            keyword_sim = hits / len(keywords) if hits > 0 else 0.0
+            keyword_sim = 0.0
+            if active.keyword:
+                content_lower = neuron.content.lower()
+                hits = sum(1 for keyword in keywords if keyword in content_lower)
+                keyword_sim = hits / len(keywords) if hits > 0 else 0.0
             semantic_sim = semantic_scores.get(neuron.id, 0.0)
             text_sim = max(keyword_sim, semantic_sim)
 
@@ -1145,8 +1186,8 @@ class Circuit:
                 continue
 
             centrality = centrality_map.get(neuron.id, 0.0)
-            pressure = self.get_pressure(neuron.id)
-            boost = self.get_retrieval_boost(neuron.id)
+            pressure = self.get_pressure(neuron.id) if active.pressure else 0.0
+            boost = self.get_retrieval_boost(neuron.id) if active.feedback else 0.0
             score = text_sim * (1.0 + centrality + pressure + boost)
             scored.append((score, neuron))
             seen.add(neuron.id)
@@ -1160,12 +1201,12 @@ class Circuit:
             if neuron is None:
                 continue
             centrality = centrality_map.get(neuron.id, 0.0)
-            pressure = self.get_pressure(neuron.id)
-            boost = self.get_retrieval_boost(neuron.id)
+            pressure = self.get_pressure(neuron.id) if active.pressure else 0.0
+            boost = self.get_retrieval_boost(neuron.id) if active.feedback else 0.0
             score = semantic_sim * (1.0 + centrality + pressure + boost)
             scored.append((score, neuron))
 
-        if self.plasticity.community_weight > 0 and scored:
+        if active.community and self.plasticity.community_weight > 0 and scored:
             scored.sort(key=lambda item: item[0], reverse=True)
             community_counts: dict[int, int] = {}
             for _score, neuron in scored[:5]:

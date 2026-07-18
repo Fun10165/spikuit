@@ -5,7 +5,7 @@ import math
 import pytest
 import pytest_asyncio
 
-from spikuit_core import Circuit, Neuron, NullEmbedder
+from spikuit_core import Circuit, Neuron, NullEmbedder, RetrievalSignals
 from spikuit_core.embedder import (
     Embedder,
     EmbeddingType,
@@ -220,6 +220,11 @@ async def test_semantic_only_retrieve_applies_retrieval_boost(tmp_path):
 
         baseline = await circuit.retrieve_scored("car")
         assert baseline and baseline[0][0].id == neuron.id
+
+        semantic_disabled = await circuit.retrieve_scored(
+            "car", signals=RetrievalSignals(semantic=False)
+        )
+        assert semantic_disabled == []
 
         circuit.set_retrieval_boost(neuron.id, 0.75)
         boosted = await circuit.retrieve_scored("car")
